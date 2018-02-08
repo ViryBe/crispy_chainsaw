@@ -1,0 +1,6 @@
+# Do not save databases
+*.db
+
+# VIM files
+*.swp
+*.un~
