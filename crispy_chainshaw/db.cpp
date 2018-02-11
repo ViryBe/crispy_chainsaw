@@ -99,7 +99,7 @@ void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
     }
 }
 
-WorkDayStatus DbManager::see_status(QDateTime date, int pntid)
+WorkDayStatus DbManager::see_status(QDateTime date, QString pntid)
 {
     WorkDayStatus res = WorkDayStatus::OFF;
     QSqlQuery query(m_db);
