@@ -3,6 +3,7 @@
 
 #include <QString>
 #include "db.h"
+#include "workday.h"
 
 class Pnt
 {
@@ -12,6 +13,7 @@ public:
     Pnt(QString name, QString code, Role r, int freq_max = -1);
     int getFlightTime(int month);
     int getTT();
+    bool addWorkday(const QDate, const Workday::WorkDayStatus);
 
 private:
     QString m_name;
