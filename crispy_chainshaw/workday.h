@@ -9,6 +9,10 @@ class Workday
 public:
     /// Type used to describe the day of a pilot
     enum class WorkDayStatus {OFF, STANDBY, OFFICE, V1, V2, V3};
+    /// Converts a string to a WorkDayStatus
+    WorkDayStatus str2wds(const QString&);
+    /// Converts a WorkDayStatus to a string
+    QString wds2str(const WorkDayStatus&);
 
     Workday(const QDate, const WorkDayStatus);
     WorkDayStatus getStatus();

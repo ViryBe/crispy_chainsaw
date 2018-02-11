@@ -2,33 +2,6 @@
 
 QString DATEFMT = "yyyy-mm-dd";
 
-WorkDayStatus str2wds(const QString& s)
-{
-    WorkDayStatus res = WorkDayStatus::OFF;
-    if (s == "off") { res = WorkDayStatus::OFF; }
-    else if (s == "office") { res = WorkDayStatus::OFFICE; }
-    else if (s == "standby") { res = WorkDayStatus::STANDBY; }
-    else if (s == "v1") { res = WorkDayStatus::V1; }
-    else if (s == "v2") { res = WorkDayStatus::V2; }
-    else if (s == "v3") { res = WorkDayStatus::V3; }
-    else { qDebug() << "invalid string not a workdaystatus"; }
-    return res;
-}
-
-QString wds2str(const WorkDayStatus& wds)
-{
-    QString res = "";
-    if (wds == WorkDayStatus::OFF) {res="off";}
-    else if (wds == WorkDayStatus::OFFICE) {res="office";}
-    else if (wds == WorkDayStatus::STANDBY){res="standby";}
-    else if (wds == WorkDayStatus::V1){res="v1";}
-    else if (wds == WorkDayStatus::V2){res="v2";}
-    else if (wds == WorkDayStatus::V3){res="v3";}
-    else {qDebug() << "invalid wds";}
-
-    return res;
-}
-
 DbManager::DbManager(const QString& path)
 {
     m_db = QSqlDatabase::addDatabase("QSQLITE");
@@ -62,14 +35,14 @@ void DbManager::add_pilot(const QString& name, const QString& role,
     }
 }
 
-void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
+void DbManager::add_workday(const QString& date, const QString& st)
 {
     QSqlQuery query(m_db);
     query.prepare(
                 "INSERT INTO Workday (date, status) VALUES " \
                 "(:date, :status)");
     query.bindValue(":date", date);
-    query.bindValue(":status", wds2str(st));
+    query.bindValue(":status", st);
     if (query.exec()) {
     }
     else {
@@ -78,9 +51,9 @@ void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
     }
 }
 
-WorkDayStatus DbManager::see_status(QDateTime date, QString pntid)
+QString DbManager::see_status(QDateTime date, QString pntid)
 {
-    WorkDayStatus res = WorkDayStatus::OFF;
+    QString res = "off";
     QSqlQuery query(m_db);
     query.prepare(
             "SELECT Workday.status FROM Workday INNER JOIN Pnt ON " \
@@ -92,7 +65,7 @@ WorkDayStatus DbManager::see_status(QDateTime date, QString pntid)
     if (query.exec()) {
         // Result should be unique
         while (query.next()) {
-            res = str2wds(query.value(0).toString());
+            res = query.value(0).toString();
         }
     }
     else {
@@ -125,4 +98,5 @@ bool DbManager::consult()
 int DbManager::getFlightTimePilot(QString code_pilot, int month)
 // return le nombre d'h de vol pour le pilot "code pilot" pour le mois month
 {
+    return 0;
 }
