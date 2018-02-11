@@ -14,8 +14,8 @@ public:
     WorkDayStatus getStatus();
 
 private:
-    QDateTime date;
-    WorkDayStatus status;
+    QDate m_date;
+    WorkDayStatus m_status;
 };
 
 #endif // WORKDAY_H
