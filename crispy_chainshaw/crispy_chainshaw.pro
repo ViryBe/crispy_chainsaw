@@ -10,8 +10,10 @@ QT += sql core gui widgets
 # Input
 HEADERS += db.h mainwindow.h pnt.h \
     workday.h \
-    acftmodel.h
+    acftmodel.h \
+    schedule.h
 FORMS += mainwindow.ui
 SOURCES += db.cpp main.cpp mainwindow.cpp pnt.cpp \
     workday.cpp \
-    acftmodel.cpp
+    acftmodel.cpp \
+    schedule.cpp
