@@ -19,12 +19,15 @@ class DbManager
 {
     public:
         DbManager(const QString&);
-        void add_pilot(const QString&, const QString&, int);
+        void add_pilot(const QString&, const QString&, const int);
         void add_acft_model(const QString&, int, int, int);
         void add_workday(const QString&, const WorkDayStatus&);
-        WorkDayStatus see_status(QDateTime, int);
+        WorkDayStatus see_status(QDateTime, QString);
+        int getFlightTimePilot(QString, int);
     private:
         QSqlDatabase m_db;
 };
+
+static DbManager _MANAGER = DbManager("");
 
 #endif

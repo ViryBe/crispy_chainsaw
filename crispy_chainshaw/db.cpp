@@ -99,7 +99,7 @@ void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
     }
 }
 
-WorkDayStatus DbManager::see_status(QDateTime date, int pntid)
+WorkDayStatus DbManager::see_status(QDateTime date, QString pntid)
 {
     WorkDayStatus res = WorkDayStatus::OFF;
     QSqlQuery query(m_db);
@@ -142,3 +142,8 @@ bool DbManager::consult()
     return success;
 }
 */
+
+int DbManager::getFlightTimePilot(QString code_pilot, int month)
+// return le nombre d'h de vol pour le pilot "code pilot" pour le mois month
+{
+}
