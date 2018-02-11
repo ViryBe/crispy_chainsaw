@@ -4,15 +4,15 @@ QString DATEFMT = "yyyy-mm-dd";
 
 WorkDayStatus str2wds(const QString& s)
 {
-	WorkDayStatus res;
-	if (s == "off") { res = WorkDayStatus::OFF; }
-	else if (s == "office") { res = WorkDayStatus::OFFICE; }
-	else if (s == "standby") { res = WorkDayStatus::STANDBY; }
-	else if (s == "v1") { res = WorkDayStatus::V1; }
-	else if (s == "v2") { res = WorkDayStatus::V2; }
-	else if (s == "v3") { res = WorkDayStatus::V3; }
-	else { throw; }
-	return res;
+    WorkDayStatus res = WorkDayStatus::OFF;
+    if (s == "off") { res = WorkDayStatus::OFF; }
+    else if (s == "office") { res = WorkDayStatus::OFFICE; }
+    else if (s == "standby") { res = WorkDayStatus::STANDBY; }
+    else if (s == "v1") { res = WorkDayStatus::V1; }
+    else if (s == "v2") { res = WorkDayStatus::V2; }
+    else if (s == "v3") { res = WorkDayStatus::V3; }
+    else { qDebug() << "invalid string not a workdaystatus"; }
+    return res;
 }
 
 DbManager::DbManager(const QString& path)
@@ -67,8 +67,25 @@ void DbManager::add_acft_model(const QString& name, const int& freq_max,
 	}
 }
 
+void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
+{
+    QSqlQuery query(m_db);
+    query.prepare(
+                "INSERT INTO Workday (date, status) VALUES " \
+                "(:date, :status)");
+    query.bindValue(":date", date);
+    query.bindValue(":status", wds2str(st));
+    if (query.exec()) {
+    }
+    else {
+        qDebug() << "error adding workday: "
+                 << query.lastError();
+    }
+}
+
 WorkDayStatus DbManager::see_status(const QDateTime date, const int pntid)
 {
+    WorkDayStatus res = WorkDayStatus::OFF;
 	QSqlQuery query(m_db);
 	query.prepare(
 			"SELECT Workday.status FROM Workday INNER JOIN Pnt ON " \
@@ -80,14 +97,14 @@ WorkDayStatus DbManager::see_status(const QDateTime date, const int pntid)
 	if (query.exec()) {
 		// Result should be unique
 		while (query.next()) {
-			auto res = query.value(0).toString();
-			return str2wds(res);
+            res = str2wds(query.value(0).toString());
 		}
 	}
-	else {
-		qDebug() << "error consulting status: "
+    else {
+        qDebug() << "error consulting status: "
 			<< query.lastError();
-	}
+    }
+    return res;
 }
 
 /*
