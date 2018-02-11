@@ -8,6 +8,10 @@ INCLUDEPATH += .
 QT += sql core gui widgets
 
 # Input
-HEADERS += db.h mainwindow.h pnt.h
+HEADERS += db.h mainwindow.h pnt.h \
+    workday.h \
+    acftmodel.h
 FORMS += mainwindow.ui
-SOURCES += db.cpp main.cpp mainwindow.cpp pnt.cpp
+SOURCES += db.cpp main.cpp mainwindow.cpp pnt.cpp \
+    workday.cpp \
+    acftmodel.cpp
