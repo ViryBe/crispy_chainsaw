@@ -3,11 +3,11 @@
 
 #include <QString>
 
-enum Role {CPT, FO, FE};
-
 class Pnt
 {
 public:
+    enum class Role {CPT, FO, FE};
+
     Pnt(QString name, QString code, Role r, int freq_max = -1);
 
 private:

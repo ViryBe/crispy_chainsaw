@@ -2,6 +2,7 @@
 #define DB_H
 
 #include <QtSql>
+#include <QString>
 #include <iostream>
 
 /// Type used to describe the day of a pilot
@@ -16,15 +17,15 @@ QString wds2str(const WorkDayStatus&);
 /// Interacts with the database
 class DbManager
 {
-	public:
-		DbManager(const QString&);
-		void add_pilot(const QString&, const QString&, const int&);
-		void add_acft_model(const QString&, const int&, const int&,
-				const int&);
+    public:
+        DbManager(const QString&);
+        void add_pilot(const QString&, const QString&, const int&);
+        void add_acft_model(const QString&, const int&, const int&,
+                const int&);
         void add_workday(const QString&, const WorkDayStatus&);
-		WorkDayStatus see_status(const QDateTime, const int);
-	private:
-		QSqlDatabase m_db;
+        WorkDayStatus see_status(const QDateTime, const int);
+    private:
+        QSqlDatabase m_db;
 };
 
 #endif
