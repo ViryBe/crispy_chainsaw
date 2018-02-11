@@ -142,3 +142,8 @@ bool DbManager::consult()
     return success;
 }
 */
+
+int DbManager::getFlightTimePilot(QString code_pilot, int month)
+// return le nombre d'h de vol pour le pilot "code pilot" pour le mois month
+{
+}

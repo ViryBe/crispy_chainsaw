@@ -23,8 +23,11 @@ class DbManager
         void add_acft_model(const QString&, int, int, int);
         void add_workday(const QString&, const WorkDayStatus&);
         WorkDayStatus see_status(QDateTime, QString);
+        int getFlightTimePilot(QString, int);
     private:
         QSqlDatabase m_db;
 };
+
+DbManager _MANAGER = DbManager("");
 
 #endif
