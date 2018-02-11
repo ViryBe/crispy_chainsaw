@@ -4,3 +4,12 @@
 # VIM files
 *.swp
 *.un~
+
+# ignore Makefile as make are managed by qmake
+Makefile
+
+*.o
+
+.*.stash
+
+*.pro.user
