@@ -20,7 +20,6 @@ class DbManager
     public:
         DbManager(const QString&);
         void add_pilot(const QString&, const QString&, const int);
-        void add_acft_model(const QString&, int, int, int);
         void add_workday(const QString&, const WorkDayStatus&);
         WorkDayStatus see_status(QDateTime, QString);
         int getFlightTimePilot(QString, int);

@@ -62,27 +62,6 @@ void DbManager::add_pilot(const QString& name, const QString& role,
     }
 }
 
-/*
-void DbManager::add_acft_model(const QString& name, const int& freq_max,
-        const int& nop, const int& ntot)
-{
-    QSqlQuery query(m_db);
-    query.prepare(
-            "INSERT INTO Acft_model (name, freq_max, nop, ntot) VALUES " \
-            "(:name, :freq_max, :nop, :ntot)");
-    query.bindValue(":name", name);
-    query.bindValue(":freq_max", freq_max);
-    query.bindValue(":nop", nop);
-    query.bindValue(":ntot", ntot);
-    if (query.exec()) {
-    }
-    else {
-        qDebug() << "error adding acft model: "
-            << query.lastError();
-    }
-}
-*/
-
 void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
 {
     QSqlQuery query(m_db);
