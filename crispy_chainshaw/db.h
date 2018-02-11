@@ -28,6 +28,6 @@ class DbManager
         QSqlDatabase m_db;
 };
 
-DbManager _MANAGER = DbManager("");
+static DbManager _MANAGER = DbManager("");
 
 #endif
