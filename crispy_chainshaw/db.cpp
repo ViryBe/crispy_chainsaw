@@ -45,7 +45,7 @@ DbManager::DbManager(const QString& path)
 }
 
 void DbManager::add_pilot(const QString& name, const QString& role,
-        const int& freq_max)
+    int freq_max)
 {
     QSqlQuery query(m_db);
     query.prepare(
@@ -62,6 +62,7 @@ void DbManager::add_pilot(const QString& name, const QString& role,
     }
 }
 
+/*
 void DbManager::add_acft_model(const QString& name, const int& freq_max,
         const int& nop, const int& ntot)
 {
@@ -80,6 +81,7 @@ void DbManager::add_acft_model(const QString& name, const int& freq_max,
             << query.lastError();
     }
 }
+*/
 
 void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
 {
@@ -97,7 +99,7 @@ void DbManager::add_workday(const QString& date, const WorkDayStatus& st)
     }
 }
 
-WorkDayStatus DbManager::see_status(const QDateTime date, const int pntid)
+WorkDayStatus DbManager::see_status(QDateTime date, int pntid)
 {
     WorkDayStatus res = WorkDayStatus::OFF;
     QSqlQuery query(m_db);

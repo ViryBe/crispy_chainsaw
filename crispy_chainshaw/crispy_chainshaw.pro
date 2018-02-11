@@ -5,7 +5,7 @@
 TEMPLATE = app
 TARGET = crispy_chainshaw
 INCLUDEPATH += .
-QT += sql core gui
+QT += sql core gui widgets
 
 # Input
 HEADERS += db.h mainwindow.h pnt.h
