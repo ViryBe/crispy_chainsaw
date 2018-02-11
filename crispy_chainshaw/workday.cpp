@@ -1,11 +1,5 @@
 #include "workday.h"
 
-Workday::Workday()
+Workday::Workday(const QDate date, const Workday::WorkDayStatus status)
 {
-    public:
-    Workday(const QDate, const WorkDayStatus);
-
-    private:
-    QDate date;
-    WorkDayStatus status;
 }
