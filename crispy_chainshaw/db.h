@@ -12,12 +12,12 @@ class DbManager
         DbManager(const QString&);
         void add_pilot(const QString&, const QString&, const int);
         void add_workday(const QString&, const QString&);
-        QString see_status(QDateTime, QString);
+        QString see_status(QDate, QString);
         int getFlightTimePilot(QString, int);
+
     private:
         QSqlDatabase m_db;
 };
 
 static DbManager _MANAGER = DbManager("");
-
 #endif
