@@ -8,7 +8,7 @@ class Workday
 {
 public:
     /// Type used to describe the day of a pilot
-    enum class WorkDayStatus {OFF, STANDBY, OFFICE, V1, V2, V3};
+    enum class WorkDayStatus {off, standby, office, v1, v2, v3};
     /// Converts a string to a WorkDayStatus
     WorkDayStatus str2wds(const QString&);
     /// Converts a WorkDayStatus to a string

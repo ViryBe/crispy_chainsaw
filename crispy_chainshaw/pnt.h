@@ -8,7 +8,7 @@
 class Pnt
 {
 public:
-    enum class Role {CPT, FO, FE};
+    enum class Role {cpt, fo, fe};
 
     Pnt(QString name, QString code, Role r, int freq_max = -1);
     int getFlightTime(int month);
