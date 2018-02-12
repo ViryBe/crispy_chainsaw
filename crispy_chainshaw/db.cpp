@@ -96,8 +96,21 @@ bool DbManager::consult()
 */
 
 
+/*
 int DbManager::getFlightTimePilot(QString code_pilot, int month)
 // return le nombre d'h de vol pour le pilot "code pilot" pour le mois month
 {
     return 0;
+}
+*/
+
+bool DbManager::test()
+{
+    DbManager db = DbManager("../dummydata/dummy.db");
+    QDate dummydate = QDate(2018, 2, 10);
+    QString dummyid = "ag";
+    QString exp_status = "off";
+    QString obtained_status = db.see_status(dummydate, dummyid);
+    qDebug() << "Obtained status: " + obtained_status;
+    return obtained_status == exp_status;
 }
