@@ -7,8 +7,7 @@ create table Acft_model(
 );
 
 create table Pnt(
-	id integer primary key not null,
-	name text,
+	id text primary key not null,
 	role text check(role in ('cpt', 'fo', 'fe')),
 	freq_max integer,
 	acft_modelid integer,
@@ -30,22 +29,22 @@ values (0, 'a', 4, 12, 15);
 insert into Acft_model (id, name, freq_max, nop, ntot)
 values (1, 'b', 6, 9, 10);
 -- Add PNTs
-insert into Pnt (id, name, role, freq_max, acft_modelid)
-values (0, 'ag', 'cpt', 2, 0);
-insert into Pnt (id, name, role, freq_max, acft_modelid)
-values (1, 'cr', 'fo', 2, 0);
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('ag', 'cpt', 2, 0);
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('cr', 'fo', 2, 0);
 -- Add workdays
 -- PNT 0
 insert into Workday (workdate, status, pntid)
-values ('2018-02-10', 'off', 0);
+values ('2018-02-10', 'off', 'ag');
 insert into Workday (workdate, status, pntid)
-values ('2018-02-11', 'off', 0);
+values ('2018-02-11', 'off', 'ag');
 insert into Workday (workdate, status, pntid)
-values ('2018-02-12', 'standby', 0);
+values ('2018-02-12', 'standby', 'ag');
 -- PNT 1
 insert into Workday (workdate, status, pntid)
-values ('2018-02-10', 'off', 1);
+values ('2018-02-10', 'off', 'cr');
 insert into Workday (workdate, status, pntid)
-values ('2018-02-11', 'office', 1);
+values ('2018-02-11', 'office', 'cr');
 insert into Workday (workdate, status, pntid)
-values ('2018-02-12', 'v1', 1);
+values ('2018-02-12', 'v1', 'cr');
