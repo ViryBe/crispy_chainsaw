@@ -14,6 +14,7 @@ class DbManager
         void add_workday(const QString&, const QString&);
         QString see_status(QDate, QString);
         int getFlightTimePilot(QString, int);
+        std::vector<QString> getPilotsOfModel(const QString& acft_model);
         bool test();
 
     private:

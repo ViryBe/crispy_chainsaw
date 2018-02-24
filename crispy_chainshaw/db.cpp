@@ -109,6 +109,29 @@ int DbManager::getFlightTimePilot(QString code_pilot, int month)
 }
 */
 
+std::vector<QString> DbManager::getPilotsOfModel(const QString& acft_model)
+{
+    std::vector<QString> pilots;
+    QSqlQuery query(m_db);
+    QString qustr =
+            "SELECT Pnt.id FROM Pnt INNER JOIN Acft_model ON "
+            "Pnt.acft_modelid = Acft_model.id WHERE "
+            "Acft_model.name LIKE :amod";
+    if (!query.prepare(qustr)) {
+        qDebug () << "pilots of model prepare failed";
+    }
+    query.bindValue(":amod", acft_model);
+    if (query.exec()) {
+        while (query.next()) {
+            pilots.push_back(QString(query.value(0).toString()));
+        }
+    }
+    else {
+        qDebug() << "error retrieving pilots for aircraft model" + acft_model;
+    }
+    return pilots;
+}
+
 bool DbManager::test()
 {
     QDate dummydate = QDate(2018, 2, 10);
