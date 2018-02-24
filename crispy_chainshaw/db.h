@@ -14,11 +14,11 @@ class DbManager
         void add_workday(const QString&, const QString&);
         QString see_status(QDate, QString);
         int getFlightTimePilot(QString, int);
-        static bool test();
+        bool test();
 
     private:
         QSqlDatabase m_db;
 };
 
-static DbManager _MANAGER = DbManager("");
+//static DbManager _MANAGER = DbManager("");
 #endif

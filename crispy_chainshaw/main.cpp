@@ -6,7 +6,8 @@
 
 int main(int argc, char *argv[])
 {
-    DbManager::test();
+    DbManager db = DbManager("/home/gabriel/workspace/vcs/crispy_chainsaw/dummydata/dummy.db");
+    db.test();
     QApplication a(argc, argv);
     MainWindow w;
     w.show();

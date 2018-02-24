@@ -1,6 +1,6 @@
 #include "db.h"
 
-QString DATEFMT = "yyyy-mm-dd";
+QString DATEFMT = "yyyy-MM-dd";
 
 DbManager::DbManager(const QString& path)
 {
@@ -53,19 +53,24 @@ void DbManager::add_workday(const QString& date, const QString& st)
 
 QString DbManager::see_status(QDate date, QString pntid)
 {
-    QString res = "off";
+    QString res = "";
     QSqlQuery query(m_db);
-    query.prepare(
-            "SELECT Workday.status FROM Workday INNER JOIN Pnt ON " \
-            "Workday.pntid = Pnt.id WHERE " \
-            "Pnt.id = :pntid AND Workday.date = :date"
-            );
+    QString qustr =
+            "SELECT Workday.status FROM Workday INNER JOIN Pnt ON "
+            "Workday.pntid = Pnt.id WHERE "
+            "Pnt.id = :pntid AND Workday.workdate = :date";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare failed";
+    }
+    QString dateqst = date.toString(DATEFMT);
+    qDebug() << dateqst;
     query.bindValue(":pntid", pntid);
-    query.bindValue(":date", date.toString(DATEFMT));
+    query.bindValue(":date", QString(date.toString(DATEFMT)));
     if (query.exec()) {
         // Result should be unique
         while (query.next()) {
             res = query.value(0).toString();
+            qDebug() << res;
         }
     }
     else {
@@ -106,11 +111,10 @@ int DbManager::getFlightTimePilot(QString code_pilot, int month)
 
 bool DbManager::test()
 {
-    DbManager db = DbManager("../dummydata/dummy.db");
     QDate dummydate = QDate(2018, 2, 10);
     QString dummyid = "ag";
     QString exp_status = "off";
-    QString obtained_status = db.see_status(dummydate, dummyid);
+    QString obtained_status = see_status(dummydate, dummyid);
     qDebug() << "Obtained status: " + obtained_status;
     return obtained_status == exp_status;
 }
