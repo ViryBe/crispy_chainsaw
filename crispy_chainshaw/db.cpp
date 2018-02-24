@@ -63,14 +63,12 @@ QString DbManager::see_status(QDate date, QString pntid)
         qDebug() << "prepare failed";
     }
     QString dateqst = date.toString(DATEFMT);
-    qDebug() << dateqst;
     query.bindValue(":pntid", pntid);
     query.bindValue(":date", QString(date.toString(DATEFMT)));
     if (query.exec()) {
         // Result should be unique
         while (query.next()) {
             res = query.value(0).toString();
-            qDebug() << res;
         }
     }
     else {
@@ -109,9 +107,9 @@ int DbManager::getFlightTimePilot(QString code_pilot, int month)
 }
 */
 
-std::vector<QString> DbManager::getPilotsOfModel(const QString& acft_model)
+std::vector<QString> DbManager::getPntsOfModel(const QString& acft_model)
 {
-    std::vector<QString> pilots;
+    std::vector<QString> pnts;
     QSqlQuery query(m_db);
     QString qustr =
             "SELECT Pnt.id FROM Pnt INNER JOIN Acft_model ON "
@@ -123,21 +121,29 @@ std::vector<QString> DbManager::getPilotsOfModel(const QString& acft_model)
     query.bindValue(":amod", acft_model);
     if (query.exec()) {
         while (query.next()) {
-            pilots.push_back(QString(query.value(0).toString()));
+            pnts.push_back(QString(query.value(0).toString()));
         }
     }
     else {
         qDebug() << "error retrieving pilots for aircraft model" + acft_model;
     }
-    return pilots;
+    return pnts;
 }
 
 bool DbManager::test()
 {
+    bool success = true;
     QDate dummydate = QDate(2018, 2, 10);
     QString dummyid = "ag";
     QString exp_status = "off";
     QString obtained_status = see_status(dummydate, dummyid);
+    success &= obtained_status == exp_status;
     qDebug() << "Obtained status: " + obtained_status;
-    return obtained_status == exp_status;
+
+    QString dummymodel = "a";
+    std::vector<QString> dummy_pnts_moda = getPntsOfModel(dummymodel);
+    for (auto const& pm: dummy_pnts_moda) {
+        success &= pm == QString("ag") || pm == QString("cr");
+    }
+    return success;
 }
