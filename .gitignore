@@ -13,3 +13,6 @@ Makefile
 .*.stash
 
 *.pro.user
+
+# build folders
+buil-*
