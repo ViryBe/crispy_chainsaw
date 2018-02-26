@@ -1,29 +1,24 @@
 #include "schedule.h"
 
-ScheduleInstance::ScheduleInstance() {
-	domain.resize(_nvar + 1);
+ScheduleInstance::ScheduleInstance(const std::vector<Flight>& flights) {
+    domain.resize(n + 1);
     current_domain.resize(n + 1);
-	for (int i = 1 ; i <= _nval ; i++) {
-		domain[i].resize(4);
-		domain[i] = std::vector<int> {1, 2, 3, 4};
-		current_domain[i].resize(4);
-		current_domain[i] = std::vector<int> {1, 2, 3, 4};
+    int nval = flights.size();
+    for (int i = 1 ; i <= nval ; i++) {
+        // TODO init correctly
+        domain[i].resize(987);
+        //domain[i] = std::vector<int> {1, 2, 3, 4};
+        current_domain[i].resize(987);
+        //current_domain[i] = std::vector<int> {1, 2, 3, 4};
 	}
-	v.resize(_nvar + 1);
-}
-
-void ScheduleInstance::print() {
-    for (int i = 1 ; i <= n ; i++) {
-		std::cout << v[i];
-	}
-	std::cout << "\n";
+    v.resize(n + 1);
 }
 
 int ScheduleInstance::bt_label(int i)
 {
 	consistent = false;
 	auto cd_copy = current_domain[i];
-	for (int j = 0 ; j < cd_copy.size() && !consistent ; j++) {
+    for (int j = 0 ; j < (int) cd_copy.size() && !consistent ; j++) {
 		v[i] = cd_copy[j];
 		consistent = true;
 		for (int h = 1 ; h < i && consistent ; h++) {
@@ -69,4 +64,9 @@ void ScheduleInstance::bcssp(int n, Status status)
 			status =Status::impossible;
 		}
 	}
+}
+
+bool ScheduleInstance::check(int i, int j)
+{
+    return true;
 }
