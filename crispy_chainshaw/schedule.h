@@ -2,7 +2,9 @@
 #define SCHEDULE_H
 
 #include <QDate>
-#include <pnt.h>
+#include "pnt.h"
+#include <vector>
+#include <algorithm>
 
 void loadSchedule(QDate = QDate::currentDate(), QDate =
         QDate::currentDate().addDays(15));
@@ -28,28 +30,32 @@ private:
 class ScheduleInstance
 {
 public:
-    // New empty schedule
-    ScheduleInstance();
+    // New empty schedule computed from dates
+    ScheduleInstance(QDate, QDate);
     // New schedule computed for the given flights
     ScheduleInstance(const std::vector<Flight>&);
     // New schedule based on an already existing schedule and vars to instantiate
     ScheduleInstance(const ScheduleInstance&, const std::vector<Flight>&);
 
-    // If a variable is already instantiated, it is replaced by the new one
-    void simpleUnion(const ScheduleInstance&);
+    // Fills schedule performing binary constraint problem resolution
+    void bcssp(int, Status);
 
-    // Returns an instance mapping conflicting vars to conflicting values
-    ScheduleInstance consistent();
 private:
-    // Internal map
-    std::map<Flight, Pnt> schedule;
+    // Status of the current instance
+    enum class Status {unknown, solution, impossible};
+    int n; // Number of variables in the problem
+    bool consistent; // Is the schedule consistent?
+    std::vector<Flight> v; // Values of the variables v[0] is a pseudo var
+    std::vector<std::vector<Pnt>> domain; // Domain of each variable
+    std::vector<std::vector<Pnt>> current_domain;
 
-    // Asserts whether the two variables, with their value violate a constraint
-    // It might be necessary to expand to n-ary constraints...
-    bool violate(Flight, Pnt, Flight, Pnt);
+    /* Check for constraints, true  iff no constraint violated by neither
+     * var i nor var j */
+    bool check(int i, int j);
 
-    // Constraint backjumping algorithm
-    void cbj(std::vector<Pnt>, ScheduleInstance);
+    // Tree search methods
+    int bt_label(int);
+    int bt_unlabel(int);
 };
 
 #endif // SCHEDULE_H
