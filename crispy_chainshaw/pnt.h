@@ -11,6 +11,7 @@ public:
     enum class Role {cpt, fo, fe};
 
     Pnt(QString name, QString code, Role r, int freq_max = -1);
+    static QString role2str(Pnt::Role);
     int getFlightTime(int month);
     int getTT();
     bool addWorkday(const QDate, const Workday::WorkDayStatus);

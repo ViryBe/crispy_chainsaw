@@ -107,7 +107,7 @@ int DbManager::getFlightTimePilot(QString code_pilot, int month)
 }
 */
 
-std::vector<QString> DbManager::getPntsOfModel(const QString& acft_model)
+std::vector<QString> DbManager::getPnts(const QString& acft_model)
 {
     std::vector<QString> pnts;
     QSqlQuery query(m_db);
@@ -141,7 +141,7 @@ bool DbManager::test()
     qDebug() << "Obtained status: " + obtained_status;
 
     QString dummymodel = "a";
-    std::vector<QString> dummy_pnts_moda = getPntsOfModel(dummymodel);
+    std::vector<QString> dummy_pnts_moda = getPnts(dummymodel);
     for (auto const& pm: dummy_pnts_moda) {
         success &= pm == QString("ag") || pm == QString("cr");
     }

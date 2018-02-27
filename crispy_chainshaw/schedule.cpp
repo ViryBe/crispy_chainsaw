@@ -1,15 +1,29 @@
 #include "schedule.h"
 
-ScheduleInstance::ScheduleInstance(const std::vector<Flight>& flights) {
+ScheduleInstance::ScheduleInstance(
+        const AcftModel& _model, const Pnt::Role _role,
+        const QDate dbeg, const QDate dend) {
+
+    m_model = _model;
+    m_role = _role;
+
+    // Number of variables = 3 * number of days
+    n = 3 * (int) dbeg.daysTo(dend);
+
+    // Init memory and csp related var
     domain.resize(n + 1);
     current_domain.resize(n + 1);
-    int nval = flights.size();
-    for (int i = 1 ; i <= nval ; i++) {
-        // TODO init correctly
-        domain[i].resize(987);
-        //domain[i] = std::vector<int> {1, 2, 3, 4};
-        current_domain[i].resize(987);
-        //current_domain[i] = std::vector<int> {1, 2, 3, 4};
+    QDate today = dbeg;
+    for (int i = 1 ; i <= n ; i++) {
+        today.addDays(i % m_model.getFreqMax()); // One day more each freq flights
+        std::vector<QString> crewmem =
+                _MANAGER.getAvailablePnts(today, Pnt::role2str(m_role),
+                                          m_model.getName());
+
+        domain[i].resize(crewmem.size());
+        domain[i] = crewmem;
+        current_domain[i].resize(crewmem.size());
+        current_domain[i] = crewmem;
 	}
     v.resize(n + 1);
 }
@@ -68,5 +82,9 @@ void ScheduleInstance::bcssp(int n, Status status)
 
 bool ScheduleInstance::check(int i, int j)
 {
+    if (i % m_model.getFreqMax() == j % m_model.getFreqMax()) {
+        // A crew member cannot do two flights the same day
+        return v[i] != v[j];
+    }
     return true;
 }

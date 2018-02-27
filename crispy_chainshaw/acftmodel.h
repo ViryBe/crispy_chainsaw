@@ -1,11 +1,15 @@
 #ifndef ACFTMODEL_H
 #define ACFTMODEL_H
 
+#include <QString>
+
 
 class AcftModel
 {
 public:
     AcftModel();
+    int getFreqMax();
+    QString getName();
 private:
     enum class AvailableModels { B727, B737 };
 
