@@ -130,6 +130,37 @@ std::vector<QString> DbManager::getPnts(const QString& acft_model)
     return pnts;
 }
 
+std::vector<QString> DbManager::getAvailablePnts(
+        const QDate& date, const QString& role, const QString& model)
+{
+    std::vector<QString> pnts;
+    QSqlQuery query(m_db);
+    QString qustr =
+            "SELECT Pnt.id FROM Pnt, Acft_model, Workday WHERE "
+            "Pnt.acft_modelid = Acft_model.id AND "
+            "Workday.pntid = Pnt.id AND "
+            "Workday.status LIKE 'standby' AND "
+            "Pnt.status LIKE :role AND "
+            "Acft_model.name LIKE :amod";
+
+    if (!query.prepare(qustr)) {
+        qDebug() << "error harvesting available pilots\n";
+    }
+    query.bindValue(":role", role);
+    query.bindValue(":amod", model);
+    if (query.exec()) {
+        while (query.next()) {
+            pnts.push_back(QString(query.value(0).toString()));
+        }
+    }
+    else {
+        qDebug() << "error retrieving " << role
+                 << " available on the " << date.toString(DATEFMT)
+                 << " for model " << model;
+    }
+    return pnts;
+}
+
 bool DbManager::test()
 {
     bool success = true;
