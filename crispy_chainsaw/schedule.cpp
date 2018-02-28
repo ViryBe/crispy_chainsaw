@@ -7,8 +7,8 @@ ScheduleInstance::ScheduleInstance(
     m_model = _model;
     m_role = _role;
 
-    // Number of variables = 3 * number of days
-    n = 3 * (int) dbeg.daysTo(dend);
+    // Number of variables = freq * number of days
+    n = m_model.getFreqMax() * (int) dbeg.daysTo(dend);
 
     // Init memory and csp related var
     domain.resize(n + 1);
