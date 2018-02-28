@@ -116,17 +116,20 @@
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetFixedSize</enum>
+          </property>
           <item>
            <widget class="QLabel" name="information_text">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="font">
              <font>
-              <family>Gentium</family>
+              <family>Microsoft JhengHei Light</family>
               <pointsize>20</pointsize>
              </font>
             </property>
@@ -166,6 +169,11 @@
                 <width>100</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Microsoft JhengHei Light</family>
+               </font>
               </property>
               <property name="text">
                <string>Code Pilote</string>
@@ -219,6 +227,11 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <family>Microsoft JhengHei Light</family>
+               </font>
+              </property>
               <property name="text">
                <string>Nom</string>
               </property>
@@ -262,12 +275,34 @@
            </layout>
           </item>
           <item>
+           <spacer name="verticalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
            <widget class="Line" name="line_2">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>700</height>
+             </size>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -277,14 +312,14 @@
           <item>
            <widget class="QLabel" name="label_2">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="font">
              <font>
-              <family>Gentium</family>
+              <family>Microsoft JhengHei Light</family>
               <pointsize>20</pointsize>
              </font>
             </property>
@@ -327,24 +362,13 @@
                   <height>0</height>
                  </size>
                 </property>
+                <property name="font">
+                 <font>
+                  <family>Microsoft JhengHei Light</family>
+                 </font>
+                </property>
                 <property name="text">
                  <string>B737</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QCheckBox" name="B737Cdt">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>CDT</string>
-                </property>
-                <property name="checkable">
-                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -371,43 +395,7 @@
                </spacer>
               </item>
               <item row="1" column="1">
-               <widget class="QCheckBox" name="B737FO">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>F/O</string>
-                </property>
-                <property name="checkable">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0">
-             <layout class="QGridLayout" name="B727Grid">
-              <item row="2" column="1">
-               <widget class="QCheckBox" name="checkBox_5">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>F/E</string>
-                </property>
-                <property name="checkable">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QCheckBox" name="checkBox_3">
+               <widget class="QRadioButton" name="B737FO">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -423,7 +411,7 @@
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QCheckBox" name="checkBox_2">
+               <widget class="QRadioButton" name="B737Cdt">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -438,6 +426,10 @@
                 </property>
                </widget>
               </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <layout class="QGridLayout" name="B727Grid">
               <item row="0" column="0">
                <widget class="QLabel" name="label_5">
                 <property name="sizePolicy">
@@ -451,6 +443,11 @@
                   <width>100</width>
                   <height>0</height>
                  </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>Microsoft JhengHei Light</family>
+                 </font>
                 </property>
                 <property name="text">
                  <string>B727</string>
@@ -479,6 +476,54 @@
                 </property>
                </spacer>
               </item>
+              <item row="0" column="1">
+               <widget class="QRadioButton" name="B727Cdt">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>CDT</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QRadioButton" name="B727FO">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>F/O</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QRadioButton" name="B727FE">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>F/E</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
             <item row="2" column="0">
@@ -500,6 +545,35 @@
            </layout>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft JhengHei Light</family>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Heures de vol</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_5"/>
         </item>
        </layout>
       </widget>
