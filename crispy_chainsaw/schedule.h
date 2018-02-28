@@ -11,37 +11,38 @@ void loadSchedule(QDate = QDate::currentDate(), QDate =
         QDate::currentDate().addDays(15));
 void createSchedule(QDate, QDate);
 
-// Variables of the csp
-class Flight
-{
-public:
-    Flight(QDate);
-
-    // We will manipulate ids... much simpler
-    int id;
-
-    // Equivalent to the domain of the variables
-    std::vector<Pnt> getAvailablePilots();
-private:
-    QDate date;
-    int flight_number;
+/** Flight requirement, to be entered in schedule */
+struct Flight {
+    QDate date; ///< Date of the flight
+    AcftModel model; ///< Model of aircraft concerned
+    int position; ///< Position of flight during day (1st, 2nd, etc.)
 };
 
-// Instance of the csp, maps flights to pilots
+/** Instance of a schedule. A schedule concerns only one model and only one
+ * role among the crew needed for the aircraft (by this we mean that there
+ * is no constraint between the different member of the crew). */
 class ScheduleInstance
 {
 public:
-    /* Each constructor needs the model, to deduce some data such as the
-     * number of flights per day and the role concerned. A schedule manages
-     * one and only one role, and one model. */
-    // New empty schedule computed from dates
-    ScheduleInstance(const AcftModel&, const Pnt::Role role,
-                     const QDate, const QDate);
-    // New schedule computed for the given flights
-    ScheduleInstance(const AcftModel, const Pnt::Role role,
-                     const std::vector<Flight>&);
-    // New schedule based on an already existing schedule and vars to instantiate
-    ScheduleInstance(const ScheduleInstance&, const std::vector<Flight>&);
+    /** Creates a schedule defined by the dates of beginning and end.
+     * @param m model of the aircraft concerned by this schedule
+     * @param r role concerned by the schedule
+     * @param db date of the beginning of the schedule
+     * @param de date of the end of the schedule */
+    ScheduleInstance(const AcftModel& m, const Pnt::Role r,
+                     const QDate db, const QDate de);
+    /** Schedules the flights given as parameter
+     * @param m model of aircraft
+     * @param r role concerned
+     * @param f flights to schedule */
+    ScheduleInstance(const AcftModel& m, const Pnt::Role r,
+                     const std::vector<Flight>& f);
+    /** Completes an already existing schedule with new flights. Already
+     * existing flights are not modified, an error is raised if the already
+     * existing schedule is not consistent.
+     * @param s schedule to complete
+     * @param f flights to schedule */
+    ScheduleInstance(const ScheduleInstance& s, const std::vector<Flight>& f);
 
 private:
     // Misc data
@@ -49,20 +50,34 @@ private:
     Pnt::Role m_role;
 
     // Data for the csp solver
-    enum class Status {unknown, solution, impossible}; // Status of csp
-    int n; // Number of variables in the problem
-    bool consistent; // Is the schedule consistent?
-    std::vector<QString> v; // Values of the variables v[0] is a pseudo var
-    std::vector<std::vector<QString>> domain; // Domain of each variable
+    enum class Status {unknown, solution, impossible}; /// Status of csp
+    int n; /// Number of variables in the problem, i.e. number of flights
+    bool consistent; /// Is the schedule consistent?
+    std::vector<QString> v; /// Values of the variables v[0] is a pseudo var
+    std::vector<std::vector<QString>> domain; /// Domain of each variable
     std::vector<std::vector<QString>> current_domain;
 
-    // Fills schedule performing binary constraint problem resolution
+    /** Calls tree search methods to solve the *binary* constraint satisfaction
+     * problem, i.e. the creation of the schedule. Works in place, modifying
+     * the [v] vector. For more information on the algorithms used, please
+     * see *Hybrid Algorithms for the Constraint Satisfaction Problem*, Patrick
+     * Prosser.
+     * @param n the number of variables to instantiate
+     * @param status the initial status of the problem */
     void bcssp(int, Status);
-    /* Check for constraints, true  iff no constraint violated by neither
+
+    /** Check for constraints, true  iff no constraint violated by neither
      * var i nor var j */
     bool check(int i, int j);
-    // Tree search methods
-    int bt_label(int);
+
+    /** Backtrack tree search method, label for forward step, i.e.
+     * tries to find an instatiation for variable [i]
+     * @param i the variable to be instantiated
+     * @returns the new current variable */
+    int bt_label(int i);
+    /** Backtrack unlabel, performs backtracking from v[i] to v[h], called
+     * when consistent is false and all values for variable i has been tested.
+     * @returns the new current variable */
     int bt_unlabel(int);
 };
 
