@@ -8,9 +8,15 @@
 class Pnt
 {
 public:
+    /** Available roles in the company
+     * * captain
+     * * first office
+     * * flight engineer */
     enum class Role {cpt, fo, fe};
 
-    Pnt(QString name, QString code, Role r, int freq_max = -1);
+    Pnt(QString n, QString c, Role r, int f = -1);
+
+    /** Converts a role to string */
     static QString role2str(Pnt::Role);
     int getFlightTime(int month);
     int getTT();

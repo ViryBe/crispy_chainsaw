@@ -3,12 +3,17 @@
 
 #include <QString>
 
-
+/** Describes a model of aircraft */
 class AcftModel
 {
 public:
     AcftModel();
+
+    /** Gives the maximum number of flights per day for this model of
+     * aircraft */
     int getFreqMax();
+
+    /** @returns name of the model */
     QString getName();
 private:
     enum class AvailableModels { B727, B737 };

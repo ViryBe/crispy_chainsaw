@@ -44,6 +44,10 @@ public:
      * @param f flights to schedule */
     ScheduleInstance(const ScheduleInstance& s, const std::vector<Flight>& f);
 
+    /** Updates database
+     * @param d database manager */
+    void updateDb(DbManager d);
+
 private:
     // Misc data
     AcftModel m_model;
