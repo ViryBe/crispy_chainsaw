@@ -15,6 +15,9 @@ public:
     explicit newPilot(QWidget *parent = 0);
     ~newPilot();
 
+private slots:
+    void on_buttonBox_accepted();
+
 private:
     Ui::newPilot *ui;
 };

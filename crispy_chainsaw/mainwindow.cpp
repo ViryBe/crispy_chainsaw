@@ -20,3 +20,4 @@ void MainWindow::on_pilotAdd_clicked()
     NewPilot.setModal(true);
     NewPilot.exec();
 }
+
