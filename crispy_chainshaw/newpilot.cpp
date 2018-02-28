@@ -28,17 +28,14 @@ void newPilot::on_buttonBox_accepted()
         function = "B737Cdt";
     }
     else if (ui->B727FE->isChecked()){
-        function = "B727FE";
+        function = "B72FE";
     }
     else if (ui->B727FO->isChecked()){
-        function = "B727FO";
+        function = "B72FO";
     }
     else if (ui->B737FO->isChecked()){
-        function = "B737FO";
+        function = "B73FO";
     }
-    qDebug(function.toLatin1()); //ok
-    //add in bdd (id, name, function)
-    //refresh list sort by name
-    //open new pilot added
+    qDebug(function.toLatin1());
 
 }
