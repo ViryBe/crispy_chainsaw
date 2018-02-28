@@ -14,5 +14,7 @@ Makefile*
 
 *.pro.user
 
+doc/
+
 # build folders
 buil-*
