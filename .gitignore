@@ -17,4 +17,4 @@ Makefile*
 doc/
 
 # build folders
-buil-*
+build-*
