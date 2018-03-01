@@ -1,9 +1,10 @@
 #ifndef SCHEDULE_H
 #define SCHEDULE_H
 
-#include <QDate>
 #include "pnt.h"
 #include "acftmodel.h"
+#include "db.h"
+#include <QDate>
 #include <vector>
 #include <algorithm>
 
@@ -52,13 +53,14 @@ private:
     // Misc data
     AcftModel m_model;
     Pnt::Role m_role;
+    QDate m_startdate;
 
     // Data for the csp solver
-    enum class Status {unknown, solution, impossible}; /// Status of csp
-    int n; /// Number of variables in the problem, i.e. number of flights
-    bool consistent; /// Is the schedule consistent?
-    std::vector<QString> v; /// Values of the variables v[0] is a pseudo var
-    std::vector<std::vector<QString>> domain; /// Domain of each variable
+    enum class Status {unknown, solution, impossible}; ///< Status of csp
+    int n; ///< Number of variables in the problem, i.e. number of flights
+    bool consistent; ///< Is the schedule consistent?
+    std::vector<QString> v; ///< Values of the variables v[0] is a pseudo var
+    std::vector<std::vector<QString>> domain; ///< Domain of each variable
     std::vector<std::vector<QString>> current_domain;
 
     /** Calls tree search methods to solve the *binary* constraint satisfaction

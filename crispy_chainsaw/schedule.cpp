@@ -17,8 +17,8 @@ ScheduleInstance::ScheduleInstance(
     for (int i = 1 ; i <= n ; i++) {
         today.addDays(i % m_model.getFreqMax()); // One day more each freq flights
         std::vector<QString> crewmem =
-                _MANAGER.getAvailablePnts(today, Pnt::role2str(m_role),
-                                          m_model.getName());
+                _MANAGER.getPnts(m_model.getName(), Pnt::role2str(m_role),
+                                 today, "standby");
 
         domain[i].resize(crewmem.size());
         domain[i] = crewmem;
@@ -87,4 +87,17 @@ bool ScheduleInstance::check(int i, int j)
         return v[i] != v[j];
     }
     return true;
+}
+
+void ScheduleInstance::updateDb(DbManager dbm)
+{
+    // For each variable, update related workday
+    for (int i = 1 ; i <= n ; i++) {
+        QDate date = m_startdate.addDays(
+                    (int) ( (i - 1) / m_model.getFreqMax() ) );
+        QString flightno = "v" + ( (i - 1) % m_model.getFreqMax() + 1 );
+        QString pntid = v[i];
+
+        dbm.addWorkday(date, flightno, pntid);
+    }
 }
