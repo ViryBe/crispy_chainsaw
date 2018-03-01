@@ -38,7 +38,7 @@ void newPilot::on_buttonBox_accepted()
     }
     qDebug(function.toLatin1()); //ok
     //add in bdd (id, name, function)
-    //refresh list sort by name
+    //refresh list. Le tri par nom est effectué de façon automatique
     //open new pilot added
 
 }

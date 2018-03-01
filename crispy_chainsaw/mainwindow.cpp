@@ -29,7 +29,21 @@ void MainWindow::on_pilotList_currentTextChanged(const QString &currentText)
     //remplir les champs correspondant dans la 2eme fenetre
 }
 
-void MainWindow::on_pilotSee_clicked()
+
+void MainWindow::on_refreshButton_clicked()
+{
+    QDate dateFrom = ui->dateFrom->date();
+    QDate dateTo = ui->dateTo->date();
+    //TODO : calculer nb jours repos, vol, ...
+    QString flightDays, homeDays, standByDays, officeDays;
+    ui->flightDays->setText(flightDays);
+    ui->homeDays->setText(homeDays);
+    ui->standByDays->setText(standByDays);
+    ui->officeDays->setText(officeDays);
+
+}
+
+void MainWindow::on_pilotManage_clicked()
 {
     QString idPilot = ui->pilotList->currentItem()->text();
     //TODO : Chercher dans la base de données les infos pilotes pour les mettre dans namePilot et function
