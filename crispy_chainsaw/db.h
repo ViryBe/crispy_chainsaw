@@ -13,9 +13,24 @@ public:
     /** Creates a dbmanager managing an sqlite file
      * @param s sqlite filepath */
     DbManager(const QString& s);
-    void add_pilot(const QString&, const QString&, const int);
-    void add_workday(const QString&, const QString&);
-    QString see_status(const QDate, const QString);
+
+    /** Adds a pilot in the database
+     * @param i id of the pilot (two characters)
+     * @param r role of the pilot
+     * @param f max frequency of flights per day. Zero means no maximum */
+    void addPilot(const QString& i, const QString& r, const int f=0);
+
+    /** Adds a workday in the database
+     * @param d date of the day
+     * @param s status of the day (e.g. off, v1, etc.)
+     * @param i id of the pilot concerned */
+    void addWorkday(const QDate& d, const QString& s, const QString& i);
+
+    /** Retrieves status of pnt on one day
+     * @param d date of the day
+     * @param i id (two characters) of the pnt
+     * @return the status as a string (e.g. off, v1, etc.) */
+    QString statusOfPnt(const QDate d, const QString i);
     int getFlightTimePilot(const QString, int);
 
     // Get PNTs according to diverse criteria
@@ -26,6 +41,7 @@ public:
      * @param m model of aircraft
      * @returns pnt ids */
     std::vector<QString> getPnts(const QString& m);
+
     /** Retrieves people of role [r] able to manage model [m]
          * @param m model of aircraft
          * @param r role asked (captain, first officer of flight engineer)
@@ -33,7 +49,7 @@ public:
     std::vector<QString> getPnts(const QString& m, const QString& r);
 
     /** A test function using see_status
-         * @returns true if tests succeed */
+     * @returns true if tests succeed */
     bool test();
 
 private:

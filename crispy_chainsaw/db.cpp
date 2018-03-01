@@ -17,7 +17,7 @@ DbManager::DbManager(const QString& path)
     }
 }
 
-void DbManager::add_pilot(const QString& name, const QString& role,
+void DbManager::addPilot(const QString& name, const QString& role,
     int freq_max)
 {
     QSqlQuery query(m_db);
@@ -35,14 +35,17 @@ void DbManager::add_pilot(const QString& name, const QString& role,
     }
 }
 
-void DbManager::add_workday(const QString& date, const QString& st)
+void DbManager::addWorkday(const QDate& date, const QString& st,
+                           const QString& pntid)
 {
+    QString strdate = date.toString(DATEFMT);
     QSqlQuery query(m_db);
     query.prepare(
-                "INSERT INTO Workday (date, status) VALUES " \
-                "(:date, :status)");
-    query.bindValue(":date", date);
+                "INSERT INTO Workday (date, status, pntid) VALUES "
+                "(:date, :status, :pntid)");
+    query.bindValue(":date", strdate);
     query.bindValue(":status", st);
+    query.bindValue(":pntid", pntid);
     if (query.exec()) {
     }
     else {
@@ -51,7 +54,7 @@ void DbManager::add_workday(const QString& date, const QString& st)
     }
 }
 
-QString DbManager::see_status(QDate date, QString pntid)
+QString DbManager::statusOfPnt(QDate date, QString pntid)
 {
     QString res = "";
     QSqlQuery query(m_db);
@@ -167,7 +170,7 @@ bool DbManager::test()
     QDate dummydate = QDate(2018, 2, 10);
     QString dummyid = "ag";
     QString exp_status = "off";
-    QString obtained_status = see_status(dummydate, dummyid);
+    QString obtained_status = statusOfPnt(dummydate, dummyid);
     success &= obtained_status == exp_status;
     qDebug() << "Obtained status: " + obtained_status;
 
