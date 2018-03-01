@@ -22,7 +22,7 @@ private slots:
 
     void on_pilotList_currentTextChanged(const QString &currentText);
 
-    void on_pilotManage_clicked();
+    void on_pilotSee_clicked();
 
 private:
     Ui::MainWindow *ui;

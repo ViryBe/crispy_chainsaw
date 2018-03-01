@@ -29,10 +29,17 @@ void MainWindow::on_pilotList_currentTextChanged(const QString &currentText)
     //remplir les champs correspondant dans la 2eme fenetre
 }
 
-void MainWindow::on_pilotManage_clicked()
+void MainWindow::on_pilotSee_clicked()
 {
+    QString idPilot = ui->pilotList->currentItem()->text();
+    //TODO : Chercher dans la base de données les infos pilotes pour les mettre dans namePilot et function
+    QString namePilot = "toto";
+    QString function = "B727FE";
+    qDebug(idPilot.toLatin1()); //ok
+
+    // Création de la nouvelle boite de dialogue pour modifier les infos
     newPilot NewPilot;
     NewPilot.setModal(true);
+    NewPilot.updateInformation(idPilot,namePilot, function);
     NewPilot.exec();
-    //remplir les données de la nouvelle fenêtre avec les éléments existants et permettre la modification
 }

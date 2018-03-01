@@ -42,3 +42,23 @@ void newPilot::on_buttonBox_accepted()
     //open new pilot added
 
 }
+
+void newPilot::updateInformation (const QString& idPilote,
+                                  const QString& namePilot, const QString& function){
+    ui->codePilotEdit->setText(idPilote);
+    ui->namePilotEdit->setText(namePilot);
+    if (function == "B737Cdt") {
+        ui->B737Cdt->setChecked(true);
+    }
+    else if (function == "B727Cdt"){
+        ui->B727Cdt->setChecked(true);
+    }
+    else if (function == "B737FO"){
+        ui->B727FO->setChecked(true);
+    }
+    else if (function == "B727FO") {
+        ui->B727FO->setChecked(true);
+    }
+    else
+        ui->B727FE->setChecked(true);
+ }
