@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //TODO : add the list of pilots in pilotList
 }
 
 MainWindow::~MainWindow()
