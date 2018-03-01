@@ -20,12 +20,6 @@ public:
 private slots:
     void on_pilotAdd_clicked();
 
-    void on_pilotList_currentTextChanged(const QString &currentText);
-
-    void on_pilotManage_clicked();
-
-    void on_refreshButton_clicked();
-
 private:
     Ui::MainWindow *ui;
 };

@@ -14,7 +14,6 @@ class newPilot : public QDialog
 public:
     explicit newPilot(QWidget *parent = 0);
     ~newPilot();
-    void updateInformation(const QString&, const QString&, const QString&);
 
 private slots:
     void on_buttonBox_accepted();

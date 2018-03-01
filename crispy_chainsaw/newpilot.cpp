@@ -28,14 +28,37 @@ void newPilot::on_buttonBox_accepted()
         function = "B737Cdt";
     }
     else if (ui->B727FE->isChecked()){
-        function = "B72FE";
+        function = "B727FE";
     }
     else if (ui->B727FO->isChecked()){
-        function = "B72FO";
+        function = "B727FO";
     }
     else if (ui->B737FO->isChecked()){
-        function = "B73FO";
+        function = "B737FO";
     }
-    qDebug(function.toLatin1());
+    qDebug(function.toLatin1()); //ok
+    //add in bdd (id, name, function)
+    //refresh list. Le tri par nom est effectué de façon automatique
+    //open new pilot added
 
 }
+
+void newPilot::updateInformation (const QString& idPilote,
+                                  const QString& namePilot, const QString& function){
+    ui->codePilotEdit->setText(idPilote);
+    ui->namePilotEdit->setText(namePilot);
+    if (function == "B737Cdt") {
+        ui->B737Cdt->setChecked(true);
+    }
+    else if (function == "B727Cdt"){
+        ui->B727Cdt->setChecked(true);
+    }
+    else if (function == "B737FO"){
+        ui->B727FO->setChecked(true);
+    }
+    else if (function == "B727FO") {
+        ui->B727FO->setChecked(true);
+    }
+    else
+        ui->B727FE->setChecked(true);
+ }
