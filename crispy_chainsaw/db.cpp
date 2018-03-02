@@ -54,6 +54,12 @@ void DbManager::addWorkday(const QDate& date, const QString& st,
     }
 }
 
+void DbManager::addWorkday(const WorkdayDb& wd)
+{
+    QDate wdate = QDate::fromString(wd.workdate, DATEFMT);
+    addWorkday(wdate, wd.status, wd.pntid);
+}
+
 QString DbManager::statusOfPnt(QDate date, QString pntid)
 {
     QString res = "";
@@ -80,35 +86,6 @@ QString DbManager::statusOfPnt(QDate date, QString pntid)
     }
     return res;
 }
-
-/*
-bool DbManager::consult()
-{
-    bool success = false;
-    QSqlQuery query(m_db);
-    if (query.exec("SELECT name FROM Pnt")) {
-        while (query.next()) {
-            auto res = query.value(0).toString();
-            qDebug() << res;
-        }
-        success = true;
-    }
-    else {
-        qDebug() << "error consulting: "
-            << query.lastError();
-    }
-    return success;
-}
-*/
-
-
-/*
-int DbManager::getFlightTimePilot(QString code_pilot, int month)
-// return le nombre d'h de vol pour le pilot "code pilot" pour le mois month
-{
-    return 0;
-}
-*/
 
 std::vector<QString> DbManager::getPnts(const QString& acft_model)
 {

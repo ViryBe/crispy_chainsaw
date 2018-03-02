@@ -6,7 +6,7 @@
 #include <iostream>
 
 /** Representation of the pnt in the database */
-struct Pnt {
+struct PntDb {
     QString id; ///< Unique id based on pnt's name
     QString role; ///< Role of the crew member (e.g. cpt for captain)
     int freq_max; ///< Maximum number of flights per month
@@ -14,7 +14,7 @@ struct Pnt {
 };
 
 /** Representation of an aircraft model in the database */
-struct AcftModel {
+struct AcftModelDb {
     int id; ///< Unique identifier
     QString name; ///< Name of the model
     int freq_max; ///< Maximum number of flights per day for this model
@@ -23,7 +23,7 @@ struct AcftModel {
 };
 
 /** Representation of a day of a pnt in the database */
-struct Workday {
+struct WorkdayDb {
     QString workdate; ///< Date of the day
     QString status; ///< Which work (e.g. simulator, office, v1, etc.)
     QString pntid; ///< Pnt concerned
@@ -49,6 +49,9 @@ public:
      * @param s status of the day (e.g. off, v1, etc.)
      * @param i id of the pilot concerned */
     void addWorkday(const QDate& d, const QString& s, const QString& i);
+
+    /** Same as above but takes directly a Workday structure */
+    void addWorkday(const WorkdayDb&);
 
     /** Retrieves status of pnt on one day
      * @param d date of the day
