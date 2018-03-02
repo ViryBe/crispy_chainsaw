@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "newpilot.h"
+#include "newplane.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -57,4 +58,26 @@ void MainWindow::on_pilotManage_clicked()
     NewPilot.setModal(true);
     NewPilot.updateInformation(idPilot,namePilot, function);
     NewPilot.exec();
+}
+
+void MainWindow::on_planeManage_clicked()
+{
+    QString idPlane = ui->planeList->currentItem()->text();
+    //TODO : Chercher dans la base de données les infos pilotes pour les mettre dans namePilot et function
+    QString function = "B727";
+    qDebug(idPlane.toLatin1()); //ok
+
+    // Création de la nouvelle boite de dialogue pour modifier les infos
+    newPlane NewPlane;
+    NewPlane.setModal(true);
+    NewPlane.updateInformation(idPlane, function);
+    NewPlane.exec();
+}
+
+void MainWindow::on_planeAdd_clicked()
+{
+    // Création de la nouvelle boite de dialogue pour modifier les infos
+    newPlane NewPlane;
+    NewPlane.setModal(true);
+    NewPlane.exec();
 }

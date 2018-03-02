@@ -26,6 +26,10 @@ private slots:
 
     void on_refreshButton_clicked();
 
+    void on_planeManage_clicked();
+
+    void on_planeAdd_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
