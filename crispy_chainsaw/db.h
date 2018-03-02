@@ -5,6 +5,30 @@
 #include <QString>
 #include <iostream>
 
+/** Representation of the pnt in the database */
+struct Pnt {
+    QString id; ///< Unique id based on pnt's name
+    QString role; ///< Role of the crew member (e.g. cpt for captain)
+    int freq_max; ///< Maximum number of flights per month
+    int acft_modelid; ///< Id of aircraft for which crew member is qualified
+};
+
+/** Representation of an aircraft model in the database */
+struct AcftModel {
+    int id; ///< Unique identifier
+    QString name; ///< Name of the model
+    int freq_max; ///< Maximum number of flights per day for this model
+    int nop; ///< Number of operational models owned by the company
+    int ntot; ///< Total number of aircrafts of this model owned by the comp
+};
+
+/** Representation of a day of a pnt in the database */
+struct Workday {
+    QString workdate; ///< Date of the day
+    QString status; ///< Which work (e.g. simulator, office, v1, etc.)
+    QString pntid; ///< Pnt concerned
+};
+
 /** Manages all inputs and outputs with the database. The SQL schema is not
  * given anywhere, although it would be a good idea. */
 class DbManager
