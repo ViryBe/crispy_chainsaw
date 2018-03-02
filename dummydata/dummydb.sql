@@ -23,9 +23,9 @@ create table Workday(
 );
 
 -- Populate a bit
--- Add aricrafts
+-- Add aircrafts
 insert into Acft_model (id, name, freq_max, nop, ntot)
-values (0, 'a', 4, 12, 15);
+values (0, 'a', 2, 12, 15);
 insert into Acft_model (id, name, freq_max, nop, ntot)
 values (1, 'b', 6, 9, 10);
 -- Add PNTs
@@ -48,3 +48,23 @@ insert into Workday (workdate, status, pntid)
 values ('2018-02-11', 'office', 'cr');
 insert into Workday (workdate, status, pntid)
 values ('2018-02-12', 'v1', 'cr');
+
+
+-- Data for a schedule (3 days)
+-- Aircraft model
+insert into Acft_model (id, name, freq_max, nop, ntot)
+values (0, 'a', 2, 12, 15);
+
+-- Pnts (captains)
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('aa', 'cpt', 0, 0);
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('ab', 'cpt', 0, 0);
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('ac', 'cpt', 0, 0);
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('ad', 'cpt', 0, 0);
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('ae', 'cpt', 0, 0);
+insert into Pnt (id, role, freq_max, acft_modelid)
+values ('af', 'cpt', 0, 0);
