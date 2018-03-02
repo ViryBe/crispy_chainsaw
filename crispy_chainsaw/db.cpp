@@ -143,6 +143,32 @@ std::vector<QString> DbManager::getPnts(
     return pnts;
 }
 
+AcftModelDb DbManager::getAcftModel(const QString& name)
+{
+    AcftModelDb acftmod;
+    QSqlQuery query(m_db);
+    QString qustr =
+            "SELECT (name, freq_max, crew, nop, ntot) FROM Acft_model WHERE "
+            "name LIKE :n";
+    if (!query.prepare(qustr)) {
+        qDebug() << "error preparing get acft models";
+    }
+    query.bindValue(":n", name);
+    if (query.exec()) {
+        query.next();
+
+        acftmod.name = query.value(0).toString();
+        acftmod.freq_max = query.value(1).toInt();
+        acftmod.crew = query.value(2).toInt();
+        acftmod.nop = query.value(3).toInt();
+        acftmod.ntot = query.value(4).toInt();
+    }
+    else {
+        qDebug() << "error retrieving acft model data: " << name;
+    }
+    return acftmod;
+}
+
 bool DbManager::test()
 {
     bool success = true;

@@ -15,11 +15,11 @@ struct PntDb {
 
 /** Representation of an aircraft model in the database */
 struct AcftModelDb {
-    int id; ///< Unique identifier
-    QString name; ///< Name of the model
+    QString name; ///< Name of the model, also identifier
     int freq_max; ///< Maximum number of flights per day for this model
     int nop; ///< Number of operational models owned by the company
     int ntot; ///< Total number of aircrafts of this model owned by the comp
+    int crew; ///< Number of people needed to form a crew
 };
 
 /** Representation of a day of a pnt in the database */
@@ -80,6 +80,10 @@ public:
     std::vector<QString> getPnts(const QString& m, const QString& r,
                                  const QDate& d, const QString& s);
 
+    /** Get all data on an aircraft model
+     * @param n name of the model */
+    AcftModelDb getAcftModel(const QString& n);
+
     /** A test function using see_status
      * @returns true if tests succeed */
     bool test();
@@ -89,5 +93,6 @@ private:
 };
 
 /** Main manager for all the program */
-static DbManager _MANAGER = DbManager("");
+static DbManager _MANAGER = DbManager(
+            "/home/gabriel/workspace/vcs/crispy_chainsaw/dummydata/dummy.db");
 #endif
