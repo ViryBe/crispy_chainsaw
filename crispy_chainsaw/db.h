@@ -10,7 +10,7 @@
 class DbManager
 {
 public:
-    /** Creates a dbmanager managing an sqlite file
+    /** Creates a dbmanager managing a sqlite file
      * @param s sqlite filepath */
     DbManager(const QString& s);
 

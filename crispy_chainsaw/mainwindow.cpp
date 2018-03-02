@@ -51,12 +51,13 @@ void MainWindow::on_pilotManage_clicked()
     //TODO : Chercher dans la base de données les infos pilotes pour les mettre dans namePilot et function
     QString namePilot = "toto";
     QString function = "B727FE";
+    int frequence = 6;
     qDebug(idPilot.toLatin1()); //ok
 
     // Création de la nouvelle boite de dialogue pour modifier les infos
     newPilot NewPilot;
     NewPilot.setModal(true);
-    NewPilot.updateInformation(idPilot,namePilot, function);
+    NewPilot.updateInformation(idPilot,namePilot, function, frequence);
     NewPilot.exec();
 }
 
