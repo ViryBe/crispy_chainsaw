@@ -19,9 +19,37 @@ struct Flight {
     int position; ///< Position of flight during day (1st, 2nd, etc.)
 };
 
-/** Instance of a schedule. A schedule concerns only one model and only one
- * role among the crew needed for the aircraft (by this we mean that there
- * is no constraint between the different member of the crew). */
+/** # Definition
+ * The aim of the schedule is to provide a crew for each flight. To lighten
+ * the object, a schedule concerns *only one* aircraft model and *only one*
+ * role among those available for the aircraft model.
+ *
+ * # Model used
+ * The schedule is modelled by a constraint satisfaction problem.
+ *
+ * ## Description of the model
+ * This model works chronogically on the flights, it attaches crew members to
+ * each flight.
+ * * Variables: flight number, e.g. if a plane has three flights per day,
+ *   the first variable is the first flight of the first day and the fifth
+ *   variable is the 2nd flight of the 2nd day.
+ * * Values: the afore mentioned variables take as value the id of a
+ *   part of the crew, e.g. if the first variable of the schedule concerning
+ *   aircraft model `x` and captains, `v1 = aa` means that the captain
+ *   identified by the id `aa` will be on the first flight of the first day.
+ * * Domain: the domain of each variable is the set of adequate personnel
+ *   (we mean having the good role) whose status on the considered day is
+ *   neither `office` nor `off`.
+ * * Constraints: mainly, a crew members cannot do more than one flight per
+ *   day, and some crew members have a maximum frequency of flight per month.
+ *   We are looking for more.
+ *
+ * Ideally, the flights should be equally balanced among crew members. In
+ * order to do that, the lists (or vectors) containing crew members will be
+ * sorted according to their number of flights after each attachment. This way,
+ * the csp solver will always consider first the members having the fewer hours
+ * of flight.
+ */
 class ScheduleInstance
 {
 public:
