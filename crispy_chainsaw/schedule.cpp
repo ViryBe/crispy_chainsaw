@@ -125,12 +125,12 @@ void ScheduleInstance::print()
     }
 }
 
-bool test()
+bool ScheduleInstance::test()
 {
-    DbManager dbm = DbManager("the good path");
     Pnt::Role role = Pnt::Role::cpt;
     AcftModel mod = AcftModel("a", 2, 2);
 
     ScheduleInstance si = ScheduleInstance(mod, role, QDate::currentDate());
+    si.print();
     return true;
 }

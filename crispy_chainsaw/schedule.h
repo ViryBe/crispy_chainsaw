@@ -89,7 +89,7 @@ public:
     void print();
 
     /** Test, creates a schedule from dummydb */
-    bool static test();
+    static bool test();
 
 private:
     // Misc data
