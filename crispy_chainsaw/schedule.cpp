@@ -26,6 +26,16 @@ ScheduleInstance::ScheduleInstance(
         current_domain[i] = crewmem;
 	}
     v.resize(n + 1);
+
+    // create schedule
+    bcssp(n, Status::unknown);
+}
+
+ScheduleInstance::ScheduleInstance(
+        const AcftModel& _model, const Pnt::Role _role,
+        const QDate dbeg)
+{
+    ScheduleInstance(_model, _role, dbeg, dbeg.addDays(15));
 }
 
 int ScheduleInstance::bt_label(int i)
@@ -100,4 +110,14 @@ void ScheduleInstance::updateDb(DbManager dbm)
 
         dbm.addWorkday(date, flightno, pntid);
     }
+}
+
+bool test()
+{
+    DbManager dbm = DbManager("the good path");
+    Pnt::Role role = Pnt::Role::cpt;
+    AcftModel mod = AcftModel("a", 2, 2);
+
+    ScheduleInstance si = ScheduleInstance(mod, role, QDate::currentDate());
+    return true;
 }

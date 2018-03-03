@@ -60,6 +60,14 @@ public:
      * @param de date of the end of the schedule */
     ScheduleInstance(const AcftModel& m, const Pnt::Role r,
                      const QDate db, const QDate de);
+
+    /** Creates a 15 days schedule defined by the dates of beginning.
+     * @param m model of the aircraft concerned by this schedule
+     * @param r role concerned by the schedule
+     * @param db date of the beginning of the schedule */
+    ScheduleInstance(const AcftModel& m, const Pnt::Role r,
+                     const QDate db);
+
     /** Schedules the flights given as parameter
      * @param m model of aircraft
      * @param r role concerned
@@ -76,6 +84,12 @@ public:
     /** Updates database
      * @param d database manager */
     void updateDb(DbManager d);
+
+    /** Prints the deduced schedule to stdout */
+    void print();
+
+    /** Test, creates a schedule from dummydb */
+    bool static test();
 
 private:
     // Misc data
