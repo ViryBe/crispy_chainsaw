@@ -119,6 +119,7 @@ void ScheduleInstance::print()
     for (int i = 1 ; i <= n ; i++) {
         day = 1 + (int) ( (i - 1) / m_model.getFreqMax() );
         flight_no = (i - 1) % m_model.getFreqMax();
+
         qDebug() << "day: " << day << ";"
                  << "flight number: " << flight_no << ";"
                  << "pnt: " << v[i];
@@ -130,7 +131,9 @@ bool ScheduleInstance::test()
     Pnt::Role role = Pnt::Role::cpt;
     AcftModel mod = AcftModel("a", 2, 2);
 
-    ScheduleInstance si = ScheduleInstance(mod, role, QDate::currentDate());
+    ScheduleInstance si = ScheduleInstance(
+                mod, role, QDate::currentDate(),
+                QDate::currentDate().addDays(2));
     si.print();
     return true;
 }

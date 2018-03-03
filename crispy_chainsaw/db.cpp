@@ -23,17 +23,25 @@ void DbManager::addPilot(const QString& name, const QString& role,
     int freq_max)
 {
     QSqlQuery query(m_db);
-    query.prepare(
-            "INSERT INTO Pnt (name, role, freq_max) VALUES " \
-            "(:name, :role, :freq_max)");
+    QString qustr =
+            "INSERT INTO Pnt (name, role, freq_max) VALUES "
+            "(:name, :role, :freq_max)";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare addPilot: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
+    }
     query.bindValue(":name", name);
     query.bindValue(":role", role);
     query.bindValue(":freq_max", freq_max);
     if (query.exec()) {
     }
     else {
-        qDebug() << "error adding pilot: "
-            << query.lastError();
+        qDebug() << "exec addPilot: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
 }
 
@@ -42,17 +50,25 @@ void DbManager::addWorkday(const QDate& date, const QString& st,
 {
     QString strdate = date.toString(DATEFMT);
     QSqlQuery query(m_db);
-    query.prepare(
-                "INSERT INTO Workday (date, status, pntid) VALUES "
-                "(:date, :status, :pntid)");
+    QString qustr =
+            "INSERT INTO Workday (date, status, pntid) VALUES "
+            "(:date, :status, :pntid)";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare addWorkday: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
+    }
     query.bindValue(":date", strdate);
     query.bindValue(":status", st);
     query.bindValue(":pntid", pntid);
     if (query.exec()) {
     }
     else {
-        qDebug() << "error adding workday: "
-                 << query.lastError();
+        qDebug() << "exec addWorkday: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
 }
 
@@ -71,9 +87,11 @@ QString DbManager::statusOfPnt(QDate date, QString pntid)
             "Workday.pntid = Pnt.id WHERE "
             "Pnt.id = :pntid AND Workday.workdate = :date";
     if (!query.prepare(qustr)) {
-        qDebug() << "prepare failed";
+        qDebug() << "prepare statusOfPnt: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
-    QString dateqst = date.toString(DATEFMT);
     query.bindValue(":pntid", pntid);
     query.bindValue(":date", QString(date.toString(DATEFMT)));
     if (query.exec()) {
@@ -83,8 +101,10 @@ QString DbManager::statusOfPnt(QDate date, QString pntid)
         }
     }
     else {
-        qDebug() << "error consulting status: "
-            << query.lastError();
+        qDebug() << "exec statusOfPnt: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
     return res;
 }
@@ -98,7 +118,10 @@ std::vector<QString> DbManager::getPnts(const QString& acft_model)
             "Pnt.acft_modelid = Acft_model.id WHERE "
             "Acft_model.name LIKE :amod";
     if (!query.prepare(qustr)) {
-        qDebug () << "pilots of model prepare failed";
+        qDebug() << "prepare getPnts: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
     query.bindValue(":amod", acft_model);
     if (query.exec()) {
@@ -107,7 +130,10 @@ std::vector<QString> DbManager::getPnts(const QString& acft_model)
         }
     }
     else {
-        qDebug() << "error retrieving pilots for aircraft model" + acft_model;
+        qDebug() << "exec getPnts: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
     return pnts;
 }
@@ -120,27 +146,33 @@ std::vector<QString> DbManager::getPnts(
     QSqlQuery query(m_db);
     QString qustr =
             "SELECT Pnt.id FROM Pnt, Acft_model, Workday WHERE "
-            "Pnt.acft_modelid = Acft_model.id AND "
+            "Pnt.acft_modelname = Acft_model.name AND "
             "Workday.pntid = Pnt.id AND "
+            "Workday.workdate LIKE :date AND "
             "Workday.status LIKE :status AND "
-            "Pnt.status LIKE :role AND "
+            "Pnt.role LIKE :role AND "
             "Acft_model.name LIKE :amod";
 
     if (!query.prepare(qustr)) {
-        qDebug() << "error harvesting available pilots\n";
+        qDebug() << "prepare getPnts: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
     query.bindValue(":role", role);
     query.bindValue(":amod", model);
     query.bindValue(":status", status);
+    query.bindValue(":date", date.toString(DATEFMT));
     if (query.exec()) {
         while (query.next()) {
             pnts.push_back(QString(query.value(0).toString()));
         }
     }
     else {
-        qDebug() << "error retrieving " << role
-                 << " available on the " << date.toString(DATEFMT)
-                 << " for model " << model;
+        qDebug() << "exec getPnts: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
     return pnts;
 }
@@ -153,7 +185,10 @@ AcftModelDb DbManager::getAcftModel(const QString& name)
             "SELECT (name, freq_max, crew, nop, ntot) FROM Acft_model WHERE "
             "name LIKE :n";
     if (!query.prepare(qustr)) {
-        qDebug() << "error preparing get acft models";
+        qDebug() << "prepare getAcftModel: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
     query.bindValue(":n", name);
     if (query.exec()) {
@@ -166,7 +201,10 @@ AcftModelDb DbManager::getAcftModel(const QString& name)
         acftmod.ntot = query.value(4).toInt();
     }
     else {
-        qDebug() << "error retrieving acft model data: " << name;
+        qDebug() << "exec getAcftModel: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
     }
     return acftmod;
 }
