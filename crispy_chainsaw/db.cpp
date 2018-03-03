@@ -2,18 +2,20 @@
 
 QString DATEFMT = "yyyy-MM-dd";
 
+DbManager _MANAGER = DbManager(
+            "/home/gabriel/workspace/vcs/crispy_chainsaw/dummydata/dummy.db");
+
 DbManager::DbManager(const QString& path)
 {
     m_db = QSqlDatabase::addDatabase("QSQLITE");
     m_db.setDatabaseName(path);
 
     if (!m_db.open()) {
-        qDebug() << "Error, connection with db failed";
+        qDebug() << "error opening db: " << path;
     }
     else
     {
-        qDebug() << m_db.tables();
-        qDebug() << "Database connection ok";
+        qDebug() << "using database: " << path;
     }
 }
 

@@ -93,6 +93,5 @@ private:
 };
 
 /** Main manager for all the program */
-static DbManager _MANAGER = DbManager(
-            "/home/gabriel/workspace/vcs/crispy_chainsaw/dummydata/dummy.db");
+extern DbManager _MANAGER;
 #endif
