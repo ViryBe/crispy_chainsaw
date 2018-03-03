@@ -112,6 +112,19 @@ void ScheduleInstance::updateDb(DbManager dbm)
     }
 }
 
+void ScheduleInstance::print()
+{
+    int day;
+    int flight_no;
+    for (int i = 1 ; i <= n ; i++) {
+        day = 1 + (int) ( (i - 1) / m_model.getFreqMax() );
+        flight_no = (i - 1) % m_model.getFreqMax();
+        qDebug() << "day: " << day << ";"
+                 << "flight number: " << flight_no << ";"
+                 << "pnt: " << v[i];
+    }
+}
+
 bool test()
 {
     DbManager dbm = DbManager("the good path");

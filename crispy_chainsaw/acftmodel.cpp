@@ -15,6 +15,7 @@ AcftModel::AcftModel(const QString& name, const int freq, const int crew)
     else if (name == "a") {
         m_name = AvailableModels::a;
     }
+
     m_freqMax = freq;
     m_crew = crew;
 }
