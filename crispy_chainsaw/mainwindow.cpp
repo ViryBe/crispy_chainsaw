@@ -82,3 +82,10 @@ void MainWindow::on_planeAdd_clicked()
     NewPlane.setModal(true);
     NewPlane.exec();
 }
+
+
+void MainWindow::on_validerB737_clicked()
+{
+    QDate dateFrom = ui->dateFromB737->date();
+    QDate dateTo = ui->dateToB737->date();
+}

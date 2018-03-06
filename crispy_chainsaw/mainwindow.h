@@ -30,6 +30,8 @@ private slots:
 
     void on_planeAdd_clicked();
 
+    void on_validerB737_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
