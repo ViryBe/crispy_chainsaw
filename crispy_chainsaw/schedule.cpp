@@ -44,7 +44,7 @@ int ScheduleInstance::bt_label(int i)
     qDebug() << "bt_label";
 	consistent = false;
 	auto cd_copy = current_domain[i];
-    for (int j = 0 ; j < (int) cd_copy.size() && !consistent ; j++) {
+    for (unsigned int j = 0 ; j < cd_copy.size() && !consistent ; j++) {
 		v[i] = cd_copy[j];
 		consistent = true;
 		for (int h = 1 ; h < i && consistent ; h++) {
@@ -96,8 +96,11 @@ void ScheduleInstance::bcssp(int n, Status status)
 
 bool ScheduleInstance::check(int i, int j)
 {
-    if (i % m_model.getFreqMax() == j % m_model.getFreqMax()) {
-        // A crew member cannot do two flights the same day
+    if ( // If two flights happen the same day...
+            (int) ( (i - 1) / m_model.getFreqMax() ) ==
+            (int) ( (j - 1) / m_model.getFreqMax() )
+            ) {
+        // ...ensure pilots are different
         return v[i] != v[j];
     }
     return true;
