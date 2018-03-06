@@ -80,6 +80,13 @@ public:
     std::vector<QString> getPnts(const QString& m, const QString& r,
                                  const QDate& d, const QString& s);
 
+    /** Retrieves members without workday
+     * @param m model concerned
+     * @param r role concerned
+     * @param d date of the day */
+    std::vector<QString> getIdlePnts(const QString& m, const QString& r,
+                                     const QDate& d);
+
     /** Get all data on an aircraft model
      * @param n name of the model */
     AcftModelDb getAcftModel(const QString& n);

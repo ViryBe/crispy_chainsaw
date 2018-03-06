@@ -15,10 +15,11 @@ ScheduleInstance::ScheduleInstance(
     current_domain.resize(n + 1);
     QDate today = dbeg;
     for (int i = 1 ; i <= n ; i++) {
-        today.addDays(i % m_model.getFreqMax()); // One day more each freq flights
+        // One day more each freq flights
+        today.addDays((i - 1) % m_model.getFreqMax());
         std::vector<QString> crewmem =
-                _MANAGER.getPnts(m_model.getName(), Pnt::role2str(m_role),
-                                 today, "standby");
+                _MANAGER.getIdlePnts(m_model.getName(), Pnt::role2str(m_role),
+                                 today);
 
         domain[i].resize(crewmem.size());
         domain[i] = crewmem;
@@ -40,6 +41,7 @@ ScheduleInstance::ScheduleInstance(
 
 int ScheduleInstance::bt_label(int i)
 {
+    qDebug() << "bt_label";
 	consistent = false;
 	auto cd_copy = current_domain[i];
     for (int j = 0 ; j < (int) cd_copy.size() && !consistent ; j++) {
@@ -58,6 +60,7 @@ int ScheduleInstance::bt_label(int i)
 
 int ScheduleInstance::bt_unlabel(int i)
 {
+    qDebug() << "bt_unlabel";
 	int h = i - 1;
 	current_domain[i] = domain[i];
 
@@ -72,7 +75,7 @@ int ScheduleInstance::bt_unlabel(int i)
 
 void ScheduleInstance::bcssp(int n, Status status)
 {
-	consistent=true;
+    consistent = true;
 	int i = 1;
 	while (status == Status::unknown){
 		if (consistent) {
@@ -84,8 +87,9 @@ void ScheduleInstance::bcssp(int n, Status status)
 		if (i > n) {
 			status = Status::solution;
 		}
-		else if( i == 0){
-			status =Status::impossible;
+        else if(i == 0) {
+            status = Status::impossible;
+            qDebug () << "impossible";
 		}
 	}
 }

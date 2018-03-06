@@ -177,6 +177,41 @@ std::vector<QString> DbManager::getPnts(
     return pnts;
 }
 
+std::vector<QString> DbManager::getIdlePnts(const QString& m, const QString& r,
+                                            const QDate& d)
+{
+    std::vector<QString> pnts;
+    QSqlQuery query(m_db);
+    QString qustr = "SELECT id FROM Pnt WHERE "
+            "id NOT IN ("
+            "SELECT DISTINCT Pnt.id FROM Pnt INNER JOIN Workday ON "
+            "Pnt.id = Workday.pntid WHERE "
+            "Workday.workdate LIKE :date AND "
+            "Pnt.role LIKE :role AND "
+            "Pnt.acft_modelname LIKE :mod)";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare getIdlePnts: "
+                 << query.lastError()
+                 << "\nrequest:"
+                 << qustr;
+    }
+    query.bindValue(":date", d.toString(DATEFMT));
+    query.bindValue(":role", r);
+    query.bindValue(":mod", m);
+    if (query.exec()) {
+        while (query.next()) {
+            pnts.push_back(QString(query.value(0).toString()));
+        }
+    }
+    else {
+        qDebug() << "exec getIdlePnts: "
+                 << query.lastError()
+                 << "\nrequest: "
+                 << qustr;
+    }
+    return pnts;
+}
+
 AcftModelDb DbManager::getAcftModel(const QString& name)
 {
     AcftModelDb acftmod;
