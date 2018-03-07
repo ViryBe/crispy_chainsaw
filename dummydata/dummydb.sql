@@ -11,6 +11,7 @@ create table Pnt(
 	role text check(role in ('cpt', 'fo', 'fe')),
 	freq_max integer,
 	acft_modelname text,
+	flightnb integer default 0,
 	foreign key (acft_modelname) references Acft_model(name)
 );
 
