@@ -9,8 +9,9 @@
 struct PntDb {
     QString id; ///< Unique id based on pnt's name
     QString role; ///< Role of the crew member (e.g. cpt for captain)
+    QString acft_modelname; ///< Name of aircraft model which can be piloted
+    int flightnb; ///< Number of realised flight since ??
     int freq_max; ///< Maximum number of flights per month
-    int acft_modelid; ///< Id of aircraft for which crew member is qualified
 };
 
 /** Representation of an aircraft model in the database */
@@ -59,6 +60,10 @@ public:
      * @return the status as a string (e.g. off, v1, etc.) */
     QString statusOfPnt(const QDate d, const QString i);
     int getFlightTimePilot(const QString, int);
+
+    /** Retrieve all the info about a pnt
+     * @param pntid identifier (string of two characters) */
+    PntDb getPnt(QString pntid);
 
     /** Retreives all pnts able to be in the crew of a specified aircraft
      * @param m model of aircraft

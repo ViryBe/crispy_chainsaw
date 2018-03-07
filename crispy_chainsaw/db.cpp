@@ -109,6 +109,34 @@ QString DbManager::statusOfPnt(QDate date, QString pntid)
     return res;
 }
 
+PntDb DbManager::getPnt(QString pntid)
+{
+    PntDb pnt;
+    QSqlQuery query(m_db);
+    QString qustr =
+            "SELECT (id, role, freq_max, acft_modelname, flightnb) WHERE "
+            "id = :id";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare getPnt: "
+                 << query.lastError()
+                 << "\n request: "
+                 << qustr;
+    }
+    query.bindValue(":id", pntid);
+    if (query.exec()) {
+        query.next();
+        pnt.id = query.value(0).toString();
+        pnt.role = query.value(1).toString();
+        pnt.freq_max = query.value(2).toInt();
+        pnt.acft_modelname = query.value(3).toString();
+        pnt.flightnb = query.value(4).toInt();
+    }
+    else {
+        qDebug() << "exec getPnt: " << query.lastError();
+    }
+    return pnt;
+}
+
 std::vector<QString> DbManager::getPnts(const QString& acft_model)
 {
     std::vector<QString> pnts;
