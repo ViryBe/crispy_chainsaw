@@ -60,6 +60,9 @@ public:
     QString statusOfPnt(const QDate d, const QString i);
     int getFlightTimePilot(const QString, int);
 
+    /** Retrieve all pnt ids from database */
+    std::vector<QString> getPnts();
+
     /** Retreives all pnts able to be in the crew of a specified aircraft
      * @param m model of aircraft
      * @returns pnt ids */

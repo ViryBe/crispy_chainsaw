@@ -109,6 +109,25 @@ QString DbManager::statusOfPnt(QDate date, QString pntid)
     return res;
 }
 
+std::vector<QString> DbManager::getPnts()
+{
+    std::vector<QString> pnts;
+    QSqlQuery query(m_db);
+    QString qustr = "SELECT id FROM Pnt";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare getPnts:" << query.lastError();
+    }
+    if (query.exec()) {
+        while (query.next()) {
+            pnts.push_back(QString(query.value(0).toString()));
+        }
+    }
+    else {
+        qDebug() << "exec getPnts: " << query.lastError();
+    }
+    return pnts;
+}
+
 std::vector<QString> DbManager::getPnts(const QString& acft_model)
 {
     std::vector<QString> pnts;
