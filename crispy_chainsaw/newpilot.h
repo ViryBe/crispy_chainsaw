@@ -3,8 +3,9 @@
 
 #include <QDialog>
 
-namespace Ui {
-class newPilot;
+namespace Ui
+{
+    class newPilot;
 }
 
 class newPilot : public QDialog
@@ -12,15 +13,16 @@ class newPilot : public QDialog
     Q_OBJECT
 
 public:
-    explicit newPilot(QWidget *parent = 0);
+    explicit newPilot( QWidget* parent = 0 );
     ~newPilot();
-    void updateInformation(const QString&, const QString&, const QString&, const int);
+    void updateInformation(
+        const QString&, const QString&, const QString&, const int );
 
 private slots:
     void on_buttonBox_accepted();
 
 private:
-    Ui::newPilot *ui;
+    Ui::newPilot* ui;
 };
 
-#endif // NEWPILOT_H
+#endif     // NEWPILOT_H

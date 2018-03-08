@@ -1,12 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QAction>
 #include <QMainWindow>
 #include <QWidget>
-#include <QAction>
 
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -14,13 +15,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow( QWidget* parent = 0 );
     ~MainWindow();
 
 private slots:
     void on_pilotAdd_clicked();
 
-    void on_pilotList_currentTextChanged(const QString &currentText);
+    void on_pilotList_currentTextChanged( const QString& currentText );
 
     void on_pilotManage_clicked();
 
@@ -33,7 +34,7 @@ private slots:
     void on_validerB737_clicked();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 };
 
-#endif // MAINWINDOW_H
+#endif     // MAINWINDOW_H

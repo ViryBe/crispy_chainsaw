@@ -3,8 +3,9 @@
 
 #include <QDialog>
 
-namespace Ui {
-class newPlane;
+namespace Ui
+{
+    class newPlane;
 }
 
 class newPlane : public QDialog
@@ -12,9 +13,9 @@ class newPlane : public QDialog
     Q_OBJECT
 
 public:
-    explicit newPlane(QWidget *parent = 0);
+    explicit newPlane( QWidget* parent = 0 );
     ~newPlane();
-    void updateInformation(const QString&, const QString&);
+    void updateInformation( const QString&, const QString& );
 
 private slots:
     void on_buttonBox_accepted();
@@ -22,7 +23,7 @@ private slots:
     void on_buttonBox_rejected();
 
 private:
-    Ui::newPlane *ui;
+    Ui::newPlane* ui;
 };
 
-#endif // NEWPLANE_H
+#endif     // NEWPLANE_H

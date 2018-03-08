@@ -1,10 +1,10 @@
-#include "mainwindow.h"
 #include "db.h"
+#include "mainwindow.h"
 #include <QApplication>
 #include <QDebug>
 #include <QMainWindow>
 
-int main(int argc, char *argv[])
+int main( int argc, char* argv[] )
 {
     /*
     QDir qdir = QDir(""); //Current path
@@ -22,12 +22,11 @@ int main(int argc, char *argv[])
     }
     */
     QString fpath = "C:/Users/clrco/Documents/Projets/"
-            "crispy_chainsaw/dummydata/dummy.db";
-    DbManager db = DbManager(fpath);
-    qDebug() << (db.test() ?
-                     "database tested succesfully" :
-                     "database testing failure");
-    QApplication a(argc, argv);
+                    "crispy_chainsaw/dummydata/dummy.db";
+    DbManager db = DbManager( fpath );
+    qDebug() << ( db.test() ? "database tested succesfully"
+                            : "database testing failure" );
+    QApplication a( argc, argv );
     MainWindow w;
     w.show();
 
