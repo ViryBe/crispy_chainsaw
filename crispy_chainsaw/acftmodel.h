@@ -7,7 +7,7 @@
 class AcftModel
 {
 public:
-    AcftModel();
+    AcftModel() = default;
     /** New aircraft model, quite poor, but enough to make a schedule
      * @param n name of the model
      * @param f frequency, number of flights per day

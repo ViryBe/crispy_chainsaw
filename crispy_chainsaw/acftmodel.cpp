@@ -1,9 +1,5 @@
 #include "acftmodel.h"
 
-AcftModel::AcftModel()
-{
-}
-
 AcftModel::AcftModel(const QString& name, const int freq, const int crew)
 {
     if (name == "b727" || name == "B727") {
@@ -33,6 +29,9 @@ QString AcftModel::getName()
     }
     else if (m_name == AvailableModels::B737) {
         name = "b737";
+    }
+    else if (m_name == AvailableModels::a) {
+        name = "a";
     }
     return name;
 }

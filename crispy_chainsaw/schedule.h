@@ -72,8 +72,7 @@ public:
      * @param m model of aircraft
      * @param r role concerned
      * @param f flights to schedule */
-    ScheduleInstance(const AcftModel& m, const Pnt::Role r,
-                     const std::vector<Flight>& f);
+    ScheduleInstance(const Pnt::Role r, const std::vector<Flight>& f);
     /** Completes an already existing schedule with new flights. Already
      * existing flights are not modified, an error is raised if the already
      * existing schedule is not consistent.
@@ -104,12 +103,13 @@ private:
     std::vector<QString> v; ///< Values of the variables v[0] is a pseudo var
     std::vector<std::vector<QString>> domain; ///< Domain of each variable
     std::vector<std::vector<QString>> current_domain;
+    std::map<QString, int> flightnb; ///< Number of flights per pilot
 
     /** Calls tree search methods to solve the *binary* constraint satisfaction
      * problem, i.e. the creation of the schedule. Works in place, modifying
      * the [v] vector. For more information on the algorithms used, please
      * see *Hybrid Algorithms for the Constraint Satisfaction Problem*, Patrick
-     * Prosser.
+     * Prosser*.
      * @param n the number of variables to instantiate
      * @param status the initial status of the problem */
     void bcssp(int, Status);
@@ -127,6 +127,10 @@ private:
      * when consistent is false and all values for variable i has been tested.
      * @returns the new current variable */
     int bt_unlabel(int);
+
+    /** Modifies order of values in the domain (since domains are
+     * implemented as lists) to favour instantiation of variables */
+    void sort_domains();
 };
 
 #endif // SCHEDULE_H

@@ -16,6 +16,10 @@ public:
 
     Pnt(QString n, QString c, Role r, int f = -1);
 
+    /** Creates a pnt from the data taken from the database
+     * @param p pnt structure, dump of the database */
+    Pnt(PntDb p);
+
     /** Converts a role to string */
     static QString role2str(Pnt::Role);
     int getFlightTime(int month);
