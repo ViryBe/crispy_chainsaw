@@ -126,6 +126,7 @@ std::vector<QString> DbManager::getPnts()
         qDebug() << "exec getPnts: " << query.lastError();
     }
     return pnts;
+}
 
 PntDb DbManager::getPnt(QString pntid)
 {
