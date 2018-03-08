@@ -62,7 +62,6 @@ public:
      * @param i id (two characters) of the pnt
      * @return the status as a string (e.g. off, v1, etc.) */
     QString statusOfPnt( const QDate d, const QString i );
-    int getFlightTimePilot( const QString, int );
 
     /** Retrieve all pnt ids from database */
     std::vector<QString> getPnts();

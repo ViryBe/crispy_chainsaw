@@ -17,10 +17,3 @@ QString Pnt::role2str( Pnt::Role role )
     }
     return r;
 }
-
-/*
-int Pnt::getFlightTime(int month)
-{
-    return _MANAGER.getFlightTimePilot(m_code, month);
-}
-*/
