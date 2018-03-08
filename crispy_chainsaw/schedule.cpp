@@ -10,23 +10,32 @@ ScheduleInstance::ScheduleInstance(
     // Number of variables = freq * number of days
     n = m_model.getFreqMax() * (int) dbeg.daysTo(dend);
 
-    // Init memory and csp related var
+    // Init domains
     domain.resize(n + 1);
     current_domain.resize(n + 1);
     QDate today = dbeg;
     for (int i = 1 ; i <= n ; i++) {
-        // One day more each freq flights
+        // Retrieve available pilots
         today.addDays((i - 1) % m_model.getFreqMax());
         std::vector<QString> crewmem =
                 _MANAGER.getIdlePnts(m_model.getName(), Pnt::role2str(m_role),
-                                 today);
+                                     today);
 
         domain[i].resize(crewmem.size());
         domain[i] = crewmem;
         current_domain[i].resize(crewmem.size());
         current_domain[i] = crewmem;
 	}
+
     v.resize(n + 1);
+
+    // Init flight number per pilot and sort domains
+    std::vector<QString> pntids = _MANAGER.getPnts(
+                m_model.getName(), Pnt::role2str(_role));
+    for (QString pid : pntids) {
+        flightnb.emplace(std::make_pair(pid, _MANAGER.getPnt(pid).flightnb));
+    }
+    sort_domains();
 
     // create schedule
     bcssp(n, Status::unknown);
@@ -45,7 +54,15 @@ int ScheduleInstance::bt_label(int i)
 	consistent = false;
 	auto cd_copy = current_domain[i];
     for (unsigned int j = 0 ; j < cd_copy.size() && !consistent ; j++) {
-		v[i] = cd_copy[j];
+        // Update value vector and flights count
+        try {
+            flightnb.at(v[i]) = std::max(flightnb.at(v[i]) - 1, 0);
+        } catch (std::out_of_range oor) {
+            // Happens when value not yet instantiated (v[i] not filled)
+        }
+        v[i] = cd_copy[j];
+        flightnb.at(v[i])++;
+
 		consistent = true;
 		for (int h = 1 ; h < i && consistent ; h++) {
 			consistent = check(i, h);
@@ -78,6 +95,7 @@ void ScheduleInstance::bcssp(int n, Status status)
     consistent = true;
 	int i = 1;
 	while (status == Status::unknown){
+        sort_domains();
 		if (consistent) {
 			i = bt_label(i);
 		}
@@ -116,6 +134,18 @@ void ScheduleInstance::updateDb(DbManager dbm)
         QString pntid = v[i];
 
         dbm.addWorkday(date, flightno, pntid);
+    }
+}
+
+void ScheduleInstance::sort_domains()
+{
+    auto cmp = [this] (QString p1, QString p2) {
+        return flightnb.find(p1)->second < flightnb.find(p2)->second;
+    };
+
+    for (int i = 1 ; i <= n ; i++) {
+        std::sort(domain[i].begin(), domain[i].end(), cmp);
+        std::sort(current_domain[i].begin(), current_domain[i].end(), cmp);
     }
 }
 

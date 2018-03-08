@@ -30,5 +30,8 @@ QString AcftModel::getName()
     else if (m_name == AvailableModels::B737) {
         name = "b737";
     }
+    else if (m_name == AvailableModels::a) {
+        name = "a";
+    }
     return name;
 }
