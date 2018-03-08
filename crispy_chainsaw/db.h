@@ -57,6 +57,24 @@ public:
     /** Same as above but takes directly a Workday structure */
     void addWorkday( const WorkdayDb& );
 
+    /** Asserts whether a flight has a crew assigned
+     * @param d date of the flight
+     * @param m model of the aircraft
+     * @param r role needed
+     * @param s status of the flight
+     * @returns true iff a pnt matches the requirements */
+    bool workProvided( const QDate& d, const QString& m, const QString& r,
+                       const QString& s );
+
+    /** Returns id of pnt working on a specified flight
+     * @param d date of the flight
+     * @param m model of aircraft on the flight
+     * @param r role needed for the flight
+     * @param s status of the flight (v1, v2, v3)
+     * @returns id of matching pnt, throws an exception else */
+    QString getWorkingPnt( const QDate& d, const QString& m, const QString& r,
+                           const QString& s );
+
     /** Retrieves status of pnt on one day
      * @param d date of the day
      * @param i id (two characters) of the pnt
@@ -65,6 +83,7 @@ public:
 
     /** Retrieve all pnt ids from database */
     std::vector<QString> getPnts();
+
     /** Retrieve all the info about a pnt
      * @param pntid identifier (string of two characters) */
     PntDb getPnt( QString pntid );

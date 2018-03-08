@@ -14,11 +14,21 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
     domain.resize( n + 1 );
     current_domain.resize( n + 1 );
     QDate today = dbeg;
+    QString fl_st;
     for ( int i = 1; i <= n; i++ ) {
+        std::vector<QString> crewmem;
         // Retrieve available pilots
+        fl_st = (int) ( (i - 1) / m_model.getFreqMax() );
         today.addDays( ( i - 1 ) % m_model.getFreqMax() );
-        std::vector<QString> crewmem = _MANAGER.getIdlePnts(
-            m_model.getName(), Pnt::role2str( m_role ), today );
+        if (_MANAGER.workProvided(today, m_model.getName(),
+                                  Pnt::role2str(m_role), fl_st)) {
+            crewmem = { _MANAGER.getWorkingPnt(today, m_model.getName(),
+                        Pnt::role2str(m_role), fl_st) };
+        }
+        else {
+            crewmem = _MANAGER.getIdlePnts(
+                        m_model.getName(), Pnt::role2str( m_role ), today );
+        }
 
         domain[ i ].resize( crewmem.size() );
         domain[ i ] = crewmem;
@@ -55,12 +65,13 @@ int ScheduleInstance::bt_label( int i )
     for ( unsigned int j = 0; j < cd_copy.size() && !consistent; j++ ) {
         // Update value vector and flights count
         try {
+            // Remove previously planned flight
             flightnb.at( v[ i ] ) = std::max( flightnb.at( v[ i ] ) - 1, 0 );
         } catch ( std::out_of_range oor ) {
             // Happens when value not yet instantiated (v[i] not filled)
         }
         v[ i ] = cd_copy[ j ];
-        flightnb.at( v[ i ] )++;
+        flightnb.at( v[ i ] )++; // Add newly planned flight
 
         consistent = true;
         for ( int h = 1; h < i && consistent; h++ ) {
