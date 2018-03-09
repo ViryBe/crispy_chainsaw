@@ -65,32 +65,57 @@ void DbManager::addWorkday( const WorkdayDb& wd )
 }
 
 bool DbManager::workProvided( const QDate& date, const QString& model,
-                              const QString& role, const QString& status )
+    const QString& role, const QString& status )
 {
     int nrslt;
-    QSqlQuery query(m_db);
-    QString qustr =
-            "SELECT COUNT(Pnt.id) FROM Pnt INNER JOIN Workday ON "
-            "Pnt.id = Workday.pntid WHERE "
-            "Workday.workdate LIKE :date AND "
-            "Workday.status LIKE :status AND "
-            "Pnt.role LIKE :role AND "
-            "Pnt.acft_modelname LIKE :mod";
-    if (!query.prepare(qustr)) {
+    QSqlQuery query( m_db );
+    QString qustr = "SELECT COUNT(Pnt.id) FROM Pnt INNER JOIN Workday ON "
+                    "Pnt.id = Workday.pntid WHERE "
+                    "Workday.workdate LIKE :date AND "
+                    "Workday.status LIKE :status AND "
+                    "Pnt.role LIKE :role AND "
+                    "Pnt.acft_modelname LIKE :mod";
+    if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare workProvided: " << query.lastError();
     }
-    query.bindValue(":date", date.toString(DATEFMT));
-    query.bindValue(":status", status);
-    query.bindValue(":role", role);
-    query.bindValue(":mod", model);
-    if (query.exec()) {
+    query.bindValue( ":date", date.toString( DATEFMT ) );
+    query.bindValue( ":status", status );
+    query.bindValue( ":role", role );
+    query.bindValue( ":mod", model );
+    if ( query.exec() ) {
         query.next();
-        nrslt = query.value(0).toInt();
-    }
-    else {
+        nrslt = query.value( 0 ).toInt();
+    } else {
         qDebug() << query.lastError();
     }
     return nrslt > 0;
+}
+
+QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
+    const QString& role, const QString& status )
+{
+    QString pntid;
+    QSqlQuery query(m_db);
+    QString qustr = "SELECT Pnt.id FROM Pnt INNER JOIN Workday ON "
+                    "Pnt.id = Workday.pntid WHERE "
+                    "Workday.workdate LIKE :date AND "
+                    "Workday.status LIKE :status AND "
+                    "Pnt.role LIKE :role AND "
+                    "Pnt.acft_modelname LIKE :mod";
+    if ( !query.prepare( qustr ) ) {
+        qDebug() << "prepare getWorkingPnt: " << query.lastError();
+    }
+    query.bindValue( ":date", date.toString( DATEFMT ) );
+    query.bindValue( ":status", status );
+    query.bindValue( ":role", role );
+    query.bindValue( ":mod", model );
+    if ( query.exec() ) {
+        query.next();
+        pntid = QString(query.value( 0 ).toString());
+    } else {
+        qDebug() << query.lastError();
+    }
+    return pntid;
 }
 
 QString DbManager::statusOfPnt( QDate date, QString pntid )
