@@ -123,13 +123,14 @@ void ScheduleInstance::bcssp( int n, Status status )
 
 bool ScheduleInstance::check( int i, int j )
 {
+    bool valid = true;
     if (     // If two flights happen the same day...
         ( int ) ( ( i - 1 ) / m_model.getFreqMax() ) ==
         ( int ) ( ( j - 1 ) / m_model.getFreqMax() ) ) {
         // ...ensure pilots are different
-        return v[ i ] != v[ j ];
+        valid &= v[ i ] != v[j];
     }
-    return true;
+    return valid;
 }
 
 void ScheduleInstance::updateDb( DbManager dbm )
