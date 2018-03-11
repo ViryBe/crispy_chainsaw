@@ -1,5 +1,6 @@
 #include "newpilot.h"
 #include "ui_newpilot.h"
+#include "db.h"
 
 newPilot::newPilot( QWidget* parent )
     : QDialog( parent ), ui( new Ui::newPilot )
@@ -37,19 +38,22 @@ void newPilot::on_buttonBox_accepted()
 }
 
 void newPilot::updateInformation( const QString& idPilote,
-    const QString& namePilot, const QString& function, const int frequence )
+    const QString& namePilot, const QString& acft, const QString& role, const int frequence )
 {
     ui->codePilotEdit->setText( idPilote );
     ui->namePilotEdit->setText( namePilot );
     ui->frequenceSpin->setValue( frequence );
-    if ( function == "B737Cdt" ) {
-        ui->B737Cdt->setChecked( true );
-    } else if ( function == "B727Cdt" ) {
-        ui->B727Cdt->setChecked( true );
-    } else if ( function == "B737FO" ) {
-        ui->B727FO->setChecked( true );
-    } else if ( function == "B727FO" ) {
-        ui->B727FO->setChecked( true );
-    } else
-        ui->B727FE->setChecked( true );
+    if (acft == "b727"){
+        if (role == "cpt")
+            ui->B727Cdt->setChecked(true);
+        else if (role == "fo")
+            ui->B727FO->setChecked(true);
+        else
+            ui->B727FE->setChecked(true);
+    }
+    else if (role == "cpt")
+        ui->B737Cdt->setChecked(true);
+    else
+        ui->B737FO->setChecked(true);
+
 }

@@ -6,16 +6,21 @@ MainWindow::MainWindow( QWidget* parent )
 {
     ui->setupUi( this );
     ui->pilotList->clear();
-    auto pntsIds = _MANAGER.getPnts();
-    for (auto id:pntsIds){
-        ui->pilotList->addItem(id);
-    }
+    refresh_pilot_list();
     ui->pilotList->setCurrentRow(0);
     auto idPilot = ui->pilotList->currentItem()->text();
     refresh_pilot_information(idPilot);
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::refresh_pilot_list()
+{
+    auto pntsIds = _MANAGER.getPnts();
+    for (auto id:pntsIds){
+        ui->pilotList->addItem(id);
+    }
+}
 
 void MainWindow::on_pilotAdd_clicked()
 {
@@ -27,7 +32,6 @@ void MainWindow::on_pilotAdd_clicked()
 
 void MainWindow::on_pilotList_currentTextChanged( const QString& currentText )
 {
-    qDebug( currentText.toLatin1() );     // ok
     refresh_pilot_information(currentText);
 }
 
@@ -48,30 +52,26 @@ void MainWindow::on_pilotManage_clicked()
 {
     QString idPilot = ui->pilotList->currentItem()->text();
     auto pilotInfo = _MANAGER.getPnt(idPilot);
-    QString namePilot = "toto";
-    QString function = pilotInfo.role;
+    QString namePilot = pilotInfo.name;
+    QString role = pilotInfo.role;
+    QString acft = pilotInfo.acft_modelname;
     int frequence = pilotInfo.freq_max;
-    qDebug( idPilot.toLatin1() );     // ok
 
     // Création de la nouvelle boite de dialogue pour modifier les infos
     newPilot NewPilot;
     NewPilot.setModal( true );
-    NewPilot.updateInformation( idPilot, namePilot, function, frequence );
+    NewPilot.updateInformation( idPilot, namePilot, acft, role, frequence );
     NewPilot.exec();
+
+    refresh_pilot_information(idPilot);
 }
 
 void MainWindow::on_planeManage_clicked()
 {
-    QString idPlane = ui->planeList->currentItem()->text();
-    // TODO : Chercher dans la base de données les infos pilotes pour les mettre
-    // dans namePilot et function
-    QString function = "B727";
-    qDebug( idPlane.toLatin1() );     // ok
-
-    // Création de la nouvelle boite de dialogue pour modifier les infos
+    QString idPlane, namePlane;
     newPlane NewPlane;
     NewPlane.setModal( true );
-    NewPlane.updateInformation( idPlane, function );
+    NewPlane.updateInformation(idPlane, namePlane);
     NewPlane.exec();
 }
 
@@ -99,16 +99,39 @@ void MainWindow::refresh_pilot_information(const QString& idPilot)
 {
  auto pilotInfo = _MANAGER.getPnt(idPilot);
  ui->codePilotBDD->setText(pilotInfo.id);
+ ui->pilotNameBDD->setText(pilotInfo.name);
  //set the date from today to + 15 days
  QDate date = date.currentDate();
  ui->dateFrom->setDate(date);
  ui->dateTo->setDate(date.addDays(15));
  refresh_pilot_days(date, date.addDays(15));
  ui->limitationVol->setValue(pilotInfo.freq_max);
+ if (pilotInfo.acft_modelname == "b727"){
+     if (pilotInfo.role == "cpt")
+         ui->B727Cdt->setChecked(true);
+     else if (pilotInfo.role == "fo")
+         ui->B727FO->setChecked(true);
+     else
+         ui->B727FE->setChecked(true);
+ }
+ else if (pilotInfo.role == "cpt")
+     ui->B737Cdt->setChecked(true);
+ else
+     ui->B737FO->setChecked(true);
  qDebug() << pilotInfo.role << pilotInfo.acft_modelname;
+}
+
+void MainWindow::change_pilot_function()
+{
+
 }
 
 void MainWindow::on_dateFrom_userDateChanged(const QDate &date)
 {
     ui->dateTo->setDate(date.addDays(15));
+}
+
+void MainWindow::on_pilotDelete_clicked()
+{
+
 }
