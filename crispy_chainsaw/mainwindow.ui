@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="pilotTab">
        <property name="sizePolicy">
@@ -577,7 +577,7 @@
             <item row="5" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_13">
               <item>
-               <widget class="QSpinBox" name="spinBox">
+               <widget class="QSpinBox" name="limitationVol">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>

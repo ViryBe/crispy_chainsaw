@@ -4,6 +4,10 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QWidget>
+#include "newpilot.h"
+#include "newplane.h"
+#include "ui_mainwindow.h"
+#include "db.h"
 
 namespace Ui
 {
@@ -33,8 +37,13 @@ private slots:
 
     void on_validerB737_clicked();
 
+    void on_dateFrom_userDateChanged(const QDate &date);
+
 private:
     Ui::MainWindow* ui;
+    void refresh_pilot_information(const QString& idPilot);
+    void refresh_pilot_days(QDate dateFrom, QDate dateTo);
+
 };
 
 #endif     // MAINWINDOW_H
