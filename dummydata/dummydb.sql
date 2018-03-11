@@ -8,6 +8,7 @@ create table Acft_model(
 
 create table Pnt(
 	id text primary key not null,
+	name text,
 	role text check(role in ('cpt', 'fo', 'fe')),
 	freq_max integer,
 	acft_modelname text,
@@ -28,10 +29,10 @@ create table Workday(
 insert into Acft_model (name, crew, freq_max, nop, ntot)
 values ('b', 2, 6, 9, 10);
 -- Add PNTs
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('ag', 'cpt', 2, 'b');
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('cr', 'fo', 2, 'b');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('ag', 'Alfred Guimbert', 'cpt', 2, 'b');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('cr', 'Charles Quin', 'fo', 2, 'b');
 -- Add workdays
 -- PNT 0
 insert into Workday (workdate, status, pntid)
@@ -55,15 +56,15 @@ insert into Acft_model (name, freq_max, nop, ntot)
 values ('a', 2, 12, 15);
 
 -- Pnts (captains)
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('aa', 'cpt', 0, 'a');
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('ab', 'cpt', 0, 'a');
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('ac', 'cpt', 0, 'a');
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('ad', 'cpt', 0, 'a');
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('ae', 'cpt', 0, 'a');
-insert into Pnt (id, role, freq_max, acft_modelname)
-values ('af', 'cpt', 0, 'a');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('aa', 'Afdas Adfex', 'cpt', 0, 'a');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('ab', 'Aerfds Bfea', 'cpt', 0, 'a');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('ac', 'Adfsdf Cdfse', 'cpt', 0, 'a');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('ad', 'Adfee Dvcxz', 'cpt', 0, 'a');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('ae', 'Aefdfg Edfse', 'cpt', 0, 'a');
+insert into Pnt (id, name, role, freq_max, acft_modelname)
+values ('af', 'Aefdfs Fdsae', 'cpt', 0, 'a');

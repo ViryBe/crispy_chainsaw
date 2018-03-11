@@ -9,6 +9,7 @@
 struct PntDb
 {
     QString id;       ///< Unique id based on pnt's name
+    QString name;	  ///< Name of the staff member
     QString role;     ///< Role of the crew member (e.g. cpt for captain)
     QString acft_modelname;     ///< Name of aircraft model which can be piloted
     int flightnb;               ///< Number of realised flight since ??
