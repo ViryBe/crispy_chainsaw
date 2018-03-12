@@ -161,6 +161,32 @@ std::vector<QString> DbManager::getPnts()
     return pnts;
 }
 
+int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
+{
+    int card = 0;
+    int numberofdays = begin.daysTo(end);
+    QSqlQuery query(m_db);
+    QString qustr = "SELECT COUNT(workdate) FROM "
+            "Workday INNER JOIN Pnt ON Pnt.id = Workday.pntid WHERE "
+            "Pnt.id LIKE :pntid AND "
+            "Workday.workdate BETWEEN :db AND :de";
+    if ( !query.prepare(qustr) ) {
+        qDebug() << "prepare cardInactiveDays: " << query.lastError();
+    }
+    query.bindValue(":pntid", id);
+    query.bindValue(":db", begin.toString(DATEFMT));
+    query.bindValue(":de", end.toString(DATEFMT));
+    if (query.exec()) {
+        query.next();
+        int nwd = query.value(0).toInt();
+        card = numberofdays = nwd;
+    }
+    else {
+        qDebug() << "exec cardInactiveDays: " << query.lastError();
+    }
+    return card;
+}
+
 PntDb DbManager::getPnt( QString pntid )
 {
     PntDb pnt;
@@ -177,7 +203,7 @@ PntDb DbManager::getPnt( QString pntid )
         pnt.id = query.value( 0 ).toString();
         pnt.name = query.value(1).toString();
         pnt.role = query.value( 2 ).toString();
-        pnt.freq_max = query.value( 3 ).toInt();
+        pnt.maxfreq = query.value( 3 ).toInt();
         pnt.acft_modelname = query.value( 4 ).toString();
         pnt.flightnb = query.value( 5 ).toInt();
     } else {
@@ -308,7 +334,7 @@ AcftModelDb DbManager::getAcftModel( const QString& name )
         query.next();
 
         acftmod.name = query.value( 0 ).toString();
-        acftmod.freq_max = query.value( 1 ).toInt();
+        acftmod.maxfreq = query.value( 1 ).toInt();
         acftmod.crew = query.value( 2 ).toInt();
         acftmod.nop = query.value( 3 ).toInt();
         acftmod.ntot = query.value( 4 ).toInt();

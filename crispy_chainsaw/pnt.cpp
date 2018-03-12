@@ -11,6 +11,18 @@ Pnt::Pnt(QString id, QString name, Role role, QString model,
     m_maxfreq = maxfreq;
 }
 
+Pnt::operator PntDb() const
+{
+    PntDb pdb;
+    pdb.id = m_id;
+    pdb.name = m_name;
+    pdb.role = role2str(m_role);
+    pdb.acft_modelname = m_acftmodel;
+    pdb.flightnb = m_flightnb;
+    pdb.maxfreq = m_maxfreq;
+    return pdb;
+}
+
 QString Pnt::role2str( Pnt::Role role )
 {
     QString r;

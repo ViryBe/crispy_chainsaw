@@ -37,7 +37,7 @@ void newPilot::on_buttonBox_accepted()
     pnt.id = code;
     pnt.name = name;
     pnt.role = query.value( 2 ).toString();
-    pnt.freq_max = query.value( 3 ).toInt();
+    pnt.maxfreq = query.value( 3 ).toInt();
     pnt.acft_modelname = query.value( 4 ).toString();
 
     // add in bdd (id, name, function)

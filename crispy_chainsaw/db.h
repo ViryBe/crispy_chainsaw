@@ -13,14 +13,14 @@ struct PntDb
     QString role;     ///< Role of the crew member (e.g. cpt for captain)
     QString acft_modelname;     ///< Name of aircraft model which can be piloted
     int flightnb;               ///< Number of realised flight since ??
-    int freq_max;               ///< Maximum number of flights per month
+    int maxfreq;                ///< Maximum number of flights per month
 };
 
 /** Representation of an aircraft model in the database */
 struct AcftModelDb
 {
     QString name;     ///< Name of the model, also identifier
-    int freq_max;     ///< Maximum number of flights per day for this model
+    int maxfreq;      ///< Maximum number of flights per day for this model
     int nop;          ///< Number of operational models owned by the company
     int ntot;     ///< Total number of aircrafts of this model owned by the comp
     int crew;     ///< Number of people needed to form a crew
@@ -88,6 +88,14 @@ public:
     /** Retrieve all the info about a pnt
      * @param pntid identifier (string of two characters) */
     PntDb getPnt( QString pntid );
+
+    /** Count incative days between two dates
+     * @param i identifier of the pnt
+     * @param b beginning of the period
+     * @param e end of the period
+     * @returns number of days with neither flights nor office nor hollidays
+     *          programmed */
+    int cardInactiveDays( QString i, QDate b, QDate e );
 
     /** Retreives all pnts able to be in the crew of a specified aircraft
      * @param m model of aircraft
