@@ -1,5 +1,6 @@
 #include "newpilot.h"
 #include "ui_newpilot.h"
+#include "db.h"
 
 newPilot::newPilot( QWidget* parent )
     : QDialog( parent ), ui( new Ui::newPilot )
@@ -15,11 +16,12 @@ void newPilot::on_buttonBox_accepted()
     code.toStdString();
     QString name = ui->namePilotEdit->text();
     name.toStdString();
-    QString function;
+    QString role, acft;
     int frequence = 0;
     qDebug( code.toLatin1() + "\n" + name.toLatin1() );     // ok
     if ( ui->B727Cdt->isChecked() ) {
-        function = "B727Cdt";
+        acft = "b727";
+        role = "Cdt";
     } else if ( ui->B737Cdt->isChecked() ) {
         function = "B737Cdt";
     } else if ( ui->B727FE->isChecked() ) {
@@ -31,25 +33,35 @@ void newPilot::on_buttonBox_accepted()
     }
     frequence = ui->frequenceSpin->value();
 
+    PntDb pnt;
+    pnt.id = code;
+    pnt.name = name;
+    pnt.role = query.value( 2 ).toString();
+    pnt.freq_max = query.value( 3 ).toInt();
+    pnt.acft_modelname = query.value( 4 ).toString();
+
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique
     // open new pilot added
 }
 
 void newPilot::updateInformation( const QString& idPilote,
-    const QString& namePilot, const QString& function, const int frequence )
+    const QString& namePilot, const QString& acft, const QString& role, const int frequence )
 {
     ui->codePilotEdit->setText( idPilote );
     ui->namePilotEdit->setText( namePilot );
     ui->frequenceSpin->setValue( frequence );
-    if ( function == "B737Cdt" ) {
-        ui->B737Cdt->setChecked( true );
-    } else if ( function == "B727Cdt" ) {
-        ui->B727Cdt->setChecked( true );
-    } else if ( function == "B737FO" ) {
-        ui->B727FO->setChecked( true );
-    } else if ( function == "B727FO" ) {
-        ui->B727FO->setChecked( true );
-    } else
-        ui->B727FE->setChecked( true );
+    if (acft == "b727"){
+        if (role == "cpt")
+            ui->B727Cdt->setChecked(true);
+        else if (role == "fo")
+            ui->B727FO->setChecked(true);
+        else
+            ui->B727FE->setChecked(true);
+    }
+    else if (role == "cpt")
+        ui->B737Cdt->setChecked(true);
+    else
+        ui->B737FO->setChecked(true);
+
 }
