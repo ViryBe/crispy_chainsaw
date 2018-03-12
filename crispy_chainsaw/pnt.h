@@ -27,10 +27,14 @@ public:
      * @param p pnt structure, dump of the database */
     Pnt( PntDb p );
 
+    /** Allows conversion from Pnt to PntDb */
     explicit operator PntDb() const;
 
     /** Converts a role to string */
     static QString role2str( Pnt::Role );
+
+    /** Writes or update pnt into database */
+    void toDb();
 
 private:
     QString m_id;

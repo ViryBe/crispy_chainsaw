@@ -11,6 +11,8 @@ Pnt::Pnt(QString id, QString name, Role role, QString model,
     m_maxfreq = maxfreq;
 }
 
+/* Does not work properly yet (or I don't know how to make it work) since
+ * conversion needs a constructor in the 'to' type (this is the 'from' type). */
 Pnt::operator PntDb() const
 {
     PntDb pdb;
@@ -34,4 +36,16 @@ QString Pnt::role2str( Pnt::Role role )
         r = "fo";
     }
     return r;
+}
+
+void Pnt::toDb()
+{
+    PntDb pdb;
+    pdb.id = m_id;
+    pdb.name = m_name;
+    pdb.role = role2str(m_role);
+    pdb.acft_modelname = m_acftmodel;
+    pdb.flightnb = m_flightnb;
+    pdb.maxfreq = m_maxfreq;
+    _MANAGER.addPilot( pdb );
 }

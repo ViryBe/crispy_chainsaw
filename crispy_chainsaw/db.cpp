@@ -17,19 +17,22 @@ DbManager::DbManager( const QString& path )
     }
 }
 
-void DbManager::addPilot(
-    const QString& name, const QString& role, int freq_max )
+void DbManager::addPilot( PntDb pdb )
 {
     QSqlQuery query( m_db );
-    QString qustr = "INSERT INTO Pnt (name, role, freq_max) VALUES "
-                    "(:name, :role, :freq_max)";
+    QString qustr = "INSERT INTO Pnt "
+            "(id, name, role, acft_modelname, flightnb, maxfreq) VALUES "
+                    "(:id, :name, :role, :amod, :fnb, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPilot: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
-    query.bindValue( ":name", name );
-    query.bindValue( ":role", role );
-    query.bindValue( ":freq_max", freq_max );
+    query.bindValue( ":id", pdb.id );
+    query.bindValue( ":name", pdb.name );
+    query.bindValue( ":role", pdb.role );
+    query.bindValue( ":mf", pdb.maxfreq );
+    query.bindValue( ":amod", pdb.acft_modelname );
+    query.bindValue( ":fnb", pdb.flightnb );
     if ( query.exec() ) {
     } else {
         qDebug() << "exec addPilot: " << query.lastError()
@@ -191,7 +194,7 @@ PntDb DbManager::getPnt( QString pntid )
 {
     PntDb pnt;
     QSqlQuery query( m_db );
-    QString qustr = "SELECT id, name, role, freq_max, acft_modelname, flightnb "
+    QString qustr = "SELECT id, name, role, maxfreq, acft_modelname, flightnb "
                     "FROM Pnt WHERE id = :id";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getPnt: " << query.lastError()
@@ -323,7 +326,7 @@ AcftModelDb DbManager::getAcftModel( const QString& name )
     AcftModelDb acftmod;
     QSqlQuery query( m_db );
     QString qustr =
-        "SELECT (name, freq_max, crew, nop, ntot) FROM Acft_model WHERE "
+        "SELECT (name, maxfreq, crew, nop, ntot) FROM Acft_model WHERE "
         "name LIKE :n";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getAcftModel: " << query.lastError()

@@ -44,10 +44,8 @@ public:
     DbManager( const QString& s );
 
     /** Adds a pilot in the database
-     * @param i id of the pilot (two characters)
-     * @param r role of the pilot
-     * @param f max frequency of flights per day. Zero means no maximum */
-    void addPilot( const QString& i, const QString& r, const int f = 0 );
+     * @param p pilot structure */
+    void addPilot( PntDb p );
 
     /** Adds a workday in the database
      * @param d date of the day
