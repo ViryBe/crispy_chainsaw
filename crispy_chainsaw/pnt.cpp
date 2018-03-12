@@ -1,11 +1,11 @@
 #include "pnt.h"
 
-Pnt::Pnt(QString id, QString name, Role role, QString model,
+Pnt::Pnt(QString id, QString name, QString role, QString model,
     int flightnb, int maxfreq)
 {
     m_id = id;
     m_name = name;
-    m_role = role;
+    m_role = str2role( role );
     m_acftmodel = model;
     m_flightnb = flightnb;
     m_maxfreq = maxfreq;
@@ -34,6 +34,21 @@ QString Pnt::role2str( Pnt::Role role )
         r = "fe";
     } else if ( role == Role::fo ) {
         r = "fo";
+    }
+    return r;
+}
+
+Pnt::Role Pnt::str2role( QString role )
+{
+    Role r;
+    if (role == "cpt") {
+        r = Role::cpt;
+    } else if (role == "fo") {
+        r = Role::fo;
+    } else if (role == "fe") {
+        r = Role::fe;
+    } else {
+        throw "invalid role";
     }
     return r;
 }

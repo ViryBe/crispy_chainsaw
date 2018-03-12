@@ -21,7 +21,7 @@ public:
      * @param a aircraft model to which the pnt is assigned
      * @param f number of flights so far
      * @param m max frequency of flights per months (zero if no limit) */
-    Pnt( QString i, QString n, Role r, QString a, int f = 0, int m = 0 );
+    Pnt( QString i, QString n, QString r, QString a, int f = 0, int m = 0 );
 
     /** Creates a pnt from the data taken from the database
      * @param p pnt structure, dump of the database */
@@ -43,6 +43,9 @@ private:
     QString m_acftmodel;
     int m_flightnb;
     int m_maxfreq;
+
+    /** Converts a string to a role */
+    static Role str2role( QString s );
 };
 
 #endif     // PNT_H

@@ -1,6 +1,7 @@
 #ifndef NEWPILOT_H
 #define NEWPILOT_H
 
+#include "pnt.h"
 #include <QDialog>
 
 namespace Ui

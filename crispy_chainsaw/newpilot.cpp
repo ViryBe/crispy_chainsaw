@@ -1,6 +1,5 @@
 #include "newpilot.h"
 #include "ui_newpilot.h"
-#include "db.h"
 
 newPilot::newPilot( QWidget* parent )
     : QDialog( parent ), ui( new Ui::newPilot )
@@ -12,15 +11,15 @@ newPilot::~newPilot() { delete ui; }
 
 void newPilot::on_buttonBox_accepted()
 {
-    QString code = ui->codePilotEdit->text();
+    QString code = "", name = "", role = "", acftmodel = "";
+    code = ui->codePilotEdit->text();
     code.toStdString();
-    QString name = ui->namePilotEdit->text();
+    name = ui->namePilotEdit->text();
     name.toStdString();
-    QString role, acft;
     int frequence = 0;
     qDebug( code.toLatin1() + "\n" + name.toLatin1() );     // ok
     if ( ui->B727Cdt->isChecked() ) {
-        acft = "b727";
+        acftmodel = "b727";
         role = "Cdt";
     } else if ( ui->B737Cdt->isChecked() ) {
         function = "B737Cdt";
@@ -33,12 +32,7 @@ void newPilot::on_buttonBox_accepted()
     }
     frequence = ui->frequenceSpin->value();
 
-    PntDb pnt;
-    pnt.id = code;
-    pnt.name = name;
-    pnt.role = query.value( 2 ).toString();
-    pnt.maxfreq = query.value( 3 ).toInt();
-    pnt.acft_modelname = query.value( 4 ).toString();
+    Pnt pnt = Pnt(code, name, role, acftmodel);
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique
