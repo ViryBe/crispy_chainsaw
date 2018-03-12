@@ -8,12 +8,6 @@
 class Pnt
 {
 public:
-    /** Available roles in the company
-     * * captain
-     * * first office
-     * * flight engineer */
-    enum class Role { cpt, fo, fe };
-
     /** Creates a pnt
      * @param i identifier, two letters string,
      * @param n full name of the pnt
@@ -30,19 +24,25 @@ public:
     /** Allows conversion from Pnt to PntDb */
     explicit operator PntDb() const;
 
-    /** Converts a role to string */
-    static QString role2str( Pnt::Role );
-
     /** Writes or update pnt into database */
     void toDb();
 
 private:
+    /** Available roles in the company
+     * * captain
+     * * first office
+     * * flight engineer */
+    enum class Role { cpt, fo, fe };
+
     QString m_id;
     QString m_name;
     Role m_role;
     QString m_acftmodel;
     int m_flightnb;
     int m_maxfreq;
+
+    /** Converts a role to string */
+    static QString role2str( Pnt::Role );
 
     /** Converts a string to a role */
     static Role str2role( QString s );

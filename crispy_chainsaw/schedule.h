@@ -60,19 +60,19 @@ public:
      * @param db date of the beginning of the schedule
      * @param de date of the end of the schedule */
     ScheduleInstance(
-        const AcftModel& m, const Pnt::Role r, const QDate db, const QDate de );
+        const AcftModel& m, QString r, QDate db, QDate de );
 
     /** Creates a 15 days schedule defined by the dates of beginning.
      * @param m model of the aircraft concerned by this schedule
      * @param r role concerned by the schedule
      * @param db date of the beginning of the schedule */
-    ScheduleInstance( const AcftModel& m, const Pnt::Role r, const QDate db );
+    ScheduleInstance( const AcftModel& m, QString r, QDate db );
 
     /** Schedules the flights given as parameter
      * @param m model of aircraft
      * @param r role concerned
      * @param f flights to schedule */
-    ScheduleInstance( const Pnt::Role r, const std::vector<Flight>& f );
+    ScheduleInstance( QString r, const std::vector<Flight>& f );
     /** Completes an already existing schedule with new flights. Already
      * existing flights are not modified, an error is raised if the already
      * existing schedule is not consistent.
@@ -93,7 +93,7 @@ public:
 private:
     // Misc data
     AcftModel m_model;
-    Pnt::Role m_role;
+    QString m_role;
     QDate m_startdate;
 
     // Data for the csp solver

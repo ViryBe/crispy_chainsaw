@@ -11,7 +11,7 @@ newPilot::~newPilot() { delete ui; }
 
 void newPilot::on_buttonBox_accepted()
 {
-    QString code = "", name = "", role = "", acftmodel = "";
+    QString code = "", name = "", role = "", acftmodel = "", rolemodel = "";
     code = ui->codePilotEdit->text();
     code.toStdString();
     name = ui->namePilotEdit->text();
@@ -22,13 +22,13 @@ void newPilot::on_buttonBox_accepted()
         acftmodel = "b727";
         role = "Cdt";
     } else if ( ui->B737Cdt->isChecked() ) {
-        function = "B737Cdt";
+        rolemodel = "B737Cdt";
     } else if ( ui->B727FE->isChecked() ) {
-        function = "B727FE";
+        rolemodel = "B727FE";
     } else if ( ui->B727FO->isChecked() ) {
-        function = "B727FO";
+        rolemodel = "B727FO";
     } else if ( ui->B737FO->isChecked() ) {
-        function = "B737FO";
+        rolemodel = "B737FO";
     }
     frequence = ui->frequenceSpin->value();
 

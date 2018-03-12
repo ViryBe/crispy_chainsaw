@@ -1,7 +1,7 @@
 #include "schedule.h"
 
 ScheduleInstance::ScheduleInstance( const AcftModel& _model,
-    const Pnt::Role _role, const QDate dbeg, const QDate dend )
+    QString _role, QDate dbeg, QDate dend )
 {
 
     m_model = _model;
@@ -21,13 +21,13 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
         fl_st = (int) ( (i - 1) / m_model.getFreqMax() );
         today.addDays( ( i - 1 ) % m_model.getFreqMax() );
         if (_MANAGER.workProvided(today, m_model.getName(),
-                                  Pnt::role2str(m_role), fl_st)) {
+                                  m_role, fl_st)) {
             crewmem = { _MANAGER.getWorkingPnt(today, m_model.getName(),
-                        Pnt::role2str(m_role), fl_st) };
+                        m_role, fl_st) };
         }
         else {
             crewmem = _MANAGER.getIdlePnts(
-                        m_model.getName(), Pnt::role2str( m_role ), today );
+                        m_model.getName(), m_role, today );
         }
 
         domain[ i ].resize( crewmem.size() );
@@ -40,7 +40,7 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
 
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids =
-        _MANAGER.getPnts( m_model.getName(), Pnt::role2str( _role ) );
+        _MANAGER.getPnts( m_model.getName(), _role );
     for ( QString pid : pntids ) {
         flightnb.emplace(
             std::make_pair( pid, _MANAGER.getPnt( pid ).flightnb ) );
@@ -52,14 +52,13 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
 }
 
 ScheduleInstance::ScheduleInstance(
-    const AcftModel& _model, const Pnt::Role _role, const QDate dbeg )
+    const AcftModel& _model, QString _role, QDate dbeg )
 {
     ScheduleInstance( _model, _role, dbeg, dbeg.addDays( 15 ) );
 }
 
 int ScheduleInstance::bt_label( int i )
 {
-    qDebug() << "bt_label";
     consistent = false;
     auto cd_copy = current_domain[ i ];
     for ( unsigned int j = 0; j < cd_copy.size() && !consistent; j++ ) {
@@ -88,7 +87,6 @@ int ScheduleInstance::bt_label( int i )
 
 int ScheduleInstance::bt_unlabel( int i )
 {
-    qDebug() << "bt_unlabel";
     int h = i - 1;
     current_domain[ i ] = domain[ i ];
 
@@ -175,7 +173,7 @@ void ScheduleInstance::print()
 
 bool ScheduleInstance::test()
 {
-    Pnt::Role role = Pnt::Role::cpt;
+    QString role = "cpt";
     AcftModel mod = AcftModel( "a", 2, 2 );
 
     ScheduleInstance si = ScheduleInstance(
