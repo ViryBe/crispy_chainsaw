@@ -16,12 +16,12 @@ void newPilot::on_buttonBox_accepted()
     code.toStdString();
     QString name = ui->namePilotEdit->text();
     name.toStdString();
-    QString role;
+    QString role, acft;
     int frequence = 0;
     qDebug( code.toLatin1() + "\n" + name.toLatin1() );     // ok
     if ( ui->B727Cdt->isChecked() ) {
-        role = "b727";
-        Cdt";
+        acft = "b727";
+        role = "Cdt";
     } else if ( ui->B737Cdt->isChecked() ) {
         function = "B737Cdt";
     } else if ( ui->B727FE->isChecked() ) {
