@@ -34,6 +34,7 @@ private:
     QString m_id;
     QString m_name;
     Role m_role;
+    QString m_acftmodel;
     int m_flightnb;
     int m_maxfreq;
 };
