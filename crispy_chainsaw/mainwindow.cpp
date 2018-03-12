@@ -27,6 +27,7 @@ void MainWindow::on_pilotAdd_clicked()
     newPilot NewPilot;
     NewPilot.setModal( true );
     NewPilot.exec();
+    refresh_pilot_list();
 }
 
 

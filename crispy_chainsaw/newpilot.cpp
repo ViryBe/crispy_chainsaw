@@ -16,11 +16,12 @@ void newPilot::on_buttonBox_accepted()
     code.toStdString();
     QString name = ui->namePilotEdit->text();
     name.toStdString();
-    QString function;
+    QString role;
     int frequence = 0;
     qDebug( code.toLatin1() + "\n" + name.toLatin1() );     // ok
     if ( ui->B727Cdt->isChecked() ) {
-        function = "B727Cdt";
+        role = "b727";
+        Cdt";
     } else if ( ui->B737Cdt->isChecked() ) {
         function = "B737Cdt";
     } else if ( ui->B727FE->isChecked() ) {
@@ -31,6 +32,13 @@ void newPilot::on_buttonBox_accepted()
         function = "B737FO";
     }
     frequence = ui->frequenceSpin->value();
+
+    PntDb pnt;
+    pnt.id = code;
+    pnt.name = name;
+    pnt.role = query.value( 2 ).toString();
+    pnt.freq_max = query.value( 3 ).toInt();
+    pnt.acft_modelname = query.value( 4 ).toString();
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique
