@@ -27,11 +27,11 @@ void DbManager::addPilot( PntDb pdb )
         qDebug() << "prepare addPilot: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
-    query.bindValue( ":id", pdb.id );
-    query.bindValue( ":name", pdb.name );
-    query.bindValue( ":role", pdb.role );
+    query.bindValue( ":id", pdb.id.toLower() );
+    query.bindValue( ":name", pdb.name.toLower() );
+    query.bindValue( ":role", pdb.role.toLower() );
     query.bindValue( ":mf", pdb.maxfreq );
-    query.bindValue( ":amod", pdb.acft_modelname );
+    query.bindValue( ":amod", pdb.acft_modelname.toLower() );
     query.bindValue( ":fnb", pdb.flightnb );
     if ( query.exec() ) {
     } else {
@@ -52,8 +52,8 @@ void DbManager::addWorkday(
                  << "\nrequest:" << qustr;
     }
     query.bindValue( ":date", strdate );
-    query.bindValue( ":status", st );
-    query.bindValue( ":pntid", pntid );
+    query.bindValue( ":status", st.toLower() );
+    query.bindValue( ":pntid", pntid.toLower() );
     if ( query.exec() ) {
     } else {
         qDebug() << "exec addWorkday: " << query.lastError()
@@ -82,9 +82,9 @@ bool DbManager::workProvided( const QDate& date, const QString& model,
         qDebug() << "prepare workProvided: " << query.lastError();
     }
     query.bindValue( ":date", date.toString( DATEFMT ) );
-    query.bindValue( ":status", status );
-    query.bindValue( ":role", role );
-    query.bindValue( ":mod", model );
+    query.bindValue( ":status", status.toLower() );
+    query.bindValue( ":role", role.toLower() );
+    query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
         query.next();
         nrslt = query.value( 0 ).toInt();
@@ -109,9 +109,9 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
         qDebug() << "prepare getWorkingPnt: " << query.lastError();
     }
     query.bindValue( ":date", date.toString( DATEFMT ) );
-    query.bindValue( ":status", status );
-    query.bindValue( ":role", role );
-    query.bindValue( ":mod", model );
+    query.bindValue( ":status", status.toLower() );
+    query.bindValue( ":role", role.toLower() );
+    query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
         query.next();
         pntid = QString(query.value( 0 ).toString());
@@ -132,7 +132,7 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
         qDebug() << "prepare statusOfPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
-    query.bindValue( ":pntid", pntid );
+    query.bindValue( ":pntid", pntid.toLower() );
     query.bindValue( ":date", QString( date.toString( DATEFMT ) ) );
     if ( query.exec() ) {
         // Result should be unique
@@ -176,7 +176,7 @@ int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
     if ( !query.prepare(qustr) ) {
         qDebug() << "prepare cardInactiveDays: " << query.lastError();
     }
-    query.bindValue(":pntid", id);
+    query.bindValue(":pntid", id.toLower());
     query.bindValue(":db", begin.toString(DATEFMT));
     query.bindValue(":de", end.toString(DATEFMT));
     if (query.exec()) {
