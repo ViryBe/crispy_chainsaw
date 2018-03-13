@@ -182,7 +182,7 @@ int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
     if (query.exec()) {
         query.next();
         int nwd = query.value(0).toInt();
-        card = numberofdays = nwd;
+        card = numberofdays - nwd;
     }
     else {
         qDebug() << "exec cardInactiveDays: " << query.lastError();
