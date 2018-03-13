@@ -5,6 +5,8 @@
 #include <QtSql>
 #include <iostream>
 
+extern QString DATEFMT;
+
 /** Representation of the pnt in the database */
 struct PntDb
 {

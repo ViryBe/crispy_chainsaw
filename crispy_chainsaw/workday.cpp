@@ -1,6 +1,6 @@
 #include "workday.h"
 
-Workday::WorkDayStatus str2wds( const QString& s )
+Workday::WorkDayStatus Workday::str2wds( const QString& s )
 {
     Workday::WorkDayStatus res = Workday::WorkDayStatus::off;
     if ( s == "off" ) {
@@ -16,12 +16,12 @@ Workday::WorkDayStatus str2wds( const QString& s )
     } else if ( s == "v3" ) {
         res = Workday::WorkDayStatus::v3;
     } else {
-        qDebug( "invalid string not a workdaystatus" );
+        throw "invalid worday status";
     }
     return res;
 }
 
-QString wds2str( const Workday::WorkDayStatus& wds )
+QString Workday::wds2str( const Workday::WorkDayStatus& wds )
 {
     QString res = "";
     if ( wds == Workday::WorkDayStatus::off ) {
@@ -43,8 +43,14 @@ QString wds2str( const Workday::WorkDayStatus& wds )
     return res;
 }
 
-Workday::Workday( const QDate date, const Workday::WorkDayStatus status )
+Workday::Workday( const QString& pntid, const QDate& date,
+                  const QString& status ) :
+    m_pntid{pntid}, m_date{date}, m_status{str2wds(status)}
 {
-    m_date = date;
-    m_status = status;
+}
+
+Workday::Workday( const WorkdayDb& wdb ) :
+    m_pntid{wdb.pntid}, m_date{QDate::fromString(wdb.workdate, DATEFMT)},
+    m_status{str2wds(wdb.status)}
+{
 }
