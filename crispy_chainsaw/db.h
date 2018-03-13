@@ -4,6 +4,7 @@
 #include <QString>
 #include <QtSql>
 #include <iostream>
+#include <regex>
 
 extern QString DATEFMT;
 
@@ -134,6 +135,7 @@ public:
 
 private:
     QSqlDatabase m_db;
+    static QString capitalizeFirstLetters(QString s);
 };
 
 /** Main manager for all the program */
