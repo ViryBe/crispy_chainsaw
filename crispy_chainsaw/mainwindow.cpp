@@ -9,7 +9,7 @@ MainWindow::MainWindow( QWidget* parent )
     refresh_pilot_list();
     ui->pilotList->setCurrentRow(0);
     auto idPilot = ui->pilotList->currentItem()->text();
-    refresh_pilot_information(idPilot);
+    refresh_pilot_information(idPilot.toLower());
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -18,7 +18,7 @@ void MainWindow::refresh_pilot_list()
 {
     auto pntsIds = _MANAGER.getPnts();
     for (auto id:pntsIds){
-        ui->pilotList->addItem(id);
+        ui->pilotList->addItem(id.toUpper());
     }
 }
 
@@ -33,7 +33,7 @@ void MainWindow::on_pilotAdd_clicked()
 
 void MainWindow::on_pilotList_currentTextChanged( const QString& currentText )
 {
-    refresh_pilot_information(currentText);
+    refresh_pilot_information(currentText.toLower());
 }
 
 
@@ -52,11 +52,11 @@ void MainWindow::on_refreshButton_clicked()
 void MainWindow::on_pilotManage_clicked()
 {
     QString idPilot = ui->pilotList->currentItem()->text();
-    auto pilotInfo = _MANAGER.getPnt(idPilot);
+    auto pilotInfo = _MANAGER.getPnt(idPilot.toLower());
     QString namePilot = pilotInfo.name;
     QString role = pilotInfo.role;
     QString acft = pilotInfo.acft_modelname;
-    int frequence = pilotInfo.freq_max;
+    int frequence = pilotInfo.maxfreq;
 
     // Création de la nouvelle boite de dialogue pour modifier les infos
     newPilot NewPilot;
@@ -106,7 +106,7 @@ void MainWindow::refresh_pilot_information(const QString& idPilot)
  ui->dateFrom->setDate(date);
  ui->dateTo->setDate(date.addDays(15));
  refresh_pilot_days(date, date.addDays(15));
- ui->limitationVol->setValue(pilotInfo.freq_max);
+ ui->limitationVol->setValue(pilotInfo.maxfreq);
  if (pilotInfo.acft_modelname == "b727"){
      if (pilotInfo.role == "cpt")
          ui->B727Cdt->setChecked(true);
