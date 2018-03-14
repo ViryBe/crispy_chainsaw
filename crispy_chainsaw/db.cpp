@@ -17,12 +17,13 @@ DbManager::DbManager( const QString& path )
     }
 }
 
-void DbManager::addPilot( PntDb pdb )
+void DbManager::addPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
-    QString qustr = "INSERT INTO Pnt "
+    QString qustr =
+            "INSERT INTO Pnt "
             "(id, name, role, acft_modelname, flightnb, maxfreq) VALUES "
-                    "(:id, :name, :role, :amod, :fnb, :mf)";
+            "(:id, :name, :role, :amod, :fnb, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPilot: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -40,7 +41,7 @@ void DbManager::addPilot( PntDb pdb )
     }
 }
 
-void DbManager::updatePilot( PntDb pdb )
+void DbManager::updatePnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
     QString qustr = "UPDATE Pnt SET "
@@ -64,7 +65,7 @@ void DbManager::updatePilot( PntDb pdb )
     }
 }
 
-void DbManager::deletePilot( QString pid )
+void DbManager::deletePnt( QString pid )
 {
     QSqlQuery query( m_db );
     QString qustr = "DELETE FROM Pnt WHERE id = :id";
