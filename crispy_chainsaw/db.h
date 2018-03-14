@@ -4,6 +4,9 @@
 #include <QString>
 #include <QtSql>
 #include <iostream>
+#include <regex>
+
+extern QString DATEFMT;
 
 /** Representation of the pnt in the database */
 struct PntDb
@@ -132,6 +135,7 @@ public:
 
 private:
     QSqlDatabase m_db;
+    static QString capitalizeFirstLetters(QString s);
 };
 
 /** Main manager for all the program */

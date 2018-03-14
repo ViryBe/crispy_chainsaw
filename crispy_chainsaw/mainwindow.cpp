@@ -9,7 +9,11 @@ MainWindow::MainWindow( QWidget* parent )
     refresh_pilot_list();
     ui->pilotList->setCurrentRow( 0 );
     auto idPilot = ui->pilotList->currentItem()->text();
+<<<<<<< HEAD
     refresh_pilot_information( idPilot );
+=======
+    refresh_pilot_information(idPilot.toLower());
+>>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -17,8 +21,13 @@ MainWindow::~MainWindow() { delete ui; }
 void MainWindow::refresh_pilot_list()
 {
     auto pntsIds = _MANAGER.getPnts();
+<<<<<<< HEAD
     for ( auto id : pntsIds ) {
         ui->pilotList->addItem( id );
+=======
+    for (auto id:pntsIds){
+        ui->pilotList->addItem(id.toUpper());
+>>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
     }
 }
 
@@ -33,7 +42,11 @@ void MainWindow::on_pilotAdd_clicked()
 
 void MainWindow::on_pilotList_currentTextChanged( const QString& currentText )
 {
+<<<<<<< HEAD
     refresh_pilot_information( currentText );
+=======
+    refresh_pilot_information(currentText.toLower());
+>>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
 }
 
 
@@ -52,7 +65,11 @@ void MainWindow::on_refreshButton_clicked()
 void MainWindow::on_pilotManage_clicked()
 {
     QString idPilot = ui->pilotList->currentItem()->text();
+<<<<<<< HEAD
     auto pilotInfo = _MANAGER.getPnt( idPilot );
+=======
+    auto pilotInfo = _MANAGER.getPnt(idPilot.toLower());
+>>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
     QString namePilot = pilotInfo.name;
     QString role = pilotInfo.role;
     QString acft = pilotInfo.acft_modelname;
@@ -98,6 +115,7 @@ void MainWindow::refresh_pilot_days( QDate dateFrom, QDate dateTo )
 
 void MainWindow::refresh_pilot_information( const QString& idPilot )
 {
+<<<<<<< HEAD
     auto pilotInfo = _MANAGER.getPnt( idPilot );
     ui->codePilotBDD->setText( pilotInfo.id );
     ui->pilotNameBDD->setText( pilotInfo.name );
@@ -119,6 +137,30 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     else
         ui->B737FO->setChecked( true );
     qDebug() << pilotInfo.role << pilotInfo.acft_modelname;
+=======
+ auto pilotInfo = _MANAGER.getPnt(idPilot);
+ ui->codePilotBDD->setText(pilotInfo.id);
+ ui->pilotNameBDD->setText(pilotInfo.name);
+ //set the date from today to + 15 days
+ QDate date = date.currentDate();
+ ui->dateFrom->setDate(date);
+ ui->dateTo->setDate(date.addDays(15));
+ refresh_pilot_days(date, date.addDays(15));
+ ui->limitationVol->setValue(pilotInfo.maxfreq);
+ if (pilotInfo.acft_modelname == "b727"){
+     if (pilotInfo.role == "cpt")
+         ui->B727Cdt->setChecked(true);
+     else if (pilotInfo.role == "fo")
+         ui->B727FO->setChecked(true);
+     else
+         ui->B727FE->setChecked(true);
+ }
+ else if (pilotInfo.role == "cpt")
+     ui->B737Cdt->setChecked(true);
+ else
+     ui->B737FO->setChecked(true);
+ qDebug() << pilotInfo.role << pilotInfo.acft_modelname;
+>>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
 }
 
 void MainWindow::change_pilot_function() {}

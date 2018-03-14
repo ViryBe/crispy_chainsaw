@@ -11,24 +11,25 @@ newPilot::~newPilot() { delete ui; }
 
 void newPilot::on_buttonBox_accepted()
 {
-    QString code = "", name = "", role = "", acftmodel = "", rolemodel = "";
+    QString code = "", name = "", role = "", acftmodel = "";
     code = ui->codePilotEdit->text();
-    code.toStdString();
     name = ui->namePilotEdit->text();
-    name.toStdString();
     int frequence = 0;
-    qDebug( code.toLatin1() + "\n" + name.toLatin1() );     // ok
     if ( ui->B727Cdt->isChecked() ) {
         acftmodel = "b727";
-        role = "Cdt";
+        role = "cpt";
     } else if ( ui->B737Cdt->isChecked() ) {
-        rolemodel = "B737Cdt";
+        acftmodel = "b737";
+        role = "cpt";
     } else if ( ui->B727FE->isChecked() ) {
-        rolemodel = "B727FE";
+        acftmodel = "b727";
+        role = "fe";
     } else if ( ui->B727FO->isChecked() ) {
-        rolemodel = "B727FO";
+        acftmodel = "b727";
+        role = "fo";
     } else if ( ui->B737FO->isChecked() ) {
-        rolemodel = "B737FO";
+        acftmodel = "b737";
+        role = "fo";;
     }
     frequence = ui->frequenceSpin->value();
 

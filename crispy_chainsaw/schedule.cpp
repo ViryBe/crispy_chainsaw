@@ -8,7 +8,7 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
     m_role = _role;
 
     // Number of variables = freq * number of days
-    n = m_model.getFreqMax() * ( int ) dbeg.daysTo( dend );
+    n = m_model.getFreqMax() * static_cast<int>( dbeg.daysTo( dend ) );
 
     // Init domains
     domain.resize( n + 1 );
@@ -18,7 +18,7 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
     for ( int i = 1; i <= n; i++ ) {
         std::vector<QString> crewmem;
         // Retrieve available pilots
-        fl_st = (int) ( (i - 1) / m_model.getFreqMax() );
+        fl_st = (i - 1) / m_model.getFreqMax();
         today.addDays( ( i - 1 ) % m_model.getFreqMax() );
         if (_MANAGER.workProvided(today, m_model.getName(),
                                   m_role, fl_st)) {
@@ -61,7 +61,7 @@ int ScheduleInstance::bt_label( int i )
 {
     consistent = false;
     auto cd_copy = current_domain[ i ];
-    for ( unsigned int j = 0; j < cd_copy.size() && !consistent; j++ ) {
+    for ( int j = 0; j < cd_copy.size() && !consistent; j++ ) {
         // Update value vector and flights count
         try {
             // Remove previously planned flight
@@ -123,10 +123,10 @@ bool ScheduleInstance::check( int i, int j )
 {
     bool valid = true;
     if (     // If two flights happen the same day...
-        ( int ) ( ( i - 1 ) / m_model.getFreqMax() ) ==
-        ( int ) ( ( j - 1 ) / m_model.getFreqMax() ) ) {
+        ( ( i - 1 ) / m_model.getFreqMax() ) ==
+        ( ( j - 1 ) / m_model.getFreqMax() ) ) {
         // ...ensure pilots are different
-        valid &= v[ i ] != v[j];
+        valid &= v[ i ] != v[ j ];
     }
     return valid;
 }
@@ -136,7 +136,7 @@ void ScheduleInstance::updateDb( DbManager dbm )
     // For each variable, update related workday
     for ( int i = 1; i <= n; i++ ) {
         QDate date =
-            m_startdate.addDays( ( int ) ( ( i - 1 ) / m_model.getFreqMax() ) );
+            m_startdate.addDays( ( i - 1 ) / m_model.getFreqMax() );
         QString flightno = "v" + ( ( i - 1 ) % m_model.getFreqMax() + 1 );
         QString pntid = v[ i ];
 
@@ -162,7 +162,7 @@ void ScheduleInstance::print()
     int day;
     int flight_no;
     for ( int i = 1; i <= n; i++ ) {
-        day = 1 + ( int ) ( ( i - 1 ) / m_model.getFreqMax() );
+        day = 1 + ( i - 1 ) / m_model.getFreqMax();
         flight_no = ( i - 1 ) % m_model.getFreqMax();
 
         qDebug() << "day: " << day << ";"
