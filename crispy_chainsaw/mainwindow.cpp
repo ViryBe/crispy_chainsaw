@@ -135,7 +135,7 @@ void MainWindow::on_pilotDelete_clicked()
     auto reply = QMessageBox::question(this, "Suppression pilote", "Etes vous surs de vouloir supprimer ce pilote ?", QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes){
         qDebug() << ui->pilotList->currentItem()->text();
-        _MANAGER.deletePilot(ui->pilotList->currentItem()->text());
+        _MANAGER.deletePnt(ui->pilotList->currentItem()->text());
         refresh_pilot_list();
     }
 }
