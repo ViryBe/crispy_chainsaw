@@ -1,8 +1,8 @@
 #include "newpilot.h"
 #include "ui_newpilot.h"
 
-newPilot::newPilot( QWidget* parent )
-    : QDialog( parent ), ui( new Ui::newPilot )
+newPilot::newPilot( PntDb pilotInfo, QWidget* parent )
+    : QDialog( parent ), ui( new Ui::newPilot ), pilot(pilotInfo)
 {
     ui->setupUi( this );
 }
@@ -14,7 +14,7 @@ void newPilot::on_buttonBox_accepted()
     QString code = "", name = "", role = "", acftmodel = "";
     code = ui->codePilotEdit->text();
     name = ui->namePilotEdit->text();
-    int frequence = 0;
+    int frequence = 0, days;
     if ( ui->B727Cdt->isChecked() ) {
         acftmodel = "b727";
         role = "cpt";
@@ -33,16 +33,22 @@ void newPilot::on_buttonBox_accepted()
     }
     frequence = ui->frequenceSpin->value();
 
-    Pnt pnt = Pnt(code, name, role, acftmodel);
+    Pnt pnt = Pnt(code, name, role, acftmodel, frequence);
+    pnt.toDb();
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique
     // open new pilot added
 }
 
-void newPilot::updateInformation( const QString& idPilote,
-    const QString& namePilot, const QString& acft, const QString& role, const int frequence )
+void newPilot::updateInformation( )
 {
+    QString idPilote = pilot.id;
+    QString namePilot = pilot.name;
+    QString role = pilot.role;
+    QString acft = pilot.acft_modelname;
+    int frequence = pilot.maxfreq;
+
     ui->codePilotEdit->setText( idPilote );
     ui->namePilotEdit->setText( namePilot );
     ui->frequenceSpin->setValue( frequence );
@@ -60,3 +66,4 @@ void newPilot::updateInformation( const QString& idPilote,
         ui->B737FO->setChecked(true);
 
 }
+

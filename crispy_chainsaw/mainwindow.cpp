@@ -5,35 +5,28 @@ MainWindow::MainWindow( QWidget* parent )
     : QMainWindow( parent ), ui( new Ui::MainWindow )
 {
     ui->setupUi( this );
-    ui->pilotList->clear();
     refresh_pilot_list();
-    ui->pilotList->setCurrentRow( 0 );
     auto idPilot = ui->pilotList->currentItem()->text();
-<<<<<<< HEAD
-    refresh_pilot_information( idPilot );
-=======
-    refresh_pilot_information(idPilot.toLower());
->>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
+    refresh_pilot_information(idPilot);
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::refresh_pilot_list()
 {
-    auto pntsIds = _MANAGER.getPnts();
-<<<<<<< HEAD
-    for ( auto id : pntsIds ) {
-        ui->pilotList->addItem( id );
-=======
+    ui->pilotList->clear();
+    pntsIds = _MANAGER.getPnts();
     for (auto id:pntsIds){
-        ui->pilotList->addItem(id.toUpper());
->>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
+        ui->pilotList->addItem(id);
     }
+    ui->pilotList->setCurrentRow(0);
+
 }
 
 void MainWindow::on_pilotAdd_clicked()
 {
-    newPilot NewPilot;
+    PntDb pilot;
+    newPilot NewPilot(pilot);
     NewPilot.setModal( true );
     NewPilot.exec();
     refresh_pilot_list();
@@ -42,11 +35,7 @@ void MainWindow::on_pilotAdd_clicked()
 
 void MainWindow::on_pilotList_currentTextChanged( const QString& currentText )
 {
-<<<<<<< HEAD
-    refresh_pilot_information( currentText );
-=======
-    refresh_pilot_information(currentText.toLower());
->>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
+    refresh_pilot_information(currentText);
 }
 
 
@@ -65,20 +54,16 @@ void MainWindow::on_refreshButton_clicked()
 void MainWindow::on_pilotManage_clicked()
 {
     QString idPilot = ui->pilotList->currentItem()->text();
-<<<<<<< HEAD
-    auto pilotInfo = _MANAGER.getPnt( idPilot );
-=======
-    auto pilotInfo = _MANAGER.getPnt(idPilot.toLower());
->>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
-    QString namePilot = pilotInfo.name;
-    QString role = pilotInfo.role;
-    QString acft = pilotInfo.acft_modelname;
-    int frequence = pilotInfo.maxfreq;
+    auto pilotInfo = _MANAGER.getPnt(idPilot);
+//    QString namePilot = pilotInfo.name;
+//    QString role = pilotInfo.role;
+//    QString acft = pilotInfo.acft_modelname;
+//    int frequence = pilotInfo.maxfreq;
 
     // Création de la nouvelle boite de dialogue pour modifier les infos
-    newPilot NewPilot;
+    newPilot NewPilot(pilotInfo);
     NewPilot.setModal( true );
-    NewPilot.updateInformation( idPilot, namePilot, acft, role, frequence );
+    NewPilot.updateInformation();
     NewPilot.exec();
 
     refresh_pilot_information( idPilot );
@@ -159,8 +144,6 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
      ui->B737Cdt->setChecked(true);
  else
      ui->B737FO->setChecked(true);
- qDebug() << pilotInfo.role << pilotInfo.acft_modelname;
->>>>>>> 1da2a769be8544c6d8698e204035cd1a5db937de
 }
 
 void MainWindow::change_pilot_function() {}
