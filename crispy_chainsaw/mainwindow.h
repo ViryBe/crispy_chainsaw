@@ -9,6 +9,7 @@
 #include "newplane.h"
 #include "ui_mainwindow.h"
 #include "db.h"
+#include <QMessageBox>
 
 namespace Ui
 {
