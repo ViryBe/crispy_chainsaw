@@ -3,7 +3,7 @@
 QString DATEFMT = "yyyy-MM-dd";
 
 DbManager _MANAGER = DbManager(
-    "/home/gabriel/workspace/vcs/crispy_chainsaw/dummydata/dummy.db" );
+    "C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummydb.sql" );
 
 DbManager::DbManager( const QString& path )
 {

@@ -21,11 +21,6 @@ int main( int argc, char* argv[] )
         qDebug() << "database not tested, file path resolution failure";
     }
     */
-    QString fpath = "C:/Users/clrco/Documents/Projets/"
-                    "crispy_chainsaw/dummydata/dummy.db";
-    DbManager db = DbManager( fpath );
-    qDebug() << ( db.test() ? "database tested succesfully"
-                            : "database testing failure" );
     QApplication a( argc, argv );
     MainWindow w;
     w.show();
