@@ -55,12 +55,7 @@ Pnt::Role Pnt::str2role( QString role )
 
 void Pnt::toDb()
 {
-    PntDb pdb;
-    pdb.id = m_id;
-    pdb.name = m_name;
-    pdb.role = role2str(m_role);
-    pdb.acft_modelname = m_acftmodel;
-    pdb.flightnb = m_flightnb;
-    pdb.maxfreq = m_maxfreq;
+    //PntDb pdb(*this);
+    PntDb pdb = static_cast<PntDb>(*this);
     _MANAGER.addPilot( pdb );
 }

@@ -10,6 +10,7 @@
 #include "ui_mainwindow.h"
 #include "db.h"
 #include <QMessageBox>
+#include <vector>
 
 namespace Ui
 {
@@ -44,6 +45,7 @@ private slots:
 
 private:
     Ui::MainWindow* ui;
+    std::vector <QString> pntsIds;
     void refresh_pilot_information(const QString& idPilot);
     void refresh_pilot_days(QDate dateFrom, QDate dateTo);
     void refresh_pilot_list();

@@ -50,6 +50,14 @@ public:
      * @param p pilot structure */
     void addPilot( PntDb p );
 
+    /** Updates pilot having same id as the PntDb structure
+     * @param p pnt data to update, the id must be in the database */
+    void updatePilot( PntDb p );
+
+    /** Deletes pilot with id i
+     * @param i id of the pilot to be deleted */
+    void deletePilot( QString i );
+
     /** Adds a workday in the database
      * @param d date of the day
      * @param s status of the day (e.g. off, v1, etc.)
