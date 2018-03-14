@@ -40,6 +40,42 @@ void DbManager::addPilot( PntDb pdb )
     }
 }
 
+void DbManager::updatePilot( PntDb pdb )
+{
+    QSqlQuery query( m_db );
+    QString qustr = "UPDATE Pnt SET "
+                    "(name, role, acft_modelname, flightnb, maxfreq) = "
+                    "(:name, :role, :amod, :fnb, :mf) WHERE "
+            "id = :id";
+    if ( !query.prepare( qustr ) ) {
+        qDebug() << "prepare addPilot: " << query.lastError()
+                 << "\nrequest:" << qustr;
+    }
+    query.bindValue( ":id", pdb.id.toLower() );
+    query.bindValue( ":name", pdb.name.toLower() );
+    query.bindValue( ":role", pdb.role.toLower() );
+    query.bindValue( ":mf", pdb.maxfreq );
+    query.bindValue( ":amod", pdb.acft_modelname.toLower() );
+    query.bindValue( ":fnb", pdb.flightnb );
+    if ( query.exec() ) {
+    } else {
+        qDebug() << "exec addPilot: " << query.lastError()
+                 << "\nrequest:" << qustr;
+    }
+}
+
+void DbManager::deletePilot( QString pid )
+{
+    QSqlQuery query( m_db );
+    QString qustr = "DELETE FROM Pnt WHERE id = :id";
+    if ( !query.prepare( qustr ) ) {
+        qDebug() << query.lastError();
+    }
+    query.bindValue(":id", pid.toLower());
+    if ( query.exec() ) {
+    } else qDebug() << query.lastError();
+}
+
 void DbManager::addWorkday(
     const QDate& date, const QString& st, const QString& pntid )
 {
