@@ -34,7 +34,7 @@ void newPilot::on_buttonBox_accepted()
     frequence = ui->frequenceSpin->value();
 
     PntDb pnt = PntDb{code, name, role, acftmodel, frequence};
-    _MANAGER.addPilot(pnt);
+    _MANAGER.addPnt(pnt);
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique
