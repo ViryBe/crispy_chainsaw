@@ -44,7 +44,7 @@ class DbManager
 public:
     /** Creates a dbmanager managing a sqlite file
      * @param s sqlite filepath */
-    DbManager( const QString& s );
+    DbManager( const QString& s);
 
     /** Adds a pilot in the database
      * @param p pilot structure */
@@ -147,5 +147,5 @@ private:
 };
 
 /** Main manager for all the program */
-extern DbManager _MANAGER;
+//extern DbManager _MANAGER;
 #endif

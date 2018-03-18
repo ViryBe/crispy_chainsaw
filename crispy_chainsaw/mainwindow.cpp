@@ -1,5 +1,9 @@
 #include "mainwindow.h"
 
+//DbManager MainWindow::_MANAGER = DbManager(
+//            QCoreApplication::applicationDirPath() + "../dummydata/dummy.db" );
+
+DbManager MainWindow::_MANAGER = DbManager("dummy.db");
 
 MainWindow::MainWindow( QWidget* parent )
     : QMainWindow( parent ), ui( new Ui::MainWindow )

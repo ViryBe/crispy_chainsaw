@@ -24,6 +24,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow( QWidget* parent = 0 );
     ~MainWindow();
+    static DbManager _MANAGER;
 
 private slots:
     //pilot tab

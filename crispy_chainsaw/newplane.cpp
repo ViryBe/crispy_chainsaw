@@ -1,5 +1,4 @@
 #include "newplane.h"
-#include "ui_newplane.h"
 
 newPlane::newPlane( QWidget* parent )
     : QDialog( parent ), ui( new Ui::newPlane )

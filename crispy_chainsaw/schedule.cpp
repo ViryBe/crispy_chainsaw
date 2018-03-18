@@ -20,13 +20,13 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
         // Retrieve available pilots
         fl_st = (i - 1) / m_model.getFreqMax();
         today.addDays( ( i - 1 ) % m_model.getFreqMax() );
-        if (_MANAGER.workProvided(today, m_model.getName(),
+        if (MainWindow::_MANAGER.workProvided(today, m_model.getName(),
                                   m_role, fl_st)) {
-            crewmem = { _MANAGER.getWorkingPnt(today, m_model.getName(),
+            crewmem = { MainWindow::_MANAGER.getWorkingPnt(today, m_model.getName(),
                         m_role, fl_st) };
         }
         else {
-            crewmem = _MANAGER.getIdlePnts(
+            crewmem = MainWindow::_MANAGER.getIdlePnts(
                         m_model.getName(), m_role, today );
         }
 
@@ -40,10 +40,10 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
 
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids =
-        _MANAGER.getPnts( m_model.getName(), _role );
+        MainWindow::_MANAGER.getPnts( m_model.getName(), _role );
     for ( QString pid : pntids ) {
         flightnb.emplace(
-            std::make_pair( pid, _MANAGER.getPnt( pid ).flightnb ) );
+            std::make_pair( pid, MainWindow::_MANAGER.getPnt( pid ).flightnb ) );
     }
     sort_domains();
 

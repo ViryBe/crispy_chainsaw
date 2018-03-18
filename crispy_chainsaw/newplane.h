@@ -2,6 +2,8 @@
 #define NEWPLANE_H
 
 #include <QDialog>
+#include "mainwindow.h"
+#include "ui_newplane.h"
 
 namespace Ui
 {

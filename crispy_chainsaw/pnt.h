@@ -4,6 +4,7 @@
 #include "db.h"
 #include "workday.h"
 #include <QString>
+#include "mainwindow.h"
 
 class Pnt
 {

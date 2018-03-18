@@ -4,6 +4,8 @@
 #include "pnt.h"
 #include <QDialog>
 #include "db.h"
+#include "mainwindow.h"
+#include "ui_newpilot.h"
 
 namespace Ui
 {

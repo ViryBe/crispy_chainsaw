@@ -57,5 +57,5 @@ void Pnt::toDb()
 {
     //PntDb pdb(*this);
     PntDb pdb = static_cast<PntDb>(*this);
-    _MANAGER.addPilot( pdb );
+    MainWindow::_MANAGER.addPnt( pdb );
 }

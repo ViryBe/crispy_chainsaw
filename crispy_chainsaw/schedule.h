@@ -7,6 +7,7 @@
 #include <QDate>
 #include <algorithm>
 #include <vector>
+#include "mainwindow.h"
 
 void loadSchedule(
     QDate = QDate::currentDate(), QDate = QDate::currentDate().addDays( 15 ) );

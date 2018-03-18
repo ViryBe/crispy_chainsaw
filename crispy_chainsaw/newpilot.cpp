@@ -1,5 +1,4 @@
 #include "newpilot.h"
-#include "ui_newpilot.h"
 
 newPilot::newPilot( PntDb pilotInfo, QWidget* parent )
     : QDialog( parent ), ui( new Ui::newPilot ), pilot(pilotInfo)
@@ -34,7 +33,7 @@ void newPilot::on_buttonBox_accepted()
     frequence = ui->frequenceSpin->value();
 
     PntDb pnt = PntDb{code, name, role, acftmodel, frequence};
-    _MANAGER.addPilot(pnt);
+    MainWindow::_MANAGER.addPnt(pnt);
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique
