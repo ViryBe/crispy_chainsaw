@@ -3,7 +3,8 @@
 QString DATEFMT = "yyyy-MM-dd";
 
 DbManager _MANAGER = DbManager(
-    "C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummydb.sql" );
+            "/home/gabriel/workspace/vcs/crispy_chainsaw/dummydata/dummy.db");
+    //"C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummydb.sql" );
 
 DbManager::DbManager( const QString& path )
 {
@@ -70,11 +71,11 @@ void DbManager::deletePnt( QString pid )
     QSqlQuery query( m_db );
     QString qustr = "DELETE FROM Pnt WHERE id = :id";
     if ( !query.prepare( qustr ) ) {
-        qDebug() << query.lastError();
+        qDebug() << "prepare deletePnt: " << query.lastError();
     }
     query.bindValue(":id", pid.toLower());
     if ( query.exec() ) {
-    } else qDebug() << query.lastError();
+    } else qDebug() << "exec deletePnt: " << query.lastError();
 }
 
 void DbManager::addWorkday(
@@ -123,10 +124,10 @@ bool DbManager::workProvided( const QDate& date, const QString& model,
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
-        query.next();
+        query.first();
         nrslt = query.value( 0 ).toInt();
     } else {
-        qDebug() << query.lastError();
+        qDebug() << "exec workProvided: " << query.lastError();
     }
     return nrslt > 0;
 }
@@ -150,10 +151,10 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
-        query.next();
+        query.first();
         pntid = QString(query.value( 0 ).toString());
     } else {
-        qDebug() << query.lastError();
+        qDebug() << "exec getWorkingPnt: " << query.lastError();
     }
     return pntid;
 }
@@ -173,9 +174,8 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     query.bindValue( ":date", QString( date.toString( DATEFMT ) ) );
     if ( query.exec() ) {
         // Result should be unique
-        while ( query.next() ) {
-            res = query.value( 0 ).toString();
-        }
+        query.first();
+        res = query.value( 0 ).toString();
     } else {
         qDebug() << "exec statusOfPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -217,7 +217,7 @@ int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
     query.bindValue(":db", begin.toString(DATEFMT));
     query.bindValue(":de", end.toString(DATEFMT));
     if (query.exec()) {
-        query.next();
+        query.first();
         int nwd = query.value(0).toInt();
         card = numberofdays - nwd;
     }
@@ -237,9 +237,9 @@ PntDb DbManager::getPnt( QString pntid )
         qDebug() << "prepare getPnt: " << query.lastError()
                  << "\n request: " << qustr;
     }
-    query.bindValue( ":id", pntid );
+    query.bindValue( ":id", pntid.toLower() );
     if ( query.exec() ) {
-        query.next();
+        query.first();
         pnt.id = query.value( 0 ).toString().toUpper();
         pnt.name = capitalizeFirstLetters(query.value(1).toString());
         pnt.role = query.value( 2 ).toString().toLower();
@@ -371,7 +371,7 @@ AcftModelDb DbManager::getAcftModel( const QString& name )
     }
     query.bindValue( ":n", name );
     if ( query.exec() ) {
-        query.next();
+        query.first();
 
         acftmod.name = query.value( 0 ).toString();
         acftmod.maxfreq = query.value( 1 ).toInt();
