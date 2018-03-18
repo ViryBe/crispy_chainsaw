@@ -46,11 +46,7 @@ public:
      * @param s sqlite filepath */
     DbManager( const QString& s );
 
-    /** Adds a pilot in the database
-     * @param p pilot structure */
-    void addPnt( PntDb p );
-
-    /** Updates pilot having same id as the PntDb structure
+    /** Updates (edit or create) pilot having same id as the PntDb structure
      * @param p pnt data to update, the id must be in the database */
     void updatePnt( PntDb p );
 
@@ -144,6 +140,13 @@ public:
 private:
     QSqlDatabase m_db;
     static QString capitalizeFirstLetters(QString s);
+
+    /** Adds a pilot in the database
+     * @param p pilot structure */
+    void addPnt( PntDb p );
+
+    void modifyPnt( PntDb p );
+
 };
 
 /** Main manager for all the program */

@@ -2,9 +2,6 @@
 
 QString DATEFMT = "yyyy-MM-dd";
 
-// DbManager _MANAGER = DbManager("./dummy.db");
-//"C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummydb.sql" );
-
 DbManager::DbManager( const QString& path )
 {
     m_db = QSqlDatabase::addDatabase( "QSQLITE" );
@@ -25,7 +22,7 @@ void DbManager::addPnt( PntDb pdb )
         "(id, name, role, acft_modelname, flightnb, maxfreq) VALUES "
         "(:id, :name, :role, :amod, :fnb, :mf)";
     if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare addPilot: " << query.lastError()
+        qDebug() << "prepare addPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
     query.bindValue( ":id", pdb.id.toLower() );
@@ -36,12 +33,12 @@ void DbManager::addPnt( PntDb pdb )
     query.bindValue( ":fnb", pdb.flightnb );
     if ( query.exec() ) {
     } else {
-        qDebug() << "exec addPilot: " << query.lastError()
+        qDebug() << "exec addPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
 }
 
-void DbManager::updatePnt( PntDb pdb )
+void DbManager::modifyPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
     QString qustr = "UPDATE Pnt SET "
@@ -49,7 +46,7 @@ void DbManager::updatePnt( PntDb pdb )
                     "(:name, :role, :amod, :fnb, :mf) WHERE "
                     "id = :id";
     if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare addPilot: " << query.lastError()
+        qDebug() << "prepare modify: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
     query.bindValue( ":id", pdb.id.toLower() );
@@ -60,8 +57,28 @@ void DbManager::updatePnt( PntDb pdb )
     query.bindValue( ":fnb", pdb.flightnb );
     if ( query.exec() ) {
     } else {
-        qDebug() << "exec addPilot: " << query.lastError()
+        qDebug() << "exec modifyPilot: " << query.lastError()
                  << "\nrequest:" << qustr;
+    }
+}
+
+void DbManager::updatePnt( PntDb pdb )
+{
+    QSqlQuery query( m_db );
+    QString qustr = "SELECT COUNT(id) FROM Pnt WHERE id = :id";
+    if (!query.prepare( qustr ) ) {
+        qDebug() << "prepare updatePnt: " << query.lastError();
+    }
+    query.bindValue(":id", pdb.id.toLower());
+    if ( query.exec() ) {
+        query.first();
+        if (query.value(0).toInt() == 0) {
+            addPnt( pdb );
+        } else {
+            modifyPnt( pdb );
+        }
+    } else {
+        qDebug() << "exec updatePnt: " << query.lastError();
     }
 }
 
