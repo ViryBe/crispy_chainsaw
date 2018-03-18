@@ -1,5 +1,14 @@
 #include "schedule.h"
 
+const int _MAXFLIGHTWEEK = 55;
+const int _MAXFLIGHTMONTH = 100;
+const int _MAXFLIGHTYEAR = 900;
+const int _MAXSERVWEEK = 60;
+const int _MAXSERVMONTH = 190;
+const int _MINRESTSERV8 = 9;
+const int _MINRESTSERV89 = 10;
+const int _MINRESTSERV9 = 11;
+
 ScheduleInstance::ScheduleInstance( const AcftModelDb& _model,
     QString _role, QDate dbeg, QDate dend )
 {
