@@ -16,7 +16,7 @@ void createSchedule( QDate, QDate );
 struct Flight
 {
     QDate date;          ///< Date of the flight
-    AcftModel model;     ///< Model of aircraft concerned
+    AcftModelDb model;     ///< Model of aircraft concerned
     int position;        ///< Position of flight during day (1st, 2nd, etc.)
 };
 
@@ -60,19 +60,20 @@ public:
      * @param db date of the beginning of the schedule
      * @param de date of the end of the schedule */
     ScheduleInstance(
-        const AcftModel& m, QString r, QDate db, QDate de );
+        const AcftModelDb& m, QString r, QDate db, QDate de );
 
     /** Creates a 15 days schedule defined by the dates of beginning.
      * @param m model of the aircraft concerned by this schedule
      * @param r role concerned by the schedule
      * @param db date of the beginning of the schedule */
-    ScheduleInstance( const AcftModel& m, QString r, QDate db );
+    ScheduleInstance( const AcftModelDb& m, QString r, QDate db );
 
     /** Schedules the flights given as parameter
      * @param m model of aircraft
      * @param r role concerned
      * @param f flights to schedule */
     ScheduleInstance( QString r, const std::vector<Flight>& f );
+
     /** Completes an already existing schedule with new flights. Already
      * existing flights are not modified, an error is raised if the already
      * existing schedule is not consistent.
@@ -92,7 +93,7 @@ public:
 
 private:
     // Misc data
-    AcftModel m_model;
+    AcftModelDb m_model;
     QString m_role;
     QDate m_startdate;
 

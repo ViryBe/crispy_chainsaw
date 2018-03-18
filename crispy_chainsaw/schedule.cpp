@@ -1,6 +1,6 @@
 #include "schedule.h"
 
-ScheduleInstance::ScheduleInstance( const AcftModel& _model,
+ScheduleInstance::ScheduleInstance( const AcftModelDb& _model,
     QString _role, QDate dbeg, QDate dend )
 {
 
@@ -8,7 +8,7 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
     m_role = _role;
 
     // Number of variables = freq * number of days
-    n = m_model.getFreqMax() * static_cast<int>( dbeg.daysTo( dend ) );
+    n = m_model.maxfreq * static_cast<int>( dbeg.daysTo( dend ) );
 
     // Init domains
     domain.resize( n + 1 );
@@ -18,16 +18,16 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
     for ( int i = 1; i <= n; i++ ) {
         std::vector<QString> crewmem;
         // Retrieve available pilots
-        fl_st = (i - 1) / m_model.getFreqMax();
-        today.addDays( ( i - 1 ) % m_model.getFreqMax() );
-        if (_MANAGER.workProvided(today, m_model.getName(),
+        fl_st = (i - 1) / m_model.maxfreq;
+        today.addDays( ( i - 1 ) % m_model.maxfreq );
+        if (_MANAGER.workProvided(today, m_model.name,
                                   m_role, fl_st)) {
-            crewmem = { _MANAGER.getWorkingPnt(today, m_model.getName(),
+            crewmem = { _MANAGER.getWorkingPnt(today, m_model.name,
                         m_role, fl_st) };
         }
         else {
             crewmem = _MANAGER.getIdlePnts(
-                        m_model.getName(), m_role, today );
+                        m_model.name, m_role, today );
         }
 
         domain[ i ].resize( crewmem.size() );
@@ -40,7 +40,7 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
 
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids =
-        _MANAGER.getPnts( m_model.getName(), _role );
+        _MANAGER.getPnts( m_model.name, _role );
     for ( QString pid : pntids ) {
         flightnb.emplace(
             std::make_pair( pid, _MANAGER.getPnt( pid ).flightnb ) );
@@ -52,7 +52,7 @@ ScheduleInstance::ScheduleInstance( const AcftModel& _model,
 }
 
 ScheduleInstance::ScheduleInstance(
-    const AcftModel& _model, QString _role, QDate dbeg )
+    const AcftModelDb& _model, QString _role, QDate dbeg )
 {
     ScheduleInstance( _model, _role, dbeg, dbeg.addDays( 15 ) );
 }
@@ -123,8 +123,8 @@ bool ScheduleInstance::check( int i, int j )
 {
     bool valid = true;
     if (     // If two flights happen the same day...
-        ( ( i - 1 ) / m_model.getFreqMax() ) ==
-        ( ( j - 1 ) / m_model.getFreqMax() ) ) {
+        ( ( i - 1 ) / m_model.maxfreq ) ==
+        ( ( j - 1 ) / m_model.maxfreq ) ) {
         // ...ensure pilots are different
         valid &= v[ i ] != v[ j ];
     }
@@ -136,8 +136,8 @@ void ScheduleInstance::updateDb( DbManager dbm )
     // For each variable, update related workday
     for ( int i = 1; i <= n; i++ ) {
         QDate date =
-            m_startdate.addDays( ( i - 1 ) / m_model.getFreqMax() );
-        QString flightno = "v" + ( ( i - 1 ) % m_model.getFreqMax() + 1 );
+            m_startdate.addDays( ( i - 1 ) / m_model.maxfreq );
+        QString flightno = "v" + ( ( i - 1 ) % m_model.maxfreq + 1 );
         QString pntid = v[ i ];
 
         dbm.addWorkday( date, flightno, pntid );
@@ -162,8 +162,8 @@ void ScheduleInstance::print()
     int day;
     int flight_no;
     for ( int i = 1; i <= n; i++ ) {
-        day = 1 + ( i - 1 ) / m_model.getFreqMax();
-        flight_no = ( i - 1 ) % m_model.getFreqMax();
+        day = 1 + ( i - 1 ) / m_model.maxfreq;
+        flight_no = ( i - 1 ) % m_model.maxfreq;
 
         qDebug() << "day: " << day << ";"
                  << "flight number: " << flight_no << ";"
@@ -174,7 +174,10 @@ void ScheduleInstance::print()
 bool ScheduleInstance::test()
 {
     QString role = "cpt";
-    AcftModel mod = AcftModel( "a", 2, 2 );
+    AcftModelDb mod;
+    mod.name = "a";
+    mod.maxfreq = 2;
+    mod.crew = 2;
 
     ScheduleInstance si = ScheduleInstance(
         mod, role, QDate::currentDate(), QDate::currentDate().addDays( 2 ) );
