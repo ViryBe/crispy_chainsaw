@@ -59,14 +59,14 @@ public:
      * @param r role concerned by the schedule
      * @param db date of the beginning of the schedule
      * @param de date of the end of the schedule */
-    ScheduleInstance(
-        const AcftModelDb& m, QString r, QDate db, QDate de );
+    ScheduleInstance( const AcftModelDb& m, QString r, QDate db, QDate de );
 
     /** Creates a 15 days schedule defined by the dates of beginning.
      * @param m model of the aircraft concerned by this schedule
      * @param r role concerned by the schedule
      * @param db date of the beginning of the schedule */
-    ScheduleInstance( const AcftModelDb& m, QString r, QDate db );
+    ScheduleInstance( const AcftModelDb& m, QString r,
+                      QDate db = QDate::currentDate() );
 
     /** Schedules the flights given as parameter
      * @param m model of aircraft
