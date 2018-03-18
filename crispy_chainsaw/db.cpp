@@ -2,9 +2,8 @@
 
 QString DATEFMT = "yyyy-MM-dd";
 
-DbManager _MANAGER = DbManager(
-            "/home/gabriel/workspace/vcs/crispy_chainsaw/dummydata/dummy.db");
-    //"C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummydb.sql" );
+// DbManager _MANAGER = DbManager("./dummy.db");
+//"C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummydb.sql" );
 
 DbManager::DbManager( const QString& path )
 {
@@ -22,9 +21,9 @@ void DbManager::addPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
     QString qustr =
-            "INSERT INTO Pnt "
-            "(id, name, role, acft_modelname, flightnb, maxfreq) VALUES "
-            "(:id, :name, :role, :amod, :fnb, :mf)";
+        "INSERT INTO Pnt "
+        "(id, name, role, acft_modelname, flightnb, maxfreq) VALUES "
+        "(:id, :name, :role, :amod, :fnb, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPilot: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -48,7 +47,7 @@ void DbManager::updatePnt( PntDb pdb )
     QString qustr = "UPDATE Pnt SET "
                     "(name, role, acft_modelname, flightnb, maxfreq) = "
                     "(:name, :role, :amod, :fnb, :mf) WHERE "
-            "id = :id";
+                    "id = :id";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPilot: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -73,9 +72,10 @@ void DbManager::deletePnt( QString pid )
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare deletePnt: " << query.lastError();
     }
-    query.bindValue(":id", pid.toLower());
+    query.bindValue( ":id", pid.toLower() );
     if ( query.exec() ) {
-    } else qDebug() << "exec deletePnt: " << query.lastError();
+    } else
+        qDebug() << "exec deletePnt: " << query.lastError();
 }
 
 void DbManager::addWorkday(
@@ -136,7 +136,7 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
     const QString& role, const QString& status )
 {
     QString pntid;
-    QSqlQuery query(m_db);
+    QSqlQuery query( m_db );
     QString qustr = "SELECT Pnt.id FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid WHERE "
                     "Workday.workdate LIKE :date AND "
@@ -152,7 +152,7 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
     query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
         query.first();
-        pntid = QString(query.value( 0 ).toString());
+        pntid = QString( query.value( 0 ).toString() );
     } else {
         qDebug() << "exec getWorkingPnt: " << query.lastError();
     }
@@ -193,7 +193,7 @@ std::vector<QString> DbManager::getPnts()
     }
     if ( query.exec() ) {
         while ( query.next() ) {
-            pnts.push_back( QString( query.value( 0 ).toString() ) );
+            pnts.push_back( QString( query.value( 0 ).toString().toUpper() ) );
         }
     } else {
         qDebug() << "exec getPnts: " << query.lastError();
@@ -204,24 +204,23 @@ std::vector<QString> DbManager::getPnts()
 int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
 {
     int card = 0;
-    int numberofdays = begin.daysTo(end);
-    QSqlQuery query(m_db);
+    int numberofdays = begin.daysTo( end );
+    QSqlQuery query( m_db );
     QString qustr = "SELECT COUNT(workdate) FROM "
-            "Workday INNER JOIN Pnt ON Pnt.id = Workday.pntid WHERE "
-            "Pnt.id LIKE :pntid AND "
-            "Workday.workdate BETWEEN :db AND :de";
-    if ( !query.prepare(qustr) ) {
+                    "Workday INNER JOIN Pnt ON Pnt.id = Workday.pntid WHERE "
+                    "Pnt.id LIKE :pntid AND "
+                    "Workday.workdate BETWEEN :db AND :de";
+    if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare cardInactiveDays: " << query.lastError();
     }
-    query.bindValue(":pntid", id.toLower());
-    query.bindValue(":db", begin.toString(DATEFMT));
-    query.bindValue(":de", end.toString(DATEFMT));
-    if (query.exec()) {
+    query.bindValue( ":pntid", id.toLower() );
+    query.bindValue( ":db", begin.toString( DATEFMT ) );
+    query.bindValue( ":de", end.toString( DATEFMT ) );
+    if ( query.exec() ) {
         query.first();
-        int nwd = query.value(0).toInt();
+        int nwd = query.value( 0 ).toInt();
         card = numberofdays - nwd;
-    }
-    else {
+    } else {
         qDebug() << "exec cardInactiveDays: " << query.lastError();
     }
     return card;
@@ -241,7 +240,7 @@ PntDb DbManager::getPnt( QString pntid )
     if ( query.exec() ) {
         query.first();
         pnt.id = query.value( 0 ).toString().toUpper();
-        pnt.name = capitalizeFirstLetters(query.value(1).toString());
+        pnt.name = capitalizeFirstLetters( query.value( 1 ).toString() );
         pnt.role = query.value( 2 ).toString().toLower();
         pnt.maxfreq = query.value( 3 ).toInt();
         pnt.acft_modelname = query.value( 4 ).toString();
@@ -403,11 +402,10 @@ bool DbManager::test()
     return success;
 }
 
-QString DbManager::capitalizeFirstLetters(QString str)
+QString DbManager::capitalizeFirstLetters( QString str )
 {
-    std::regex firstlet("\\b[a-z]");
+    std::regex firstlet( "\\b[a-z]" );
     return QString::fromStdString(
-                static_cast<std::string>(
-                    std::regex_replace(str.toStdString(), firstlet, "\\u&",
-                                       std::regex_constants::format_sed) ) );
+        static_cast<std::string>( std::regex_replace( str.toStdString(),
+            firstlet, "\\u&", std::regex_constants::format_sed ) ) );
 }
