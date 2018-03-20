@@ -9,12 +9,12 @@ const int _MINRESTSERV8 = 9;
 const int _MINRESTSERV89 = 10;
 const int _MINRESTSERV9 = 11;
 
-ScheduleInstance::ScheduleInstance( const AcftModelDb& _model,
-    QString _role, QDate dbeg, QDate dend )
-{
+ScheduleInstance::ScheduleInstance( const AcftModelDb& _model, QString _role ) :
+    m_model{_model}, m_role{_role}
+{}
 
-    m_model = _model;
-    m_role = _role;
+void ScheduleInstance::plan( QDate dbeg, QDate dend )
+{
 
     // Number of variables = freq * number of days
     n = m_model.maxfreq * static_cast<int>( dbeg.daysTo( dend ) );
@@ -49,7 +49,7 @@ ScheduleInstance::ScheduleInstance( const AcftModelDb& _model,
 
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids =
-        _MANAGER.getPnts( m_model.name, _role );
+        _MANAGER.getPnts( m_model.name, m_role );
     for ( QString pid : pntids ) {
         flightnb.emplace(
             std::make_pair( pid, _MANAGER.getPnt( pid ).flightnb ) );
@@ -60,10 +60,9 @@ ScheduleInstance::ScheduleInstance( const AcftModelDb& _model,
     bcssp( n, Status::unknown );
 }
 
-ScheduleInstance::ScheduleInstance(
-    const AcftModelDb& _model, QString _role, QDate dbeg )
+void ScheduleInstance::plan( QDate dbeg )
 {
-    ScheduleInstance( _model, _role, dbeg, dbeg.addDays( 15 ) );
+    plan( dbeg, dbeg.addDays(15));
 }
 
 int ScheduleInstance::bt_label( int i )
@@ -188,8 +187,8 @@ bool ScheduleInstance::test()
     mod.maxfreq = 2;
     mod.crew = 2;
 
-    ScheduleInstance si = ScheduleInstance(
-        mod, role, QDate::currentDate(), QDate::currentDate().addDays( 2 ) );
+    ScheduleInstance si = ScheduleInstance(mod, role);
+    si.plan(QDate::currentDate(), QDate::currentDate().addDays( 2 ) );
     si.print();
     return true;
 }

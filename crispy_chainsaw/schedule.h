@@ -54,32 +54,19 @@ struct Flight
 class ScheduleInstance
 {
 public:
-    /** Creates a schedule defined by the dates of beginning and end.
+    /** Creates a schedule define by a model and a role
      * @param m model of the aircraft concerned by this schedule
-     * @param r role concerned by the schedule
-     * @param db date of the beginning of the schedule
-     * @param de date of the end of the schedule */
-    ScheduleInstance( const AcftModelDb& m, QString r, QDate db, QDate de );
+     * @param r role concerned by the schedule */
+    ScheduleInstance( const AcftModelDb& m, QString r );
 
-    /** Creates a 15 days schedule defined by the dates of beginning.
-     * @param m model of the aircraft concerned by this schedule
-     * @param r role concerned by the schedule
+    /** Creates an effective schedule, i.e. associates pnts to flights
+     * @param b date of the beginning of the schedule
+     * @param e end date of the schedule */
+    void plan( QDate b, QDate e);
+
+    /** Creates a 15 days schedule defined by the start date.
      * @param db date of the beginning of the schedule */
-    ScheduleInstance( const AcftModelDb& m, QString r,
-                      QDate db = QDate::currentDate() );
-
-    /** Schedules the flights given as parameter
-     * @param m model of aircraft
-     * @param r role concerned
-     * @param f flights to schedule */
-    ScheduleInstance( QString r, const std::vector<Flight>& f );
-
-    /** Completes an already existing schedule with new flights. Already
-     * existing flights are not modified, an error is raised if the already
-     * existing schedule is not consistent.
-     * @param s schedule to complete
-     * @param f flights to schedule */
-    ScheduleInstance( const ScheduleInstance& s, const std::vector<Flight>& f );
+    void plan( QDate db = QDate::currentDate() );
 
     /** Updates database
      * @param d database manager */
