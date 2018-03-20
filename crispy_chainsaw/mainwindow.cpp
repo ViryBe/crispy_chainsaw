@@ -121,7 +121,7 @@ void MainWindow::on_validerB737_clicked()
 
 void MainWindow::refresh_pilot_days( QDate dateFrom, QDate dateTo )
 {
-    // refresh the days of work of the pilot
+    ui->dateTo->setMinimumDate(ui->dateFrom->date());
 }
 
 void MainWindow::refresh_pilot_information( const QString& idPilot )
@@ -217,3 +217,10 @@ void MainWindow::on_validerB727_clicked()
 
 
 
+
+void MainWindow::on_vacancesButton_clicked()
+{
+    planningPilot newPlanningPilot;
+    newPlanningPilot.setModal( true );
+    newPlanningPilot.exec();
+}

@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include "newpilot.h"
 #include "newplane.h"
+#include "planningpilot.h"
 #include "ui_mainwindow.h"
 #include "db.h"
 #include <QMessageBox>
@@ -44,6 +45,8 @@ private slots:
     void on_validerB727_clicked();
 
 
+
+    void on_vacancesButton_clicked();
 
 private:
     Ui::MainWindow* ui;
