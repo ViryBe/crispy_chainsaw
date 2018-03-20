@@ -7,7 +7,9 @@
 
 int main( int argc, char* argv[] )
 {
-    ScheduleInstance::test();
-    QApplication a(argc, argv);
-    return true;
+    QApplication a( argc, argv );
+    MainWindow w;
+    w.show();
+
+    return a.exec();
 }
