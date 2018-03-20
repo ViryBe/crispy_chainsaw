@@ -11,6 +11,7 @@
 #include "db.h"
 #include <QMessageBox>
 #include <vector>
+#include <algorithm>
 
 namespace Ui
 {
@@ -40,6 +41,7 @@ private slots:
     //B737 tab
     void on_validerB737_clicked();
     void on_dateFrom_userDateChanged(const QDate &date);
+    void on_validerB727_clicked();
 
 
 
@@ -49,7 +51,7 @@ private:
     void refresh_pilot_information(const QString& idPilot);
     void refresh_pilot_days(QDate dateFrom, QDate dateTo);
     void refresh_pilot_list();
-    void change_pilot_function();
+    void update_tables(QDate dateFrom, QDate dateTo);
 };
 
 #endif     // MAINWINDOW_H

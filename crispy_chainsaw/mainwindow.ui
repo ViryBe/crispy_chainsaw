@@ -1587,7 +1587,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="validerB737_2">
+           <widget class="QPushButton" name="validerB727">
             <property name="text">
              <string>Valider </string>
             </property>
