@@ -43,14 +43,14 @@ QString Workday::wds2str( const Workday::WorkDayStatus& wds )
     return res;
 }
 
-Workday::Workday( const QString& pntid, const QDate& date,
-                  const QString& status ) :
-    m_pntid{pntid}, m_date{date}, m_status{str2wds(status)}
+Workday::Workday(
+    const QString& pntid, const QDate& date, const QString& status )
+    : m_pntid{pntid}, m_date{date}, m_status{str2wds( status )}
 {
 }
 
-Workday::Workday( const WorkdayDb& wdb ) :
-    m_pntid{wdb.pntid}, m_date{QDate::fromString(wdb.workdate, DATEFMT)},
-    m_status{str2wds(wdb.status)}
+Workday::Workday( const WorkdayDb& wdb )
+    : m_pntid{wdb.pntid}, m_date{QDate::fromString( wdb.workdate, DATEFMT )},
+      m_status{str2wds( wdb.status )}
 {
 }

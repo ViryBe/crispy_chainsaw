@@ -2,6 +2,9 @@
 
 QString DATEFMT = "yyyy-MM-dd";
 
+// DbManager _MANAGER = DbManager( "/home/viry/Documents/info/projet_info/"
+//                                "crispy_chainsaw/dummydata/dummy.db" );
+
 DbManager::DbManager( const QString& path )
 {
     m_db = QSqlDatabase::addDatabase( "QSQLITE" );
@@ -66,13 +69,13 @@ void DbManager::updatePnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
     QString qustr = "SELECT COUNT(id) FROM Pnt WHERE id = :id";
-    if (!query.prepare( qustr ) ) {
+    if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare updatePnt: " << query.lastError();
     }
-    query.bindValue(":id", pdb.id.toLower());
+    query.bindValue( ":id", pdb.id.toLower() );
     if ( query.exec() ) {
         query.first();
-        if (query.value(0).toInt() == 0) {
+        if ( query.value( 0 ).toInt() == 0 ) {
             addPnt( pdb );
         } else {
             modifyPnt( pdb );

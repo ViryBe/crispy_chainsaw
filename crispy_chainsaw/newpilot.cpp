@@ -2,7 +2,7 @@
 #include "ui_newpilot.h"
 
 newPilot::newPilot( PntDb pilotInfo, QWidget* parent )
-    : QDialog( parent ), ui( new Ui::newPilot ), pilot(pilotInfo)
+    : QDialog( parent ), ui( new Ui::newPilot ), pilot( pilotInfo )
 {
     ui->setupUi( this );
 }
@@ -29,19 +29,20 @@ void newPilot::on_buttonBox_accepted()
         role = "fo";
     } else if ( ui->B737FO->isChecked() ) {
         acftmodel = "b737";
-        role = "fo";;
+        role = "fo";
+        ;
     }
     frequence = ui->frequenceSpin->value();
 
     PntDb pnt = PntDb{code, name, role, acftmodel, frequence};
-    _MANAGER.addPnt(pnt);
+    _MANAGER->updatePnt( pnt );
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique
     // open new pilot added
 }
 
-void newPilot::updateInformation( )
+void newPilot::updateInformation()
 {
     QString idPilote = pilot.id;
     QString namePilot = pilot.name;
@@ -52,18 +53,15 @@ void newPilot::updateInformation( )
     ui->codePilotEdit->setText( idPilote );
     ui->namePilotEdit->setText( namePilot );
     ui->frequenceSpin->setValue( frequence );
-    if (acft == "b727"){
-        if (role == "cpt")
-            ui->B727Cdt->setChecked(true);
-        else if (role == "fo")
-            ui->B727FO->setChecked(true);
+    if ( acft == "b727" ) {
+        if ( role == "cpt" )
+            ui->B727Cdt->setChecked( true );
+        else if ( role == "fo" )
+            ui->B727FO->setChecked( true );
         else
-            ui->B727FE->setChecked(true);
-    }
-    else if (role == "cpt")
-        ui->B737Cdt->setChecked(true);
+            ui->B727FE->setChecked( true );
+    } else if ( role == "cpt" )
+        ui->B737Cdt->setChecked( true );
     else
-        ui->B737FO->setChecked(true);
-
+        ui->B737FO->setChecked( true );
 }
-

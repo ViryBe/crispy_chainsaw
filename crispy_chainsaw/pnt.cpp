@@ -1,7 +1,7 @@
 #include "pnt.h"
 
-Pnt::Pnt(QString id, QString name, QString role, QString model,
-    int flightnb, int maxfreq)
+Pnt::Pnt( QString id, QString name, QString role, QString model, int flightnb,
+    int maxfreq )
 {
     m_id = id;
     m_name = name;
@@ -18,7 +18,7 @@ Pnt::operator PntDb() const
     PntDb pdb;
     pdb.id = m_id;
     pdb.name = m_name;
-    pdb.role = role2str(m_role);
+    pdb.role = role2str( m_role );
     pdb.acft_modelname = m_acftmodel;
     pdb.flightnb = m_flightnb;
     pdb.maxfreq = m_maxfreq;
@@ -41,11 +41,11 @@ QString Pnt::role2str( Pnt::Role role )
 Pnt::Role Pnt::str2role( QString role )
 {
     Role r;
-    if (role == "cpt") {
+    if ( role == "cpt" ) {
         r = Role::cpt;
-    } else if (role == "fo") {
+    } else if ( role == "fo" ) {
         r = Role::fo;
-    } else if (role == "fe") {
+    } else if ( role == "fe" ) {
         r = Role::fe;
     } else {
         throw "invalid role";
@@ -55,7 +55,7 @@ Pnt::Role Pnt::str2role( QString role )
 
 void Pnt::toDb()
 {
-    //PntDb pdb(*this);
-    PntDb pdb = static_cast<PntDb>(*this);
-    _MANAGER.updatePnt( pdb );
+    // PntDb pdb(*this);
+    PntDb pdb = static_cast<PntDb>( *this );
+    _MANAGER->updatePnt( pdb );
 }

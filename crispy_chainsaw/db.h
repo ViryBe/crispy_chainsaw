@@ -12,7 +12,7 @@ extern QString DATEFMT;
 struct PntDb
 {
     QString id;       ///< Unique id based on pnt's name
-    QString name;	  ///< Name of the staff member
+    QString name;     ///< Name of the staff member
     QString role;     ///< Role of the crew member (e.g. cpt for captain)
     QString acft_modelname;     ///< Name of aircraft model which can be piloted
     int flightnb;               ///< Number of realised flight since ??
@@ -69,8 +69,8 @@ public:
      * @param r role needed
      * @param s status of the flight
      * @returns true iff a pnt matches the requirements */
-    bool workProvided( const QDate& d, const QString& m, const QString& r,
-                       const QString& s );
+    bool workProvided(
+        const QDate& d, const QString& m, const QString& r, const QString& s );
 
     /** Returns id of pnt working on a specified flight
      * @param d date of the flight
@@ -78,8 +78,8 @@ public:
      * @param r role needed for the flight
      * @param s status of the flight (v1, v2, v3)
      * @returns id of matching pnt, throws an exception else */
-    QString getWorkingPnt( const QDate& d, const QString& m, const QString& r,
-                           const QString& s );
+    QString getWorkingPnt(
+        const QDate& d, const QString& m, const QString& r, const QString& s );
 
     /** Retrieves status of pnt on one day
      * @param d date of the day
@@ -139,16 +139,15 @@ public:
 
 private:
     QSqlDatabase m_db;
-    static QString capitalizeFirstLetters(QString s);
+    static QString capitalizeFirstLetters( QString s );
 
     /** Adds a pilot in the database
      * @param p pilot structure */
     void addPnt( PntDb p );
 
     void modifyPnt( PntDb p );
-
 };
 
 /** Main manager for all the program */
-extern DbManager _MANAGER;
+extern DbManager* _MANAGER;
 #endif

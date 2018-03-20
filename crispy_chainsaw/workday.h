@@ -8,7 +8,6 @@
 class Workday
 {
 public:
-
     Workday( const QString& i, const QDate& d, const QString& s );
     Workday( const WorkdayDb& );
     QString getStatus();

@@ -15,9 +15,9 @@ void createSchedule( QDate, QDate );
 /** Flight requirement, to be entered in schedule */
 struct Flight
 {
-    QDate date;          ///< Date of the flight
+    QDate date;            ///< Date of the flight
     AcftModelDb model;     ///< Model of aircraft concerned
-    int position;        ///< Position of flight during day (1st, 2nd, etc.)
+    int position;          ///< Position of flight during day (1st, 2nd, etc.)
 };
 
 /** # Definition
@@ -65,8 +65,8 @@ public:
      * @param m model of the aircraft concerned by this schedule
      * @param r role concerned by the schedule
      * @param db date of the beginning of the schedule */
-    ScheduleInstance( const AcftModelDb& m, QString r,
-                      QDate db = QDate::currentDate() );
+    ScheduleInstance(
+        const AcftModelDb& m, QString r, QDate db = QDate::currentDate() );
 
     /** Schedules the flights given as parameter
      * @param m model of aircraft
