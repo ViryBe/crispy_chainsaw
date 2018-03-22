@@ -57,14 +57,14 @@ values ('a', 2, 12, 15);
 
 -- Pnts (captains)
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
-values ('aa', 'Afdas Adfex', 'cpt', 0, 'a');
+values ('aa', 'afdas adfex', 'cpt', 0, 'a');
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
-values ('ab', 'Aerfds Bfea', 'cpt', 0, 'a');
+values ('ab', 'aerfds bfea', 'cpt', 0, 'a');
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
-values ('ac', 'Adfsdf Cdfse', 'cpt', 0, 'a');
+values ('ac', 'adfsdf cdfse', 'cpt', 0, 'a');
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
-values ('ad', 'Adfee Dvcxz', 'cpt', 0, 'a');
+values ('ad', 'adfee dvcxz', 'cpt', 0, 'a');
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
-values ('ae', 'Aefdfg Edfse', 'cpt', 0, 'a');
+values ('ae', 'aefdfg edfse', 'cpt', 0, 'a');
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
-values ('af', 'Aefdfs Fdsae', 'cpt', 0, 'a');
+values ('af', 'aefdfs fdsae', 'cpt', 0, 'a');
