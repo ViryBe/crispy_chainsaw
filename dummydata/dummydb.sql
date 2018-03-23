@@ -16,9 +16,10 @@ create table Pnt(
 );
 
 create table Workday(
-	workdate text,
-	status text check(status in ('off', 'standby', 'office', 'v1', 'v2', 'v3')),
-	pntid text,
+	workdate text not null,
+	status text check(status in
+		('office', 'off', 'v1', 'v2', 'v3', 'simu')),
+	pntid text not null,
 	forced integer default 0,
 	foreign key (pntid) references Pnt(id),
 	primary key(workdate, pntid)
@@ -40,7 +41,7 @@ values ('2018-02-10', 'off', 'ag');
 insert into Workday (workdate, status, pntid)
 values ('2018-02-11', 'off', 'ag');
 insert into Workday (workdate, status, pntid)
-values ('2018-02-12', 'standby', 'ag');
+values ('2018-02-12', 'off', 'ag');
 -- PNT 1
 insert into Workday (workdate, status, pntid)
 values ('2018-02-10', 'off', 'cr');
