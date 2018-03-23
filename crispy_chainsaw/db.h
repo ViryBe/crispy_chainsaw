@@ -12,7 +12,7 @@ extern QString DATEFMT;
 struct PntDb
 {
     QString id;       ///< Unique id based on pnt's name
-    QString name;	  ///< Name of the staff member
+    QString name;     ///< Name of the staff member
     QString role;     ///< Role of the crew member (e.g. cpt for captain)
     QString acft_modelname;     ///< Name of aircraft model which can be piloted
     int flightnb;               ///< Number of realised flight since ??
@@ -32,10 +32,10 @@ struct AcftModelDb
 /** Representation of a day of a pnt in the database */
 struct WorkdayDb
 {
-    QDate workdate;       ///< Date of the day
-    QString status;       ///< Which work (e.g. simulator, office, v1, etc.)
-    QString pntid;        ///< Pnt concerned
-    int forced = 0;       ///< Whether workday has been added manually
+    QDate workdate;     ///< Date of the day
+    QString status;     ///< Which work (e.g. simulator, office, v1, etc.)
+    QString pntid;      ///< Pnt concerned
+    int forced = 0;     ///< Whether workday has been added manually
 };
 
 /** Manages all inputs and outputs with the database. The SQL schema is not
@@ -76,8 +76,8 @@ public:
      * @param r role needed
      * @param s status of the flight
      * @returns true iff a pnt matches the requirements */
-    bool workForced( const QDate& d, const QString& m, const QString& r,
-                     const QString& s );
+    bool workForced(
+        const QDate& d, const QString& m, const QString& r, const QString& s );
 
     /** @returns date of the last day scheduled automatically */
     QDate getLastScheduledDay();
@@ -89,7 +89,7 @@ public:
      * @param m model of aircraft concerned by the model
      * @returns all days set automatically */
     std::vector<WorkdayDb> getAutomaticallySetWorkdays(
-            QDate f, QDate t, QString r = "*", QString m = "*");
+        QDate f, QDate t, QString r = "*", QString m = "*" );
 
     /** Returns id of pnt working on a specified flight
      * @param d date of the flight
@@ -97,8 +97,8 @@ public:
      * @param r role needed for the flight
      * @param s status of the flight (v1, v2, v3)
      * @returns id of matching pnt, throws an exception else */
-    QString getWorkingPnt( const QDate& d, const QString& m, const QString& r,
-                           const QString& s );
+    QString getWorkingPnt(
+        const QDate& d, const QString& m, const QString& r, const QString& s );
 
     /** Retrieves status of pnt on one day
      * @param d date of the day
@@ -158,14 +158,13 @@ public:
 
 private:
     QSqlDatabase m_db;
-    static QString capitalizeFirstLetters(QString s);
+    static QString capitalizeFirstLetters( QString s );
 
     /** Adds a pilot in the database
      * @param p pilot structure */
     void addPnt( PntDb p );
 
     void modifyPnt( PntDb p );
-
 };
 
 /** Main manager for all the program */

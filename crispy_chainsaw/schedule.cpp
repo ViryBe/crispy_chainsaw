@@ -140,12 +140,12 @@ void ScheduleInstance::recomputeFrom(
 {
     // First clean the schedule
     QDate to = _MANAGER.getLastScheduledDay();
-    std::vector<WorkdayDb> autosetdays = _MANAGER.getAutomaticallySetWorkdays(
-                dfrom, to, role, amod.name);
-    for (WorkdayDb wday : autosetdays) {
-        _MANAGER.deleteWorkday(wday.workdate, wday.pntid);
+    std::vector<WorkdayDb> autosetdays =
+        _MANAGER.getAutomaticallySetWorkdays( dfrom, to, role, amod.name );
+    for ( WorkdayDb wday : autosetdays ) {
+        _MANAGER.deleteWorkday( wday.workdate, wday.pntid );
     }
-    ScheduleInstance rescheduled = ScheduleInstance(amod, role, dfrom, to);
+    ScheduleInstance rescheduled = ScheduleInstance( amod, role, dfrom, to );
     rescheduled.updateDb( _MANAGER );
 }
 
@@ -176,9 +176,9 @@ void ScheduleInstance::sort_domains()
 
 void ScheduleInstance::print()
 {
-    int day;
-    int flight_no;
     for ( int i = 1; i <= n; i++ ) {
+        int day;
+        int flight_no;
         day = 1 + ( i - 1 ) / m_model.maxfreq;
         flight_no = ( i - 1 ) % m_model.maxfreq;
 

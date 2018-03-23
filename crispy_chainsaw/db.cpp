@@ -2,7 +2,9 @@
 
 QString DATEFMT = "yyyy-MM-dd";
 
-//DbManager _MANAGER = DbManager("C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummy.db" );
+// DbManager _MANAGER =
+// DbManager("C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummy.db"
+// );
 
 DbManager::DbManager( const QString& path )
 {
@@ -68,13 +70,13 @@ void DbManager::updatePnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
     QString qustr = "SELECT COUNT(id) FROM Pnt WHERE id = :id";
-    if (!query.prepare( qustr ) ) {
+    if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare updatePnt: " << query.lastError();
     }
-    query.bindValue(":id", pdb.id.toLower());
+    query.bindValue( ":id", pdb.id.toLower() );
     if ( query.exec() ) {
         query.first();
-        if (query.value(0).toInt() == 0) {
+        if ( query.value( 0 ).toInt() == 0 ) {
             addPnt( pdb );
         } else {
             modifyPnt( pdb );
@@ -123,9 +125,9 @@ void DbManager::addWorkday( const WorkdayDb& wd )
     addWorkday( wd.workdate, wd.status, wd.pntid );
 }
 
-void DbManager::deleteWorkday(QDate date, QString pntid)
+void DbManager::deleteWorkday( QDate date, QString pntid )
 {
-    QSqlQuery query(m_db);
+    QSqlQuery query( m_db );
     QString qustr = "DELETE FROM Workday WHERE "
                     "workdate LIKE :date AND "
                     "pntid LIKE :id";
@@ -133,8 +135,8 @@ void DbManager::deleteWorkday(QDate date, QString pntid)
         qDebug() << "prepare deleteWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
-    query.bindValue( ":date", date.toString(DATEFMT));
-    query.bindValue(":id", pntid);
+    query.bindValue( ":date", date.toString( DATEFMT ) );
+    query.bindValue( ":id", pntid );
     if ( query.exec() ) {
     } else {
         qDebug() << "exec deleteWorkday: " << query.lastError()
@@ -145,7 +147,7 @@ void DbManager::deleteWorkday(QDate date, QString pntid)
 bool DbManager::workForced( const QDate& date, const QString& model,
     const QString& role, const QString& status )
 {
-    int nrslt;
+    int nrslt = 0;
     QSqlQuery query( m_db );
     QString qustr = "SELECT COUNT(Pnt.id) FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid WHERE "
@@ -175,12 +177,12 @@ QDate DbManager::getLastScheduledDay()
     QDate lastday;
     QSqlQuery query( m_db );
     QString qustr = "SELECT MAX(workdate) FROM Workday WHERE forced = 0";
-    if ( !query.prepare( qustr )) {
+    if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getlastschedule: " << query.lastError();
     }
-    if ( query.exec()) {
+    if ( query.exec() ) {
         query.first();
-        lastday = QDate::fromString(query.value(0).toString(), DATEFMT);
+        lastday = QDate::fromString( query.value( 0 ).toString(), DATEFMT );
     } else {
         qDebug() << "exec getlastschedule: " << query.lastError();
     }
@@ -188,7 +190,7 @@ QDate DbManager::getLastScheduledDay()
 }
 
 std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
-        QDate from, QDate to, QString role, QString amod)
+    QDate from, QDate to, QString role, QString amod )
 {
     std::vector<WorkdayDb> workdays;
     QSqlQuery query( m_db );
@@ -197,18 +199,18 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
                     "role LIKE :role AND "
                     "acft_modelname LIKE :mod AND "
                     "forced = 0";
-    if ( !query.prepare( qustr )) {
+    if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getautosetwdays: " << query.lastError();
     }
-    query.bindValue(":role", role.toLower());
-    query.bindValue(":mod", amod.toLower());
+    query.bindValue( ":role", role.toLower() );
+    query.bindValue( ":mod", amod.toLower() );
     if ( query.exec() ) {
-        while (query.next()) {
+        while ( query.next() ) {
             WorkdayDb wd;
-            wd.pntid = query.value(2).toString().toUpper();
-            wd.workdate = query.value(0).toDate();
-            wd.status = query.value(1).toString().toLower();
-            workdays.push_back(wd);
+            wd.pntid = query.value( 2 ).toString().toUpper();
+            wd.workdate = query.value( 0 ).toDate();
+            wd.status = query.value( 1 ).toString().toLower();
+            workdays.push_back( wd );
         }
     } else {
         qDebug() << "exec getautosetwd: " << query.lastError();
