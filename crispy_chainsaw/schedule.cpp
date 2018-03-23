@@ -12,6 +12,10 @@ const int _MINRESTSERV9 = 11;
 ScheduleInstance::ScheduleInstance(
     const AcftModelDb& _model, QString _role, QDate dbeg, QDate dend )
 {
+
+    m_model = _model;
+    m_role = _role;
+
     // Number of variables = freq * number of days
     n = m_model.maxfreq * static_cast<int>( dbeg.daysTo( dend ) );
 
@@ -52,9 +56,10 @@ ScheduleInstance::ScheduleInstance(
     bcssp( n, Status::unknown );
 }
 
-void ScheduleInstance::plan( QDate dbeg )
+ScheduleInstance::ScheduleInstance(
+    const AcftModelDb& _model, QString _role, QDate dbeg )
 {
-    plan( dbeg, dbeg.addDays(15));
+    ScheduleInstance( _model, _role, dbeg, dbeg.addDays( 15 ) );
 }
 
 int ScheduleInstance::bt_label( int i )
@@ -191,8 +196,8 @@ bool ScheduleInstance::test()
     mod.maxfreq = 2;
     mod.crew = 2;
 
-    ScheduleInstance si = ScheduleInstance(mod, role);
-    si.plan(QDate::currentDate(), QDate::currentDate().addDays( 2 ) );
+    ScheduleInstance si = ScheduleInstance(
+        mod, role, QDate::currentDate(), QDate::currentDate().addDays( 2 ) );
     si.print();
     return true;
 }
