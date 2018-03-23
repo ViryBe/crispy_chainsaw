@@ -9,13 +9,9 @@ const int _MINRESTSERV8 = 9;
 const int _MINRESTSERV89 = 10;
 const int _MINRESTSERV9 = 11;
 
-ScheduleInstance::ScheduleInstance( const AcftModelDb& _model, QString _role ) :
-    m_model{_model}, m_role{_role}
-{}
-
-void ScheduleInstance::plan( QDate dbeg, QDate dend )
+ScheduleInstance::ScheduleInstance(
+    const AcftModelDb& _model, QString _role, QDate dbeg, QDate dend )
 {
-
     // Number of variables = freq * number of days
     n = m_model.maxfreq * static_cast<int>( dbeg.daysTo( dend ) );
 
@@ -27,16 +23,13 @@ void ScheduleInstance::plan( QDate dbeg, QDate dend )
     for ( int i = 1; i <= n; i++ ) {
         std::vector<QString> crewmem;
         // Retrieve available pilots
-        fl_st = (i - 1) / m_model.maxfreq;
+        fl_st = ( i - 1 ) / m_model.maxfreq;
         today.addDays( ( i - 1 ) % m_model.maxfreq );
-        if (_MANAGER.workProvided(today, m_model.name,
-                                  m_role, fl_st)) {
-            crewmem = { _MANAGER.getWorkingPnt(today, m_model.name,
-                        m_role, fl_st) };
-        }
-        else {
-            crewmem = _MANAGER.getIdlePnts(
-                        m_model.name, m_role, today );
+        if ( _MANAGER.workForced( today, m_model.name, m_role, fl_st ) ) {
+            crewmem = {
+                _MANAGER.getWorkingPnt( today, m_model.name, m_role, fl_st )};
+        } else {
+            crewmem = _MANAGER.getIdlePnts( m_model.name, m_role, today );
         }
 
         domain[ i ].resize( crewmem.size() );
@@ -48,8 +41,7 @@ void ScheduleInstance::plan( QDate dbeg, QDate dend )
     v.resize( n + 1 );
 
     // Init flight number per pilot and sort domains
-    std::vector<QString> pntids =
-        _MANAGER.getPnts( m_model.name, m_role );
+    std::vector<QString> pntids = _MANAGER.getPnts( m_model.name, _role );
     for ( QString pid : pntids ) {
         flightnb.emplace(
             std::make_pair( pid, _MANAGER.getPnt( pid ).flightnb ) );
@@ -78,7 +70,7 @@ int ScheduleInstance::bt_label( int i )
             // Happens when value not yet instantiated (v[i] not filled)
         }
         v[ i ] = cd_copy[ j ];
-        flightnb.at( v[ i ] )++; // Add newly planned flight
+        flightnb.at( v[ i ] )++;     // Add newly planned flight
 
         consistent = true;
         for ( int h = 1; h < i && consistent; h++ ) {
@@ -131,20 +123,32 @@ bool ScheduleInstance::check( int i, int j )
 {
     bool valid = true;
     if (     // If two flights happen the same day...
-        ( ( i - 1 ) / m_model.maxfreq ) ==
-        ( ( j - 1 ) / m_model.maxfreq ) ) {
+        ( ( i - 1 ) / m_model.maxfreq ) == ( ( j - 1 ) / m_model.maxfreq ) ) {
         // ...ensure pilots are different
         valid &= v[ i ] != v[ j ];
     }
     return valid;
 }
 
+void ScheduleInstance::recomputeFrom(
+    const AcftModelDb& amod, QString role, QDate dfrom )
+{
+    // First clean the schedule
+    QDate to = _MANAGER.getLastScheduledDay();
+    std::vector<WorkdayDb> autosetdays = _MANAGER.getAutomaticallySetWorkdays(
+                dfrom, to, role, amod.name);
+    for (WorkdayDb wday : autosetdays) {
+        _MANAGER.deleteWorkday(wday.workdate, wday.pntid);
+    }
+    ScheduleInstance rescheduled = ScheduleInstance(amod, role, dfrom, to);
+    rescheduled.updateDb( _MANAGER );
+}
+
 void ScheduleInstance::updateDb( DbManager dbm )
 {
     // For each variable, update related workday
     for ( int i = 1; i <= n; i++ ) {
-        QDate date =
-            m_startdate.addDays( ( i - 1 ) / m_model.maxfreq );
+        QDate date = m_startdate.addDays( ( i - 1 ) / m_model.maxfreq );
         QString flightno = "v" + ( ( i - 1 ) % m_model.maxfreq + 1 );
         QString pntid = v[ i ];
 

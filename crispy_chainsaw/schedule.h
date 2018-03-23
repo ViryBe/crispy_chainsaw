@@ -75,6 +75,12 @@ public:
     /** Prints the deduced schedule to stdout */
     void print();
 
+    /** Rebuilds the schedule from a specified date
+     * @param m model of aircraft concerned
+     * @param r role concerned
+     * @param date from which to recompute */
+    static void recomputeFrom( const AcftModelDb& m, QString r, QDate f );
+
     /** Test, creates a schedule from dummydb */
     static bool test();
 

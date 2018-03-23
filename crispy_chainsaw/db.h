@@ -16,7 +16,7 @@ struct PntDb
     QString role;     ///< Role of the crew member (e.g. cpt for captain)
     QString acft_modelname;     ///< Name of aircraft model which can be piloted
     int flightnb;               ///< Number of realised flight since ??
-    int maxfreq;                ///< Maximum number of flights per month
+    int maxfreq = 0;            ///< Maximum number of flights per month
 };
 
 /** Representation of an aircraft model in the database */
@@ -32,9 +32,10 @@ struct AcftModelDb
 /** Representation of a day of a pnt in the database */
 struct WorkdayDb
 {
-    QString workdate;     ///< Date of the day
+    QDate workdate;       ///< Date of the day
     QString status;       ///< Which work (e.g. simulator, office, v1, etc.)
     QString pntid;        ///< Pnt concerned
+    int forced = 0;       ///< Whether workday has been added manually
 };
 
 /** Manages all inputs and outputs with the database. The SQL schema is not
@@ -63,14 +64,32 @@ public:
     /** Same as above but takes directly a Workday structure */
     void addWorkday( const WorkdayDb& );
 
-    /** Asserts whether a flight has a crew assigned
+    /** Deletes a workday from the database. Remains silent if workday does
+     * not exist (not tested)
+     * @param d date of the workday
+     * @param i id of concerned pnt */
+    void deleteWorkday( QDate d, QString i );
+
+    /** Asserts whether a flight has a crew assigned manually
      * @param d date of the flight
      * @param m model of the aircraft
      * @param r role needed
      * @param s status of the flight
      * @returns true iff a pnt matches the requirements */
-    bool workProvided( const QDate& d, const QString& m, const QString& r,
-                       const QString& s );
+    bool workForced( const QDate& d, const QString& m, const QString& r,
+                     const QString& s );
+
+    /** @returns date of the last day scheduled automatically */
+    QDate getLastScheduledDay();
+
+    /** Select all workdays written by the scheduler between two days
+     * @param f from when to fetch days
+     * @param t upper limit for days
+     * @param r role concerned by the workday
+     * @param m model of aircraft concerned by the model
+     * @returns all days set automatically */
+    std::vector<WorkdayDb> getAutomaticallySetWorkdays(
+            QDate f, QDate t, QString r = "*", QString m = "*");
 
     /** Returns id of pnt working on a specified flight
      * @param d date of the flight
@@ -114,7 +133,7 @@ public:
     std::vector<QString> getPnts( const QString& m, const QString& r );
 
     /** Retrieves pnts with a given status on a given day of a certain model
-     * and having a certain role in the crew (ideal to fill the schedule!)
+     * and having a certain role in the crew (great to fill the schedule!)
      * @param m aircraft model
      * @param r role of pnt in the crew
      * @param d date considered
