@@ -198,12 +198,16 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
                     "pntid = Pnt.id AND "
                     "role LIKE :role AND "
                     "acft_modelname LIKE :mod AND "
+                    "workdate <= :to AND "
+                    "workdate >= :from AND "
                     "forced = 0";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getautosetwdays: " << query.lastError();
     }
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", amod.toLower() );
+    query.bindValue( ":from", from.toString( DATEFMT ) );
+    query.bindValue( ":to", to.toString( DATEFMT ) );
     if ( query.exec() ) {
         while ( query.next() ) {
             WorkdayDb wd;
@@ -490,17 +494,19 @@ bool DbManager::test()
 
 QString DbManager::capitalizeFirstLetters( QString name )
 {
-    QStringList parts = name.split(" ");
+    QStringList parts = name.split( " " );
     QString res = "";
-    for (QString word : parts) {
+    for ( QString word : parts ) {
         res += " ";
         std::string sword = word.toStdString();
         std::string cword = "";
-        cword.push_back( toupper( sword[0] ) );
-        for (char c : sword.substr( 1 ) ) {
-            cword.push_back( c );
+        cword.push_back( toupper( sword[ 0 ] ) );
+        if ( sword.size() > 1 ) {
+            for ( char c : sword.substr( 1 ) ) {
+                cword.push_back( c );
+            }
         }
-        res += QString::fromStdString(cword);
+        res += QString::fromStdString( cword );
     }
     return res;
 }
