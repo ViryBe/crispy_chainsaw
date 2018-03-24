@@ -488,10 +488,19 @@ bool DbManager::test()
     return success;
 }
 
-QString DbManager::capitalizeFirstLetters( QString str )
+QString DbManager::capitalizeFirstLetters( QString name )
 {
-    std::regex firstlet( "\\b[a-z]" );
-    return QString::fromStdString(
-        static_cast<std::string>( std::regex_replace( str.toStdString(),
-            firstlet, "\\u&", std::regex_constants::format_sed ) ) );
+    QStringList parts = name.split(" ");
+    QString res = "";
+    for (QString word : parts) {
+        res += " ";
+        std::string sword = word.toStdString();
+        std::string cword = "";
+        cword.push_back( toupper( sword[0] ) );
+        for (char c : sword.substr( 1 ) ) {
+            cword.push_back( c );
+        }
+        res += QString::fromStdString(cword);
+    }
+    return res;
 }

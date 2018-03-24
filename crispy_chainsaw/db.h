@@ -85,11 +85,12 @@ public:
     /** Select all workdays written by the scheduler between two days
      * @param f from when to fetch days
      * @param t upper limit for days
-     * @param r role concerned by the workday
-     * @param m model of aircraft concerned by the model
+     * @param r role concerned by the workday (defaults to sqlite wildcard)
+     * @param m model of aircraft concerned by the model (defaults to sqlite
+     *          wildcard)
      * @returns all days set automatically */
     std::vector<WorkdayDb> getAutomaticallySetWorkdays(
-        QDate f, QDate t, QString r = "*", QString m = "*" );
+        QDate f, QDate t, QString r = "_", QString m = "_" );
 
     /** Returns id of pnt working on a specified flight
      * @param d date of the flight
