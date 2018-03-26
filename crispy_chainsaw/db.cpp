@@ -23,7 +23,7 @@ void DbManager::addPnt( PntDb pdb )
     QSqlQuery query( m_db );
     QString qustr =
         "INSERT INTO Pnt "
-        "(id, name, role, acft_modelname, flightnb, maxfreq) VALUES "
+        "(id, name, role, acft_modelname, maxfreq) VALUES "
         "(:id, :name, :role, :amod, :fnb, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPnt: " << query.lastError()
@@ -34,7 +34,6 @@ void DbManager::addPnt( PntDb pdb )
     query.bindValue( ":role", pdb.role.toLower() );
     query.bindValue( ":mf", pdb.maxfreq );
     query.bindValue( ":amod", pdb.acft_modelname.toLower() );
-    query.bindValue( ":fnb", pdb.flightnb );
     if ( query.exec() ) {
     } else {
         qDebug() << "exec addPnt: " << query.lastError()
@@ -46,7 +45,7 @@ void DbManager::modifyPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
     QString qustr = "UPDATE Pnt SET "
-                    "(name, role, acft_modelname, flightnb, maxfreq) = "
+                    "(name, role, acft_modelname, maxfreq) = "
                     "(:name, :role, :amod, :fnb, :mf) WHERE "
                     "id = :id";
     if ( !query.prepare( qustr ) ) {
@@ -58,7 +57,6 @@ void DbManager::modifyPnt( PntDb pdb )
     query.bindValue( ":role", pdb.role.toLower() );
     query.bindValue( ":mf", pdb.maxfreq );
     query.bindValue( ":amod", pdb.acft_modelname.toLower() );
-    query.bindValue( ":fnb", pdb.flightnb );
     if ( query.exec() ) {
     } else {
         qDebug() << "exec modifyPilot: " << query.lastError()
@@ -320,7 +318,7 @@ PntDb DbManager::getPnt( QString pntid )
 {
     PntDb pnt;
     QSqlQuery query( m_db );
-    QString qustr = "SELECT id, name, role, maxfreq, acft_modelname, flightnb "
+    QString qustr = "SELECT id, name, role, maxfreq, acft_modelname "
                     "FROM Pnt WHERE id = :id";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getPnt: " << query.lastError()
@@ -334,7 +332,6 @@ PntDb DbManager::getPnt( QString pntid )
         pnt.role = query.value( 2 ).toString().toLower();
         pnt.maxfreq = query.value( 3 ).toInt();
         pnt.acft_modelname = query.value( 4 ).toString();
-        pnt.flightnb = query.value( 5 ).toInt();
     } else {
         qDebug() << "exec getPnt: " << query.lastError();
     }
