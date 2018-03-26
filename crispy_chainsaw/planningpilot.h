@@ -3,8 +3,9 @@
 
 #include <QDialog>
 
-namespace Ui {
-class planningPilot;
+namespace Ui
+{
+    class planningPilot;
 }
 
 class planningPilot : public QDialog
@@ -12,11 +13,11 @@ class planningPilot : public QDialog
     Q_OBJECT
 
 public:
-    explicit planningPilot(QWidget *parent = 0);
+    explicit planningPilot( QWidget* parent = 0 );
     ~planningPilot();
 
 private:
-    Ui::planningPilot *ui;
+    Ui::planningPilot* ui;
 };
 
-#endif // PLANNINGPILOT_H
+#endif     // PLANNINGPILOT_H

@@ -21,10 +21,9 @@ void DbManager::init( const QString& path )
 void DbManager::addPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
-    QString qustr =
-        "INSERT INTO Pnt "
-        "(id, name, role, acft_modelname, maxfreq) VALUES "
-        "(:id, :name, :role, :amod, :fnb, :mf)";
+    QString qustr = "INSERT INTO Pnt "
+                    "(id, name, role, acft_modelname, maxfreq) VALUES "
+                    "(:id, :name, :role, :amod, :fnb, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPnt: " << query.lastError()
                  << "\nrequest:" << qustr;

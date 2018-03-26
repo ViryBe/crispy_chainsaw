@@ -1,9 +1,9 @@
 #ifndef NEWPILOT_H
 #define NEWPILOT_H
 
+#include "db.h"
 #include "pnt.h"
 #include <QDialog>
-#include "db.h"
 
 namespace Ui
 {
