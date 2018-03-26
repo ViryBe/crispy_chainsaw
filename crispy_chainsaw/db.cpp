@@ -21,9 +21,10 @@ void DbManager::init( const QString& path )
 void DbManager::addPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
-    QString qustr = "INSERT INTO Pnt "
-                    "(id, name, role, acft_modelname, maxfreq) VALUES "
-                    "(:id, :name, :role, :amod, :fnb, :mf)";
+    QString qustr =
+        "INSERT INTO Pnt "
+        "(id, name, role, acft_modelname, maxfreq) VALUES "
+        "(:id, :name, :role, :amod, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -45,7 +46,7 @@ void DbManager::modifyPnt( PntDb pdb )
     QSqlQuery query( m_db );
     QString qustr = "UPDATE Pnt SET "
                     "(name, role, acft_modelname, maxfreq) = "
-                    "(:name, :role, :amod, :fnb, :mf) WHERE "
+                    "(:name, :role, :amod, :mf) WHERE "
                     "id = :id";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare modify: " << query.lastError()
