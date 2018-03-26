@@ -71,7 +71,7 @@ int ScheduleInstance::bt_label( int i )
         try {
             // Remove previously planned flight
             flightnb.at( v[ i ] ) = std::max( flightnb.at( v[ i ] ) - 1, 0 );
-        } catch ( std::out_of_range oor ) {
+        } catch ( std::out_of_range ) {
             // Happens when value not yet instantiated (v[i] not filled)
         }
         v[ i ] = cd_copy[ j ];

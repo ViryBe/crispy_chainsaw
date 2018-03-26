@@ -82,8 +82,8 @@ public:
     ScheduleInstance( const ScheduleInstance& s, const std::vector<Flight>& f );
 
     /** Updates database
-     * @param d database manager */
-    void updateDb( DbManager d );
+     * @param dbm database manager */
+    void updateDb( DbManager dbm );
 
     /** Prints the deduced schedule to stdout */
     void print();

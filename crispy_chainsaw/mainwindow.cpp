@@ -74,7 +74,7 @@ void MainWindow::on_refreshButton_clicked()
 {
     QDate dateFrom = ui->dateFrom->date();
     QDate dateTo = ui->dateTo->date();
-    // TODO : calculer nb jours repos, vol, ...
+    // TODO(claire) : calculer nb jours repos, vol, ...
     QString flightDays, homeDays, standByDays, officeDays;
     ui->flightDays->setText( flightDays );
     ui->homeDays->setText( homeDays );
