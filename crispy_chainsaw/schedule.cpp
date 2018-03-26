@@ -46,10 +46,12 @@ ScheduleInstance::ScheduleInstance(
 
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids = _MANAGER.getPnts( m_model.name, _role );
+    /*
     for ( QString pid : pntids ) {
         flightnb.emplace(
             std::make_pair( pid, _MANAGER.getPnt( pid ).flightnb ) );
     }
+    */
     sort_domains();
 
     // create schedule
