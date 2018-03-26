@@ -50,8 +50,8 @@ public:
     void init( const QString& s );
 
     /** Updates (edit or create) pilot having same id as the PntDb structure
-     * @param p pnt data to update, the id must be in the database */
-    void updatePnt( PntDb p );
+     * @param pdb pnt data to update, the id must be in the database */
+    void updatePnt( PntDb pdb );
 
     /** Deletes pilot with id i
      * @param i id of the pilot to be deleted */
@@ -164,10 +164,10 @@ private:
     static QString capitalizeFirstLetters( QString s );
 
     /** Adds a pilot in the database
-     * @param p pilot structure */
-    void addPnt( PntDb p );
+     * @param pdb pilot structure */
+    void addPnt( PntDb pdb );
 
-    void modifyPnt( PntDb p );
+    void modifyPnt( PntDb pdb );
 };
 
 /** Main manager for all the program */
