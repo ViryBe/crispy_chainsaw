@@ -156,7 +156,7 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
 {
     for ( auto id : pntsIds ) {
         auto pilot = _MANAGER.getPnt( id );
-        for ( auto d = dateFrom; d <= dateTo; d.addDays( 1 ) ) {
+        for ( auto d = dateFrom; d <= dateTo; d = d.addDays( 1 ) ) {
             auto info = _MANAGER.statusOfPnt( d, id );
             if ( pilot.acft_modelname == "b737" ) {
                 // pilote de b737
