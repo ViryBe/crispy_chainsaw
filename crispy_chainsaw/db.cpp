@@ -6,7 +6,7 @@ QString DATEFMT = "yyyy-MM-dd";
 // DbManager("C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummy.db"
 // );
 
-DbManager::DbManager( const QString& path )
+void DbManager::init( const QString& path )
 {
     m_db = QSqlDatabase::addDatabase( "QSQLITE" );
     m_db.setDatabaseName( path );

@@ -1,13 +1,20 @@
+#include "db.h"
 #include "mainwindow.h"
 #include "schedule.h"
-#include "db.h"
 #include <QApplication>
 #include <QDebug>
 #include <QMainWindow>
 
+DbManager _MANAGER{};
+
+
 int main( int argc, char* argv[] )
 {
     QApplication a( argc, argv );
+
+    const QString path = QCoreApplication::applicationDirPath() + "/dummy.db";
+    _MANAGER.init( path );
+
     MainWindow w;
     w.show();
 

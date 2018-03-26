@@ -43,9 +43,11 @@ struct WorkdayDb
 class DbManager
 {
 public:
+    DbManager() = default;
+
     /** Creates a dbmanager managing a sqlite file
      * @param s sqlite filepath */
-    DbManager( const QString& s );
+    void init( const QString& s );
 
     /** Updates (edit or create) pilot having same id as the PntDb structure
      * @param p pnt data to update, the id must be in the database */
