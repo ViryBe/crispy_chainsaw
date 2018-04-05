@@ -142,6 +142,37 @@ void DbManager::deleteWorkday( QDate date, QString pntid )
     }
 }
 
+std::vector<WorkdayDb> DbManager::getWorkdays( QString pntid,
+        QDate from, QDate to, QString status)
+{
+    std::vector<WorkdayDb> rslt;
+    QSqlQuery query( m_db );
+    QString qustr = "SELECT (workdate, status, pntid, forced) FROM "
+            "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
+            "pntid = :pid AND "
+            "status LIKE :st AND "
+            "workdate >= :from AND workdate <= :to";
+    if ( !query.prepare( qustr ) ) {
+        qDebug() << "prepare getWorkdays: " <<  query.lastError();
+    }
+    query.bindValue( ":pid", pntid);
+    query.bindValue( ":st", status);
+    query.bindValue( ":from", from);
+    query.bindValue( ":to", to);
+    if ( query.exec() ) {
+        while ( query.next() ) {
+            WorkdayDb wd{ QDate::fromString(query.value(0).toString(), DATEFMT),
+                        query.value(1).toString().toLower(),
+                        query.value(2).toInt(),
+                        query.value(3).toBool()};
+            rslt.push_back(wd);
+        }
+    } else {
+        qDebug() << "getWorkdayserr: " << query.lastError();
+    }
+    return rslt;
+}
+
 bool DbManager::workForced( const QDate& date, const QString& model,
     const QString& role, const QString& status )
 {

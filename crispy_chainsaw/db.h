@@ -71,6 +71,14 @@ public:
      * @param i id of concerned pnt */
     void deleteWorkday( QDate d, QString i );
 
+    /** Gather workdays of a pnt
+     * @param i id of pnt
+     * @param f begin date
+     * @param t end date
+     * @param s status wanted */
+    std::vector<WorkdayDb> getWorkdays( QString i, QDate f, QDate t,
+                                        QString s = "_" );
+
     /** Asserts whether a flight has a crew assigned manually
      * @param d date of the flight
      * @param m model of the aircraft
