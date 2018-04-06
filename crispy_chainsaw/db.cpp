@@ -2,10 +2,6 @@
 
 QString DATEFMT = "yyyy-MM-dd";
 
-// DbManager _MANAGER =
-// DbManager("C:/Users/clrco/Documents/Projets/crispy_chainsaw/dummydata/dummy.db"
-// );
-
 void DbManager::init( const QString& path )
 {
     m_db = QSqlDatabase::addDatabase( "QSQLITE" );
@@ -147,9 +143,9 @@ std::vector<WorkdayDb> DbManager::getWorkdays( QString pntid,
 {
     std::vector<WorkdayDb> rslt;
     QSqlQuery query( m_db );
-    QString qustr = "SELECT (workdate, status, pntid, forced) FROM "
+    QString qustr = "SELECT workdate, status, pntid, forced FROM "
             "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
-            "pntid = :pid AND "
+            "pntid LIKE :pid AND "
             "status LIKE :st AND "
             "workdate >= :from AND workdate <= :to";
     if ( !query.prepare( qustr ) ) {

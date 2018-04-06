@@ -34,7 +34,7 @@ struct WorkdayDb
     QDate workdate;     ///< Date of the day
     QString status;     ///< Which work (e.g. simulator, office, v1, etc.)
     QString pntid;      ///< Pnt concerned
-    int forced = 0;     ///< Whether workday has been added manually
+    bool forced = false;     ///< Whether workday has been added manually
 };
 
 /** Manages all inputs and outputs with the database. The SQL schema is not

@@ -15,6 +15,7 @@ int main( int argc, char* argv[] )
     const QString path = QCoreApplication::applicationDirPath() + "/dummy.db";
     _MANAGER.init( path );
 
+    ScheduleInstance::test();
     MainWindow w;
     w.show();
 

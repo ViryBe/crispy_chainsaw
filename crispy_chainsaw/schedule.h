@@ -112,6 +112,8 @@ private:
         int yearservice = 0;
 
         bool operator<=( const workRegister& wr );
+        void addFlight(); ///< Adds a flight to register
+        void removeFlight(); ///< Removes a flight from register
     };
 
     // Data for the csp solver

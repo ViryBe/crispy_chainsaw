@@ -1,13 +1,13 @@
 #include "schedule.h"
 
-const int _MAXFLIGHTWEEK = 55;
-const int _MAXFLIGHTMONTH = 100;
-const int _MAXFLIGHTYEAR = 900;
-const int _MAXSERVWEEK = 60;
-const int _MAXSERVMONTH = 190;
-const int _MINRESTSERV8 = 9;
-const int _MINRESTSERV89 = 10;
-const int _MINRESTSERV9 = 11;
+const int kMAXFLIGHTWEEK = 55;
+const int kMAXFLIGHTMONTH = 100;
+const int kMAXFLIGHTYEAR = 900;
+const int kMAXSERVWEEK = 60;
+const int kMAXSERVMONTH = 190;
+const int kMINRESTSERV8 = 9;
+const int kMINRESTSERV89 = 10;
+const int kMINRESTSERV9 = 11;
 const int kMONTH = 30; ///< Number of days in a month
 const int kWEEK = 7; ///< Number of days in a week
 
@@ -48,7 +48,7 @@ ScheduleInstance::ScheduleInstance(
 
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids = _MANAGER.getPnts( m_model.name, _role );
-    for ( QString pid : pntids ) {
+    for ( auto pid : pntids ) {
         workRegister wr;
         auto year = dbeg.year();
         auto oneyearago = QDate( year - 1, dbeg.month(), dbeg.day() );
@@ -69,8 +69,7 @@ ScheduleInstance::ScheduleInstance(
                             1 : 0;
             }
         }
-        workload.emplace(
-            std::make_pair( pid, wr ) );
+        workload.emplace( std::make_pair( pid, wr ) );
     }
     sort_domains();
 
@@ -92,12 +91,12 @@ int ScheduleInstance::bt_label( int i )
         // Update value vector and flights count
         try {
             // Remove previously planned flight
-            flightnb.at( v[ i ] ) = std::max( flightnb.at( v[ i ] ) - 1, 0 );
+            workload.at( v[ i ] ).removeFlight();
         } catch ( std::out_of_range ) {
             // Happens when value not yet instantiated (v[i] not filled)
         }
         v[ i ] = cd_copy[ j ];
-        flightnb.at( v[ i ] )++;     // Add newly planned flight
+        workload.at( v[ i ] ).addFlight(); // Add newly planned flight
 
         consistent = true;
         for ( int h = 1; h < i && consistent; h++ ) {
@@ -198,6 +197,20 @@ bool ScheduleInstance::workRegister::operator<=( const workRegister& wr )
     } else {
         return yearservice <= wr.yearservice;
     }
+}
+
+void ScheduleInstance::workRegister::addFlight()
+{
+    ++yearflight;
+    ++monthflight;
+    ++weekflight;
+}
+
+void ScheduleInstance::workRegister::removeFlight()
+{
+    yearflight = std::max( yearflight - 1, 0 );
+    monthflight = std::max( monthflight - 1, 0 );
+    weekflight = std::max( weekflight - 1, 0 );
 }
 
 void ScheduleInstance::sort_domains()
