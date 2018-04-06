@@ -19,6 +19,7 @@ create table Workday(
 	workdate text,
 	status text check(status in ('off', 'standby', 'office', 'v1', 'v2', 'v3')),
 	pntid text,
+	forced integer default 0,
 	foreign key (pntid) references Pnt(id),
 	primary key(workdate, pntid)
 );
