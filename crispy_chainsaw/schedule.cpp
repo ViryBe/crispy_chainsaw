@@ -8,6 +8,8 @@ const int _MAXSERVMONTH = 190;
 const int _MINRESTSERV8 = 9;
 const int _MINRESTSERV89 = 10;
 const int _MINRESTSERV9 = 11;
+const int kMONTH = 30; ///< Number of days in a month
+const int kWEEK = 7; ///< Number of days in a week
 
 ScheduleInstance::ScheduleInstance(
     const AcftModelDb& _model, QString _role, QDate dbeg, QDate dend )
@@ -46,12 +48,30 @@ ScheduleInstance::ScheduleInstance(
 
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids = _MANAGER.getPnts( m_model.name, _role );
-    /*
     for ( QString pid : pntids ) {
-        flightnb.emplace(
-            std::make_pair( pid, _MANAGER.getPnt( pid ).flightnb ) );
+        workRegister wr;
+        auto year = dbeg.year();
+        auto oneyearago = QDate( year - 1, dbeg.month(), dbeg.day() );
+        std::vector<WorkdayDb> wds = _MANAGER.getWorkdays( pid, oneyearago,
+                                                           dbeg );
+        for (auto wd : wds) {
+            if (wd.status == "v1" || wd.status == "v2" || wd.status == "v3" ) {
+                wr.yearflight += 1;
+                wr.monthflight += ( dbeg.daysTo(wd.workdate) <= kMONTH ) ?
+                            1 : 0;
+                wr.weekflight += ( dbeg.daysTo( wd.workdate ) <= kWEEK ) ?
+                            1 : 0;
+            } else if ( wd.status == "office" ) {
+                wr.yearservice += 1;
+                wr.monthservice += ( dbeg.daysTo(wd.workdate) <= kMONTH ) ?
+                            1 : 0;
+                wr.weekservice += ( dbeg.daysTo( wd.workdate ) <= kWEEK ) ?
+                            1 : 0;
+            }
+        }
+        workload.emplace(
+            std::make_pair( pid, wr ) );
     }
-    */
     sort_domains();
 
     // create schedule
@@ -163,10 +183,27 @@ void ScheduleInstance::updateDb( DbManager dbm )
     }
 }
 
+bool ScheduleInstance::workRegister::operator<=( const workRegister& wr )
+{
+    if ( weekflight != wr.weekflight ) {
+        return weekflight < wr.weekflight;
+    } else if ( monthflight != wr.monthflight ) {
+        return monthflight < wr.monthflight;
+    } else if ( yearflight != wr.yearflight ) {
+        return yearflight < wr.yearflight;
+    } else if ( weekservice != wr.weekservice ) {
+        return weekservice < wr.weekservice;
+    } else if ( monthservice != wr.monthservice ) {
+        return monthservice < wr.monthservice;
+    } else {
+        return yearservice <= wr.yearservice;
+    }
+}
+
 void ScheduleInstance::sort_domains()
 {
     auto cmp = [this]( QString p1, QString p2 ) {
-        return flightnb.find( p1 )->second < flightnb.find( p2 )->second;
+        return workload.find( p1 )->second <= workload.find( p2 )->second;
     };
 
     for ( int i = 1; i <= n; i++ ) {

@@ -103,6 +103,17 @@ private:
     QString m_role;
     QDate m_startdate;
 
+    struct workRegister {
+        int weekflight = 0;
+        int monthflight = 0;
+        int yearflight = 0;
+        int weekservice = 0;
+        int monthservice = 0;
+        int yearservice = 0;
+
+        bool operator<=( const workRegister& wr );
+    };
+
     // Data for the csp solver
     enum class Status { unknown, solution, impossible };     ///< Status of csp
     int n;     ///< Number of variables in the problem, i.e. number of flights
@@ -112,6 +123,7 @@ private:
     std::vector<std::vector<QString>> domain;     ///< Domain of each variable
     std::vector<std::vector<QString>> current_domain;
     std::map<QString, int> flightnb;     ///< Number of flights per pilot
+    std::map<QString, workRegister> workload;
 
     /** Calls tree search methods to solve the *binary* constraint satisfaction
      * problem, i.e. the creation of the schedule. Works in place, modifying
