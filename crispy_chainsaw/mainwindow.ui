@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="pilotTab">
        <property name="sizePolicy">
@@ -1641,7 +1641,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="tableWidget"/>
+         <widget class="QTableWidget" name="CapB727Tab"/>
         </item>
         <item>
          <widget class="QLabel" name="label_18">
@@ -1651,7 +1651,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="tableWidget_2"/>
+         <widget class="QTableWidget" name="FOB727Tab"/>
         </item>
         <item>
          <widget class="QLabel" name="label_19">
@@ -1661,7 +1661,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="tableWidget_3"/>
+         <widget class="QTableWidget" name="FEB727Tab"/>
         </item>
        </layout>
       </widget>
