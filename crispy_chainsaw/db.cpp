@@ -43,7 +43,7 @@ void DbManager::modifyPnt( PntDb pdb )
     QString qustr = "UPDATE Pnt SET "
                     "(name, role, acft_modelname, maxfreq) = "
                     "(:name, :role, :amod, :mf) WHERE "
-                    "id = :id";
+                    "id LIKE :id";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare modify: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -281,7 +281,7 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     QSqlQuery query( m_db );
     QString qustr = "SELECT Workday.status FROM Workday INNER JOIN Pnt ON "
                     "Workday.pntid = Pnt.id WHERE "
-                    "Pnt.id = :pntid AND Workday.workdate = :date";
+                    "Pnt.id LIKE :pntid AND Workday.workdate LIKE :date";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare statusOfPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -291,7 +291,7 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     if ( query.exec() ) {
         // Result should be unique
         query.first();
-        res = query.value( 0 ).toString();
+        res = query.value( 0 ).toString().toUpper();
     } else {
         qDebug() << "exec statusOfPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -329,7 +329,7 @@ PntDb DbManager::getPnt( QString pntid )
     PntDb pnt;
     QSqlQuery query( m_db );
     QString qustr = "SELECT id, name, role, maxfreq, acft_modelname "
-                    "FROM Pnt WHERE id = :id";
+                    "FROM Pnt WHERE id LIKE :id";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getPnt: " << query.lastError()
                  << "\n request: " << qustr;
