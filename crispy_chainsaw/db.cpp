@@ -1,5 +1,7 @@
 #include "db.h"
 
+const QString kDATEFMT = "yyyy-MM-dd";
+
 void DbManager::init( const QString& path )
 {
     m_db = QSqlDatabase::addDatabase( "QSQLITE" );
