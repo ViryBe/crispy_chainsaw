@@ -3,9 +3,10 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = crispy_chainshaw
+TARGET = crispy_chainsaw
 INCLUDEPATH += .
 QT += sql core gui widgets
+CONFIG += debug
 
 # Input
 HEADERS += db.h mainwindow.h pnt.h \

@@ -57,7 +57,6 @@ void MainWindow::on_pilotDelete_clicked()
         "Etes vous surs de vouloir supprimer ce pilote ?",
         QMessageBox::Yes | QMessageBox::No );
     if ( reply == QMessageBox::Yes ) {
-        qDebug() << ui->pilotList->currentItem()->text();
         _MANAGER.deletePnt( ui->pilotList->currentItem()->text() );
         refresh_pilot_list();
     }
@@ -129,7 +128,7 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB737->setDate( date.addDays( 15 ) );
     refresh_pilot_days( date, date.addDays( 15 ) );
-    qDebug() << pilotInfo.maxfreq;     // ok
+//    qDebug() << pilotInfo.maxfreq;     // ok
     ui->limitationVol->setValue( pilotInfo.maxfreq );
     if ( pilotInfo.acft_modelname == "b727" ) {
         if ( pilotInfo.role == "cpt" ) {
