@@ -1,5 +1,11 @@
 #include "pnt.h"
 
+QDebug& operator<<(QDebug& os, Pnt)
+{
+    os << Pnt.m_id;
+    return os;
+}
+
 Pnt::Pnt( QString id, QString name, QString role, QString model, int maxfreq )
 {
     m_id = id;

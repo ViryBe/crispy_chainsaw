@@ -44,6 +44,9 @@ private:
 
     /** Converts a string to a role */
     static Role str2role( QString s );
+
+
+    friend QDebug& operator<<(QDebug&, Pnt);
 };
 
 #endif     // PNT_H
