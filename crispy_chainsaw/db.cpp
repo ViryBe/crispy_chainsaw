@@ -1,7 +1,5 @@
 #include "db.h"
 
-QString DATEFMT = "yyyy-MM-dd";
-
 void DbManager::init( const QString& path )
 {
     m_db = QSqlDatabase::addDatabase( "QSQLITE" );
@@ -96,7 +94,7 @@ void DbManager::deletePnt( QString pid )
 void DbManager::addWorkday(
     const QDate& date, const QString& st, const QString& pntid )
 {
-    QString strdate = date.toString( DATEFMT );
+    QString strdate = date.toString( kDATEFMT );
     QSqlQuery query( m_db );
     QString qustr = "INSERT INTO Workday (date, status, pntid) VALUES "
                     "(:date, :status, :pntid)";
@@ -129,7 +127,7 @@ void DbManager::deleteWorkday( QDate date, QString pntid )
         qDebug() << "prepare deleteWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
-    query.bindValue( ":date", date.toString( DATEFMT ) );
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
     query.bindValue( ":id", pntid );
     if ( query.exec() ) {
     } else {
@@ -185,7 +183,7 @@ bool DbManager::workForced( const QDate& date, const QString& model,
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare workForced: " << query.lastError();
     }
-    query.bindValue( ":date", date.toString( DATEFMT ) );
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
     query.bindValue( ":status", status.toLower() );
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", model.toLower() );
@@ -208,7 +206,7 @@ QDate DbManager::getLastScheduledDay()
     }
     if ( query.exec() ) {
         query.first();
-        lastday = QDate::fromString( query.value( 0 ).toString(), DATEFMT );
+        lastday = QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
     } else {
         qDebug() << "exec getlastschedule: " << query.lastError();
     }
@@ -232,8 +230,8 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
     }
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", amod.toLower() );
-    query.bindValue( ":from", from.toString( DATEFMT ) );
-    query.bindValue( ":to", to.toString( DATEFMT ) );
+    query.bindValue( ":from", from.toString( kDATEFMT ) );
+    query.bindValue( ":to", to.toString( kDATEFMT ) );
     if ( query.exec() ) {
         while ( query.next() ) {
             WorkdayDb wd;
@@ -262,7 +260,7 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getWorkingPnt: " << query.lastError();
     }
-    query.bindValue( ":date", date.toString( DATEFMT ) );
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
     query.bindValue( ":status", status.toLower() );
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", model.toLower() );
@@ -287,7 +285,7 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
                  << "\nrequest:" << qustr;
     }
     query.bindValue( ":pntid", pntid.toLower() );
-    query.bindValue( ":date", QString( date.toString( DATEFMT ) ) );
+    query.bindValue( ":date", QString( date.toString( kDATEFMT ) ) );
     if ( query.exec() ) {
         // Result should be unique
         query.first();
@@ -312,8 +310,8 @@ int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
         qDebug() << "prepare cardInactiveDays: " << query.lastError();
     }
     query.bindValue( ":pntid", id.toLower() );
-    query.bindValue( ":db", begin.toString( DATEFMT ) );
-    query.bindValue( ":de", end.toString( DATEFMT ) );
+    query.bindValue( ":db", begin.toString( kDATEFMT ) );
+    query.bindValue( ":de", end.toString( kDATEFMT ) );
     if ( query.exec() ) {
         query.first();
         int nwd = query.value( 0 ).toInt();
@@ -390,7 +388,7 @@ DbManager::getPnts( QDate date, QString status, QString model, QString role )
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":amod", model.toLower() );
     query.bindValue( ":status", status.toLower() );
-    query.bindValue( ":date", date.toString( DATEFMT ) );
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
     if ( query.exec() ) {
         while ( query.next() ) {
             pnts.push_back( QString( query.value( 0 ).toString() ).toUpper() );
@@ -417,7 +415,7 @@ std::vector<QString> DbManager::getIdlePnts(
         qDebug() << "prepare getIdlePnts: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
-    query.bindValue( ":date", d.toString( DATEFMT ) );
+    query.bindValue( ":date", d.toString( kDATEFMT ) );
     query.bindValue( ":role", r.toLower() );
     query.bindValue( ":mod", m.toLower() );
     if ( query.exec() ) {
