@@ -1,14 +1,14 @@
 #include "schedule.h"
 
-const int kMAXFLIGHTWEEK = 55;
-const int kMAXFLIGHTMONTH = 100;
-const int kMAXFLIGHTYEAR = 900;
-const int kMAXSERVWEEK = 60;
-const int kMAXSERVMONTH = 190;
-const int kMINRESTSERV8 = 9;
-const int kMINRESTSERV89 = 10;
-const int kMINRESTSERV9 = 11;
-const int kMONTH = 30; ///< Number of days in a month
+const int kMAXFLIGHTWEEK = 55; ///< Time of flight per week
+const int kMAXFLIGHTMONTH = 100; ///< Flight time per month
+const int kMAXFLIGHTYEAR = 900; ///< Flight time per year
+const int kMAXSERVWEEK = 60; ///< Time of service per week
+const int kMAXSERVMONTH = 190; ///< Time of service per month
+const int kMINRESTSERV8 = 9; ///< Rest time if less than 8 hours of service
+const int kMINRESTSERV89 = 10; ///< Rest time if 8 or 9 hours of service
+const int kMINRESTSERV9 = 11; ///< Rest time if more than 9 hours of service
+const int kMONTH = 28; ///< Number of days in a month
 const int kWEEK = 7; ///< Number of days in a week
 
 ScheduleInstance::ScheduleInstance(
@@ -87,7 +87,7 @@ int ScheduleInstance::bt_label( int i )
 {
     consistent = false;
     auto cd_copy = current_domain[ i ];
-    for ( int j = 0; j < cd_copy.size() && !consistent; j++ ) {
+    for ( auto j = 0; j < cd_copy.size() && !consistent; j++ ) {
         // Update value vector and flights count
         try {
             // Remove previously planned flight
@@ -148,6 +148,15 @@ void ScheduleInstance::bcssp( int n, Status status )
 bool ScheduleInstance::check( int i, int j )
 {
     bool valid = true;
+    // Check for legal times
+    auto wr = workload.at( v[ i ] );
+    if ( !wr.check() && v[ j ] == v[ i ] ) {
+        // Even if times are not respected, only days requiring this pnt should
+        // be blamed, not others. If legal constraints are not respected but
+        // v[j] does not involve pilot of v[i], true is returned nonetheless as
+        // the two workdays do not show incompatibilites.
+        valid &= false;
+    }
     if (     // If two flights happen the same day...
         ( ( i - 1 ) / m_model.maxfreq ) == ( ( j - 1 ) / m_model.maxfreq ) ) {
         // ...ensure pilots are different
@@ -211,6 +220,15 @@ void ScheduleInstance::workRegister::removeFlight()
     yearflight = std::max( yearflight - 1, 0 );
     monthflight = std::max( monthflight - 1, 0 );
     weekflight = std::max( weekflight - 1, 0 );
+}
+
+bool ScheduleInstance::workRegister::check()
+{
+    return weekflight <= kMAXFLIGHTWEEK &&
+            monthflight <= kMAXFLIGHTMONTH &&
+            yearflight <= kMAXFLIGHTYEAR &&
+            weekservice <= kMAXSERVWEEK &&
+            monthservice <= kMAXSERVMONTH;
 }
 
 void ScheduleInstance::sort_domains()

@@ -112,6 +112,7 @@ private:
         int yearservice = 0;
 
         bool operator<=( const workRegister& wr );
+        bool check(); ///< Check time limits constraints
         void addFlight(); ///< Adds a flight to register
         void removeFlight(); ///< Removes a flight from register
     };
@@ -124,7 +125,6 @@ private:
         v;     ///< Values of the variables v[0] is a pseudo var
     std::vector<std::vector<QString>> domain;     ///< Domain of each variable
     std::vector<std::vector<QString>> current_domain;
-    std::map<QString, int> flightnb;     ///< Number of flights per pilot
     std::map<QString, workRegister> workload;
 
     /** Calls tree search methods to solve the *binary* constraint satisfaction
