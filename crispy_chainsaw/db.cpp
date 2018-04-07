@@ -53,8 +53,7 @@ void DbManager::modifyPnt( PntDb pdb )
     query.bindValue( ":role", pdb.role.toLower() );
     query.bindValue( ":mf", pdb.maxfreq );
     query.bindValue( ":amod", pdb.acft_modelname.toLower() );
-    if ( query.exec() ) {
-    } else {
+    if ( !query.exec() ) {
         qDebug() << "exec modifyPilot: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
@@ -287,11 +286,14 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
                  << "\nrequest:" << qustr;
     }
     query.bindValue( ":pntid", pntid.toLower() );
-    query.bindValue( ":date", QString( date.toString( kDATEFMT ) ) );
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
     if ( query.exec() ) {
         // Result should be unique
         query.first();
         res = query.value( 0 ).toString().toUpper();
+        if ( res == "" ) {
+            throw date.toString( kDATEFMT );
+        }
     } else {
         qDebug() << "exec statusOfPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
