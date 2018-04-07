@@ -182,7 +182,7 @@ bool DbManager::workForced( const QDate& date, const QString& model,
                     "Pnt.role LIKE :role AND "
                     "Pnt.acft_modelname LIKE :mod";
     if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare workProvided: " << query.lastError();
+        qDebug() << "prepare workForced: " << query.lastError();
     }
     query.bindValue( ":date", date.toString( DATEFMT ) );
     query.bindValue( ":status", status.toLower() );
@@ -192,7 +192,7 @@ bool DbManager::workForced( const QDate& date, const QString& model,
         query.first();
         nrslt = query.value( 0 ).toInt();
     } else {
-        qDebug() << "exec workProvided: " << query.lastError();
+        qDebug() << "exec workForced: " << query.lastError();
     }
     return nrslt > 0;
 }

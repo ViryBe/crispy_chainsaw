@@ -81,12 +81,13 @@ public:
 
     /** Asserts whether a flight has a crew assigned manually
      * @param d date of the flight
-     * @param m model of the aircraft
-     * @param r role needed
-     * @param s status of the flight
+     * @param m model of the aircraft (defaults to sqlite wildcard)
+     * @param r role needed (defaults to sqlite wildcard)
+     * @param s status of the flight (defaults to sqlite wildcard)
      * @returns true iff a pnt matches the requirements */
     bool workForced(
-        const QDate& d, const QString& m, const QString& r, const QString& s );
+            const QDate& d, const QString& m = "_", const QString& r = "_",
+            const QString& s = "_" );
 
     /** @returns date of the last day scheduled automatically */
     QDate getLastScheduledDay();
