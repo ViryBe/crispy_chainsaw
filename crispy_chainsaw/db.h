@@ -117,13 +117,6 @@ public:
      * @return the status as a string (e.g. off, v1, etc.) */
     QString statusOfPnt( const QDate d, const QString i );
 
-    /** Retrieve all pnt ids from database */
-    std::vector<QString> getPnts();
-
-    /** Retrieve all the info about a pnt
-     * @param pntid identifier (string of two characters) */
-    PntDb getPnt( QString pntid );
-
     /** Count incative days between two dates
      * @param i identifier of the pnt
      * @param b beginning of the period
@@ -132,25 +125,26 @@ public:
      *          programmed */
     int cardInactiveDays( QString i, QDate b, QDate e );
 
-    /** Retreives all pnts able to be in the crew of a specified aircraft
-     * @param m model of aircraft
-     * @returns pnt ids */
-    std::vector<QString> getPnts( const QString& m );
+    /** Retrieve all the info about a pnt
+     * @param pntid identifier (string of two characters) */
+    PntDb getPnt( QString pntid );
 
-    /** Retrieves people of role [r] able to manage model [m]
+    /** Retrieve pnts given their job or their model of aircraft. Parameters
+     * default to sqlite wildcard ("_").
      * @param m model of aircraft
-     * @param r role asked (captain, first officer of flight engineer)
-     * @returns pnt ids */
-    std::vector<QString> getPnts( const QString& m, const QString& r );
+     * @param r role required (captain, first officer, ...)
+     * @returns all pnts matching the requirements */
+    std::vector<QString> getPnts( QString m = "_", QString r = "_" );
 
     /** Retrieves pnts with a given status on a given day of a certain model
      * and having a certain role in the crew (great to fill the schedule!)
-     * @param m aircraft model
-     * @param r role of pnt in the crew
+     * All parameters have the sqlite wildcard as default, except date.
      * @param d date considered
-     * @param s status wanted */
+     * @param s status wanted
+     * @param m aircraft model
+     * @param r role of pnt in the crew */
     std::vector<QString> getPnts(
-        const QString& m, const QString& r, const QDate& d, const QString& s );
+        QDate d, QString s = "_", QString m = "_", QString r = "_" );
 
     /** Retrieves members without workday
      * @param m model concerned

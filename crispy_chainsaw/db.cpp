@@ -298,24 +298,6 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     return res;
 }
 
-std::vector<QString> DbManager::getPnts()
-{
-    std::vector<QString> pnts;
-    QSqlQuery query( m_db );
-    QString qustr = "SELECT id FROM Pnt";
-    if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare getPnts:" << query.lastError();
-    }
-    if ( query.exec() ) {
-        while ( query.next() ) {
-            pnts.push_back( QString( query.value( 0 ).toString().toUpper() ) );
-        }
-    } else {
-        qDebug() << "exec getPnts: " << query.lastError();
-    }
-    return pnts;
-}
-
 int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
 {
     int card = 0;
@@ -365,30 +347,7 @@ PntDb DbManager::getPnt( QString pntid )
     return pnt;
 }
 
-std::vector<QString> DbManager::getPnts( const QString& acft_model )
-{
-    std::vector<QString> pnts;
-    QSqlQuery query( m_db );
-    QString qustr = "SELECT id FROM Pnt WHERE "
-                    "acft_modelname = :amod";
-    if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare getPnts: " << query.lastError()
-                 << "\nrequest:" << qustr;
-    }
-    query.bindValue( ":amod", acft_model.toLower() );
-    if ( query.exec() ) {
-        while ( query.next() ) {
-            pnts.push_back( QString( query.value( 0 ).toString() ).toUpper() );
-        }
-    } else {
-        qDebug() << "exec getPnts: " << query.lastError()
-                 << "\nrequest:" << qustr;
-    }
-    return pnts;
-}
-
-std::vector<QString> DbManager::getPnts(
-    const QString& model, const QString& role )
+std::vector<QString> DbManager::getPnts( QString model, QString role )
 {
     std::vector<QString> pnts;
     QSqlQuery query( m_db );
@@ -410,8 +369,8 @@ std::vector<QString> DbManager::getPnts(
     return pnts;
 }
 
-std::vector<QString> DbManager::getPnts( const QString& model,
-    const QString& role, const QDate& date, const QString& status )
+std::vector<QString>
+DbManager::getPnts( QDate date, QString status, QString model, QString role )
 {
     std::vector<QString> pnts;
     QSqlQuery query( m_db );
