@@ -157,10 +157,11 @@ std::vector<WorkdayDb> DbManager::getWorkdays( QString pntid,
     query.bindValue( ":to", to);
     if ( query.exec() ) {
         while ( query.next() ) {
-            WorkdayDb wd{ QDate::fromString(query.value(0).toString(), DATEFMT),
-                        query.value(1).toString().toLower(),
-                        query.value(2).toString().toUpper(),
-                        query.value(3).toBool()};
+            WorkdayDb wd;
+            wd.workdate = QDate::fromString(query.value(0).toString(), DATEFMT);
+            wd.pntid = query.value(1).toString().toLower();
+            wd.status = query.value(2).toString().toUpper();
+            wd.forced = query.value(3).toBool();
             rslt.push_back(wd);
         }
     } else {
