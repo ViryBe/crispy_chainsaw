@@ -34,7 +34,12 @@ void newPilot::on_buttonBox_accepted()
     }
     frequence = ui->frequenceSpin->value();
 
-    PntDb pnt = PntDb{code, name, role, acftmodel, frequence};
+    PntDb pnt;
+    pnt.id = code;
+    pnt.name =name;
+    pnt.role = role;
+    pnt.acft_modelname = acftmodel;
+    pnt.maxfreq = frequence;
     _MANAGER.updatePnt( pnt );
 
     // add in bdd (id, name, function)
