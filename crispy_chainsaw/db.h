@@ -7,7 +7,7 @@
 #include <regex>
 
 const QString kDATEFMT = "yyyy-MM-dd";
-const QString kSQLWILDCARD = "_";
+const QString kSQLWILDCARD = "%";
 
 /** Representation of the pnt in the database */
 struct PntDb
