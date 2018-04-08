@@ -153,13 +153,24 @@ void MainWindow::on_dateFrom_userDateChanged( const QDate& date )
 
 void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
 {
+    auto nbDays = dateTo.daysTo(dateFrom);
+    std::map<QString, int> dict;
+    ui->capB727Tab->setColumnCount(nbDays);
+    ui->capB737Tab->setColumnCount(nbDays);
+    ui->feB727Tab->setColumnCount(nbDays);
+    ui->foB727Tab->setColumnCount(nbDays);
+    ui->foB737Tab->setColumnCount(nbDays);
     for ( auto id : pntsIds ) {
         auto pilot = _MANAGER.getPnt( id );
-        for ( auto d = dateFrom; d <= dateTo; d = d.addDays( 1 ) ) {
+        qDebug() << pilot.id;
+        for (int j = 0; j < nbDays; j++) {
+            auto d = dateFrom.addDays(j);
             auto info = _MANAGER.statusOfPnt( d, id );
             if ( pilot.acft_modelname == "b737" ) {
                 // pilote de b737
                 if ( pilot.role == "cpt" ) {
+                    ui->capB727Tab->insertRow();
+                    //dict[pilot.id] = idx;
                     qDebug() << info;
                 } else
                 // First Officer

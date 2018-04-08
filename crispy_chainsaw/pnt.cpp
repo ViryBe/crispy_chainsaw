@@ -1,9 +1,6 @@
 #include "pnt.h"
 
-QDebug& operator<<(QDebug& os, Pnt p)
-{
-    return os << p.m_id;
-}
+
 
 Pnt::Pnt( QString id, QString name, QString role, QString model, int maxfreq )
 {

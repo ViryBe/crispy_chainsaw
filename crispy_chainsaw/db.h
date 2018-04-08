@@ -19,6 +19,7 @@ struct PntDb
     int maxfreq = 0;            ///< Maximum number of flights per month
 };
 
+
 /** Representation of an aircraft model in the database */
 struct AcftModelDb
 {
