@@ -487,50 +487,54 @@ AcftModelDb DbManager::getAcftModel( const QString& name )
 void DbManager::createScheduleView( QString view_name, QDate from_date,
                                     QDate to_date )
 {
-    for ( auto i = 0; i < from_date.daysTo( to_date ); i++ ) {
+    QString kVIEWNAME = "yyyyMMdd";
+    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
         QDate today = from_date.addDays( i );
         QSqlQuery query( m_db );
         QString qustr =
-            "CREATE VIEW :vn (pntid, acftmodel, role, status) AS "
+            "CREATE TEMP VIEW v" + today.toString( kVIEWNAME ) +
+            "(pntid, acftmodel, role, status) AS "
             "SELECT Pnt.id, Pnt.acft_modelname, Pnt.role, Workday.status FROM "
             "Pnt INNER JOIN Workday ON Pnt.id = Workday.pntid WHERE "
-            "Workday.workdate LIKE :date";
+            "Workday.workdate LIKE " + today.toString( kVIEWNAME );
         if ( !query.prepare( qustr ) ) {
             qDebug() << "preparing views: " << query.lastError();
         }
-        query.bindValue( ":vn", "v" + today.toString( kDATEFMT ) );
-        query.bindValue( ":date", today.toString( kDATEFMT ) );
+        //query.bindValue( ":vn", "v" + today.toString( kVIEWNAME ) );
+        //query.bindValue( ":date", today.toString( kVIEWNAME ) );
         if ( !query.exec() ) {
             qDebug() << "creating view: " << query.lastError();
         }
     }
     QSqlQuery query( m_db );
     // CREATE VIEW viewname (id, d0, d1, ..., dn)
-    QString qustr = "CREATE VIEW :vn (id";
-    for ( auto i = 0; i < from_date.daysTo( to_date ); i++ ) {
-        qustr += ", :d" + i;
+    QString qustr = "CREATE TEMP VIEW " + view_name + " (id";
+    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
+        QDate today = from_date.addDays( i );
+        qustr += ", c" + today.toString( kVIEWNAME );
     }
     qustr += ") AS ";
     // AS SELECT pntid, vd1.status, ..., vdn.status
     qustr += "SELECT pntid";
-    for ( auto i = 0; i < from_date.daysTo( to_date ); i++ ) {
+    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
         QDate today = from_date.addDays( i );
-        qustr += ", v" + today.toString( kDATEFMT );
+        qustr += ", v" + today.toString( kVIEWNAME );
         qustr += ".status";
     }
     // FROM vd1 INNER JOIN vd2 ON pntid INNER JOIN vd3 ON pntid ...
-    qustr += " FROM v" + from_date.toString( kDATEFMT );
-    for ( auto i = 0; i < from_date.daysTo( to_date ); i++ ) {
+    qustr += " FROM v" + from_date.toString( kVIEWNAME );
+    for ( auto i = 1; i <= from_date.daysTo( to_date ); i++ ) {
         QDate today = from_date.addDays( i );
-        qustr += " INNER JOIN v" + today.toString( kDATEFMT );
+        qustr += " INNER JOIN v" + today.toString( kVIEWNAME );
         qustr += " ON pntid";
     }
+    qDebug() << "query: " << qustr;
     if ( !query.prepare( qustr ) ) {
         qDebug() << "finalview:" << query.lastError();
     }
-    for ( auto i = 0; i < from_date.daysTo( to_date ); i++ ) {
+    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
         QDate today = from_date.addDays( i );
-        query.bindValue( ":d" + i, today.toString( kDATEFMT ) );
+        //query.bindValue( ":d" + i, today.toString( kVIEWNAME ) );
     }
     query.bindValue( ":vn", view_name );
     if ( !query.exec() ) {
