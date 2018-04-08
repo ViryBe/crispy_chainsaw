@@ -62,8 +62,7 @@ public:
      * @param s status of the day (e.g. off, v1, etc.)
      * @param i id of the pilot concerned
      * @param f manually (forced) workday */
-    void addWorkday( const QDate& d, const QString& s, const QString& i,
-                     const bool& f );
+    void addWorkday( QDate d, QString s, QString i, bool f );
 
     /** Same as above but takes directly a Workday structure */
     void addWorkday( const WorkdayDb& );

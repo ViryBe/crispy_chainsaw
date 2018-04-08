@@ -95,10 +95,8 @@ void DbManager::deletePnt( QString pid )
 }
 
 void DbManager::addWorkday(
-    const QDate& date, const QString& st, const QString& pntid,
-        const bool& forced )
+        QDate date, QString st, QString pntid, bool forced )
 {
-    QString strdate = date.toString( kDATEFMT );
     QSqlQuery query( m_db );
     QString qustr = "INSERT INTO Workday (workdate, status, pntid, forced) VALUES "
                     "(:date, :status, :pntid, :f)";
@@ -106,7 +104,7 @@ void DbManager::addWorkday(
         qDebug() << "prepare addWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
-    query.bindValue( ":date", strdate );
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
     query.bindValue( ":status", st.toLower() );
     query.bindValue( ":pntid", pntid.toLower() );
     query.bindValue( ":f", forced );

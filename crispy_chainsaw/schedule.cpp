@@ -17,6 +17,7 @@ ScheduleInstance::ScheduleInstance(
 
     m_model = _model;
     m_role = _role;
+    m_startdate = dbeg;
 
     // Number of variables = freq * number of days
     n = m_model.maxfreq * static_cast<int>( dbeg.daysTo( dend ) );
@@ -188,7 +189,8 @@ void ScheduleInstance::updateDb( DbManager dbm )
         WorkdayDb wddb;
         wddb.forced = false;
         wddb.pntid = v[ i ];
-        wddb.status = "v" + ( ( i - 1 ) % m_model.maxfreq + 1 );
+        wddb.status = "v" + QString::fromStdString(
+                    std::to_string( ( i - 1 ) % m_model.maxfreq + 1 ) );
         wddb.workdate = m_startdate.addDays(
                     ( i - 1 ) / m_model.maxfreq );
 
@@ -274,5 +276,6 @@ bool ScheduleInstance::test()
     ScheduleInstance si = ScheduleInstance(
         mod, role, QDate::currentDate(), QDate::currentDate().addDays( 2 ) );
     si.print();
+    si.updateDb( _MANAGER );
     return true;
 }
