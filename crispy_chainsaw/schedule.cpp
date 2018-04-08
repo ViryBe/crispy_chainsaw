@@ -185,11 +185,14 @@ void ScheduleInstance::updateDb( DbManager dbm )
 {
     // For each variable, update related workday
     for ( int i = 1; i <= n; i++ ) {
-        QDate date = m_startdate.addDays( ( i - 1 ) / m_model.maxfreq );
-        QString flightno = "v" + ( ( i - 1 ) % m_model.maxfreq + 1 );
-        QString pntid = v[ i ];
+        WorkdayDb wddb;
+        wddb.forced = false;
+        wddb.pntid = v[ i ];
+        wddb.status = "v" + ( ( i - 1 ) % m_model.maxfreq + 1 );
+        wddb.workdate = m_startdate.addDays(
+                    ( i - 1 ) / m_model.maxfreq );
 
-        dbm.addWorkday( date, flightno, pntid );
+        dbm.addWorkday( wddb );
     }
 }
 

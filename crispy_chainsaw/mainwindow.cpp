@@ -232,6 +232,6 @@ void MainWindow::on_dateFromB737_userDateChanged(const QDate &date)
 
 void MainWindow::on_dateFromB727_userDateChanged(const QDate &date)
 {
-    ui->dateToB727->setDate( date.addDays( 15 ) );
+    ui->dateToB727->setDate(date.addDays(15));
     ui->dateToB727->setMinimumDate( ui->dateFromB727->date() );
 }
