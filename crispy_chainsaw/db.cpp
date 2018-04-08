@@ -495,7 +495,7 @@ void DbManager::createScheduleView( QString view_name, QDate from_date,
             "CREATE TEMP VIEW v" + today.toString( kVIEWNAME ) +
             "(pntid, acftmodel, role, status) AS "
             "SELECT Pnt.id, Pnt.acft_modelname, Pnt.role, Workday.status FROM "
-            "Pnt INNER JOIN Workday ON Pnt.id = Workday.pntid WHERE "
+            "Pnt OUTER LEFT JOIN Workday ON Pnt.id = Workday.pntid WHERE "
             "Workday.workdate LIKE '" + today.toString( kDATEFMT ) + "'";
         if ( !query.prepare( qustr ) ) {
             qDebug() << "preparing views: " << query.lastError();
@@ -509,14 +509,16 @@ void DbManager::createScheduleView( QString view_name, QDate from_date,
     }
     QSqlQuery query( m_db );
     // CREATE VIEW viewname (id, d0, d1, ..., dn)
-    QString qustr = "CREATE TEMP VIEW " + view_name + " (id";
+    QString qustr = "CREATE TEMP VIEW " + view_name + " (id, acftmodel, role";
     for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
         QDate today = from_date.addDays( i );
         qustr += ", c" + today.toString( kVIEWNAME );
     }
     qustr += ") AS ";
     // AS SELECT pntid, vd1.status, ..., vdn.status
-    qustr += "SELECT v" + from_date.toString( kVIEWNAME ) + ".pntid";
+    qustr += "SELECT v" + from_date.toString( kVIEWNAME ) + ".pntid, ";
+    qustr += "v" + from_date.toString( kVIEWNAME ) + ".acftmodel, ";
+    qustr += "v" + from_date.toString( kVIEWNAME ) + ".role";
     for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
         QDate today = from_date.addDays( i );
         qustr += ", v" + today.toString( kVIEWNAME );
