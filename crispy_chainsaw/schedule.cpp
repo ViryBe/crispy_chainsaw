@@ -150,6 +150,8 @@ bool ScheduleInstance::check( int i, int j )
     bool valid = true;
     // Check for legal times
     auto wr = workload.at( v[ i ] );
+    auto pnt =  _MANAGER.getPnt( v[ i ] );
+    valid &= pnt.maxfreq > 0 ? pnt.maxfreq > wr.weekflight : true;
     if ( !wr.check() && v[ j ] == v[ i ] ) {
         // Even if times are not respected, only days requiring this pnt should
         // be blamed, not others. If legal constraints are not respected but

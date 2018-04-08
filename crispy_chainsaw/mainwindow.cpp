@@ -162,32 +162,27 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     ui->foB737Tab->setColumnCount(nbDays);
     for ( auto id : pntsIds ) {
         auto pilot = _MANAGER.getPnt( id );
-        qDebug() << pilot.id;
-        for (int j = 0; j < nbDays; j++) {
-            auto d = dateFrom.addDays(j);
-            auto info = _MANAGER.statusOfPnt( d, id );
-            if ( pilot.acft_modelname == "b737" ) {
-                // pilote de b737
-                if ( pilot.role == "cpt" ) {
-                    ui->capB727Tab->insertRow();
-                    //dict[pilot.id] = idx;
-                    qDebug() << info;
-                } else
-                // First Officer
-                {
-                    qDebug() << info;
+        for ( auto d = dateFrom; d <= dateTo; d = d.addDays( 1 ) ) {
+            try {
+                auto info = _MANAGER.statusOfPnt( d, id );
+                if ( pilot.acft_modelname == "b737" ) { // pilote de b737
+                    if ( pilot.role == "cpt" ) {
+                        qDebug() << info;
+                    } else { // First officer
+                        qDebug() << info;
+                    }
+                } else { // b727
+                    if ( pilot.role == "cpt" ) {
+                        qDebug() << info;
+                    } else if ( pilot.role == "fo" ) {
+                        qDebug() << info;
+                    } else {
+                        // flight engineer
+                        qDebug() << info;
+                    }
                 }
-            } else
-            // pilote de B727
-            {
-                if ( pilot.role == "cpt" ) {
-                    qDebug() << info;
-                } else if ( pilot.role == "fo" ) {
-                    qDebug() << info;
-                } else {
-                    // flight engineer
-                    qDebug() << info;
-                }
+            } catch (const QDate& d) {
+                qDebug() << d.toString( "yyyy-MM-dd" );
             }
         }
     }

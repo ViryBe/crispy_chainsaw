@@ -4,6 +4,7 @@
 # VIM files
 *.swp
 *.un~
+tags
 
 # ignore Makefile as make are managed by qmake
 Makefile*
@@ -18,3 +19,7 @@ doc/
 
 # build folders
 build-*
+# and builded files
+moc_*.[ch]*
+ui_*.[ch]*
+crispy_chainsaw/crispy_chainsaw
