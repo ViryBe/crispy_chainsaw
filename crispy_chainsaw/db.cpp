@@ -53,7 +53,7 @@ void DbManager::modifyPnt( PntDb pdb )
     query.bindValue( ":mf", pdb.maxfreq );
     query.bindValue( ":amod", pdb.acft_modelname.toLower() );
     if ( !query.exec() ) {
-        qDebug() << "exec modifyPilot: " << query.lastError()
+        qDebug() << "exec modifyPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
 }
@@ -365,7 +365,7 @@ PntDb DbManager::getPnt( QString pntid )
             pnt.maxfreq = query.value( 3 ).toInt();
             pnt.acft_modelname = query.value( 4 ).toString();
         } else {
-            throw "no pnt having this id";
+            qDebug() << "No pnt with id" << pntid;
         }
     } else {
         qDebug() << "exec getPnt: " << query.lastError();
