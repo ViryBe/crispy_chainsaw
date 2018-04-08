@@ -9,6 +9,7 @@ planningPilot::planningPilot( QWidget* parent )
     ui->setupUi( this );
     ui->dateTo->setDate( dateFrom.currentDate() );
     ui->dateFrom->setDate( dateTo.currentDate() );
+    ui->dateTo->setMinimumDate( ui->dateFrom->date() );
 }
 
 planningPilot::~planningPilot() { delete ui; }

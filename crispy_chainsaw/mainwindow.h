@@ -45,13 +45,9 @@ private slots:
     void on_validerB737_clicked();
     void on_dateFrom_userDateChanged( const QDate& date );
     void on_validerB727_clicked();
-
-
-    void on_vacancesButton_clicked();
-
     void on_dateFromB737_userDateChanged(const QDate &date);
-
     void on_dateFromB727_userDateChanged(const QDate &date);
+    void on_officeButton_clicked();
 
 private:
     Ui::MainWindow* ui;

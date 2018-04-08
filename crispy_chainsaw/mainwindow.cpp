@@ -217,7 +217,7 @@ void MainWindow::on_validerB727_clicked()
 }
 
 
-void MainWindow::on_vacancesButton_clicked()
+void MainWindow::on_officeButton_clicked()
 {
     planningPilot newPlanningPilot;
     newPlanningPilot.setModal( true );

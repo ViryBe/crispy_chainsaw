@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="pilotTab">
        <property name="sizePolicy">
@@ -1015,23 +1015,21 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_16">
             <item>
-             <widget class="QPushButton" name="vacancesButton">
-              <property name="text">
-               <string>Ajouter congés</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="officeButton">
-              <property name="text">
-               <string>Ajouter jours de bureau</string>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="simuButton">
+              <property name="minimumSize">
+               <size>
+                <width>140</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
-               <string>Ajouter simulateur</string>
+               <string>Modifier planning</string>
               </property>
              </widget>
             </item>

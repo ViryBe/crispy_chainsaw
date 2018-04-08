@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>320</width>
-    <height>138</height>
+    <height>141</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,6 +51,30 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QComboBox" name="comboBox">
+     <item>
+      <property name="text">
+       <string>Congé</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Simulateur</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bureau</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Libre</string>
+      </property>
+     </item>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
