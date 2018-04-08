@@ -159,6 +159,13 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
      * aircraft) which allowes to rebuild the schedule without fetching back
      * neither the aircraft model nor the role from the database */
 {
+    auto nbDays = dateTo.daysTo(dateFrom);
+    std::map<QString, int> dict;
+    ui->capB727Tab->setColumnCount(nbDays);
+    ui->capB737Tab->setColumnCount(nbDays);
+    ui->feB727Tab->setColumnCount(nbDays);
+    ui->foB727Tab->setColumnCount(nbDays);
+    ui->foB737Tab->setColumnCount(nbDays);
     for ( auto id : pntsIds ) {
         auto pilot = _MANAGER.getPnt( id );
         for ( auto d = dateFrom; d <= dateTo; d = d.addDays( 1 ) ) {
