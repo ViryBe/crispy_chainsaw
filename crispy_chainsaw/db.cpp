@@ -254,8 +254,8 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
     return workdays;
 }
 
-QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
-    const QString& role, const QString& status )
+QString DbManager::getWorkingPnt( QDate date, QString model, QString role,
+                                  QString status )
 {
     QString pntid;
     QSqlQuery query( m_db );
@@ -276,7 +276,7 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
         if ( query.first() ) {
             pntid = QString( query.value( 0 ).toString() );
         } else {
-            throw "no working pnt";
+            throw QString::fromStdString( "no working pnt" );
         }
     } else {
         qDebug() << "exec getWorkingPnt: " << query.lastError();

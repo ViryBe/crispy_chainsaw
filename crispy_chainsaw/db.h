@@ -62,7 +62,7 @@ public:
      * @param s status of the day (e.g. off, v1, etc.)
      * @param i id of the pilot concerned
      * @param f manually (forced) workday */
-    void addWorkday( QDate d, QString s, QString i, bool f = false );
+    void addWorkday( QDate d, QString s, QString i, bool f );
 
     /** Same as above but takes directly a Workday structure */
     void addWorkday( const WorkdayDb& );
@@ -110,8 +110,7 @@ public:
      * @param r role needed for the flight
      * @param s status of the flight (v1, v2, v3)
      * @returns id of matching pnt, throws an exception else */
-    QString getWorkingPnt(
-        const QDate& d, const QString& m, const QString& r, const QString& s );
+    QString getWorkingPnt( QDate d, QString m, QString r, QString s );
 
     /** Retrieves status of pnt on one day
      * @param d date of the day
