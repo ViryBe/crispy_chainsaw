@@ -30,8 +30,7 @@ void DbManager::addPnt( PntDb pdb )
     query.bindValue( ":role", pdb.role.toLower() );
     query.bindValue( ":mf", pdb.maxfreq );
     query.bindValue( ":amod", pdb.acft_modelname.toLower() );
-    if ( query.exec() ) {
-    } else {
+    if ( !query.exec() ) {
         qDebug() << "exec addPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
@@ -68,11 +67,14 @@ void DbManager::updatePnt( PntDb pdb )
     }
     query.bindValue( ":id", pdb.id.toLower() );
     if ( query.exec() ) {
-        query.first();
-        if ( query.value( 0 ).toInt() == 0 ) {
-            addPnt( pdb );
+        if ( query.first() ) {
+            if ( query.value( 0 ).toInt() == 0 ) {
+                addPnt( pdb );
+            } else {
+                modifyPnt( pdb );
+            }
         } else {
-            modifyPnt( pdb );
+            throw "couldn't evaluate existence";
         }
     } else {
         qDebug() << "exec updatePnt: " << query.lastError();
@@ -87,9 +89,9 @@ void DbManager::deletePnt( QString pid )
         qDebug() << "prepare deletePnt: " << query.lastError();
     }
     query.bindValue( ":id", pid.toLower() );
-    if ( query.exec() ) {
-    } else
+    if ( !query.exec() ) {
         qDebug() << "exec deletePnt: " << query.lastError();
+    }
 }
 
 void DbManager::addWorkday(
@@ -106,8 +108,7 @@ void DbManager::addWorkday(
     query.bindValue( ":date", strdate );
     query.bindValue( ":status", st.toLower() );
     query.bindValue( ":pntid", pntid.toLower() );
-    if ( query.exec() ) {
-    } else {
+    if ( !query.exec() ) {
         qDebug() << "exec addWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
@@ -130,8 +131,7 @@ void DbManager::deleteWorkday( QDate date, QString pntid )
     }
     query.bindValue( ":date", date.toString( kDATEFMT ) );
     query.bindValue( ":id", pntid );
-    if ( query.exec() ) {
-    } else {
+    if ( !query.exec() ) {
         qDebug() << "exec deleteWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
@@ -189,8 +189,11 @@ bool DbManager::workForced( const QDate& date, const QString& model,
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
-        query.first();
-        nrslt = query.value( 0 ).toInt();
+        if ( query.first() ) {
+            nrslt = query.value( 0 ).toInt();
+        } else {
+            throw "no pnt forced";
+        }
     } else {
         qDebug() << "exec workForced: " << query.lastError();
     }
@@ -206,8 +209,12 @@ QDate DbManager::getLastScheduledDay()
         qDebug() << "prepare getlastschedule: " << query.lastError();
     }
     if ( query.exec() ) {
-        query.first();
-        lastday = QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
+        if ( query.first() ) {
+            lastday = QDate::fromString( query.value( 0 ).toString(),
+                                         kDATEFMT );
+        } else {
+            throw "no scheduled day";
+        }
     } else {
         qDebug() << "exec getlastschedule: " << query.lastError();
     }
@@ -266,8 +273,11 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
-        query.first();
-        pntid = QString( query.value( 0 ).toString() );
+        if ( query.first() ) {
+            pntid = QString( query.value( 0 ).toString() );
+        } else {
+            throw "no working pnt";
+        }
     } else {
         qDebug() << "exec getWorkingPnt: " << query.lastError();
     }
@@ -316,9 +326,12 @@ int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
     query.bindValue( ":db", begin.toString( kDATEFMT ) );
     query.bindValue( ":de", end.toString( kDATEFMT ) );
     if ( query.exec() ) {
-        query.first();
-        int nwd = query.value( 0 ).toInt();
-        card = numberofdays - nwd;
+        if ( query.first() ) {
+            int nwd = query.value( 0 ).toInt();
+            card = numberofdays - nwd;
+        } else {
+            throw "can't count inactive days";
+        }
     } else {
         qDebug() << "exec cardInactiveDays: " << query.lastError();
     }
@@ -337,12 +350,15 @@ PntDb DbManager::getPnt( QString pntid )
     }
     query.bindValue( ":id", pntid.toLower() );
     if ( query.exec() ) {
-        query.first();
-        pnt.id = query.value( 0 ).toString().toUpper();
-        pnt.name = capitalizeFirstLetters( query.value( 1 ).toString() );
-        pnt.role = query.value( 2 ).toString().toLower();
-        pnt.maxfreq = query.value( 3 ).toInt();
-        pnt.acft_modelname = query.value( 4 ).toString();
+        if ( query.first() ) {
+            pnt.id = query.value( 0 ).toString().toUpper();
+            pnt.name = capitalizeFirstLetters( query.value( 1 ).toString() );
+            pnt.role = query.value( 2 ).toString().toLower();
+            pnt.maxfreq = query.value( 3 ).toInt();
+            pnt.acft_modelname = query.value( 4 ).toString();
+        } else {
+            throw "no pnt having this id";
+        }
     } else {
         qDebug() << "exec getPnt: " << query.lastError();
     }
@@ -445,13 +461,15 @@ AcftModelDb DbManager::getAcftModel( const QString& name )
     }
     query.bindValue( ":n", name );
     if ( query.exec() ) {
-        query.first();
-
-        acftmod.name = query.value( 0 ).toString();
-        acftmod.maxfreq = query.value( 1 ).toInt();
-        acftmod.crew = query.value( 2 ).toInt();
-        acftmod.nop = query.value( 3 ).toInt();
-        acftmod.ntot = query.value( 4 ).toInt();
+        if ( query.first() ) {
+            acftmod.name = query.value( 0 ).toString();
+            acftmod.maxfreq = query.value( 1 ).toInt();
+            acftmod.crew = query.value( 2 ).toInt();
+            acftmod.nop = query.value( 3 ).toInt();
+            acftmod.ntot = query.value( 4 ).toInt();
+        } else {
+            throw "no acft model";
+        }
     } else {
         qDebug() << "exec getAcftModel: " << query.lastError()
                  << "\nrequest:" << qustr;
