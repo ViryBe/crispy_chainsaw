@@ -16,6 +16,9 @@ public:
     explicit planningPilot( QWidget* parent = 0 );
     ~planningPilot();
 
+private slots:
+    void on_dateFrom_userDateChanged(const QDate &date);
+
 private:
     Ui::planningPilot* ui;
 };

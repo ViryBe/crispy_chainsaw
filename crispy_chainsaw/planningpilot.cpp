@@ -13,3 +13,8 @@ planningPilot::planningPilot( QWidget* parent )
 }
 
 planningPilot::~planningPilot() { delete ui; }
+
+void planningPilot::on_dateFrom_userDateChanged(const QDate &date)
+{
+    ui->dateTo->setMinimumDate( ui->dateFrom->date() );
+}
