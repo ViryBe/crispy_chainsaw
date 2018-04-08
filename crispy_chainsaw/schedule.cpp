@@ -17,7 +17,6 @@ ScheduleInstance::ScheduleInstance(
 
     m_model = _model;
     m_role = _role;
-    qDebug() << m_role;
     m_startdate = dbeg;
 
     // Number of variables = freq * number of days
@@ -40,7 +39,7 @@ ScheduleInstance::ScheduleInstance(
             try { // Try to remove existing days if they exist
                 auto assignedpnt = _MANAGER.getWorkingPnt( today, m_model.name,
                                                            m_role, fl_st );
-                _MANAGER.deletePnt( assignedpnt );
+                _MANAGER.deleteWorkday( today, assignedpnt );
             } catch (const QString& msg) {
                 qDebug() << msg;
             }
