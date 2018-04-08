@@ -33,9 +33,10 @@ ScheduleInstance::ScheduleInstance(
         fl_st = ( i - 1 ) / m_model.maxfreq;
         today.addDays( ( i - 1 ) % m_model.maxfreq );
         if ( _MANAGER.workForced( today, m_model.name, m_role, fl_st ) ) {
+            // If workday forced, keep it
             crewmem = {
                 _MANAGER.getWorkingPnt( today, m_model.name, m_role, fl_st )};
-        } else {
+        } else { // Delete previous and get idle pnts
             crewmem = _MANAGER.getIdlePnts( m_model.name, m_role, today );
         }
 
@@ -189,8 +190,7 @@ void ScheduleInstance::updateDb( DbManager dbm )
         WorkdayDb wddb;
         wddb.forced = false;
         wddb.pntid = v[ i ];
-        wddb.status = "v" + QString::fromStdString(
-                    std::to_string( ( i - 1 ) % m_model.maxfreq + 1 ) );
+        wddb.status = "v" + QString::number( ( i - 1 ) % m_model.maxfreq + 1 );
         wddb.workdate = m_startdate.addDays(
                     ( i - 1 ) / m_model.maxfreq );
 
