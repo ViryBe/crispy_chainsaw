@@ -167,6 +167,10 @@ public:
      * @param n name of the model */
     AcftModelDb getAcftModel( const QString& n );
 
+    /** Creates a view to fill a schedule table view */
+    void createScheduleView( QString n, QDate f, QDate t, QString m,
+                             QString r );
+
     /** A test function using see_status
      * @returns true if tests succeed */
     bool test();
