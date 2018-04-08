@@ -453,7 +453,7 @@ AcftModelDb DbManager::getAcftModel( const QString& name )
     AcftModelDb acftmod;
     QSqlQuery query( m_db );
     QString qustr =
-        "SELECT (name, maxfreq, crew, nop, ntot) FROM Acft_model WHERE "
+        "SELECT name, maxfreq, crew, nop, ntot FROM Acft_model WHERE "
         "name LIKE :n";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getAcftModel: " << query.lastError()
