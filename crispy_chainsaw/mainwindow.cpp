@@ -112,6 +112,10 @@ void MainWindow::on_validerB737_clicked()
 void MainWindow::refresh_pilot_days()
 {
     ui->dateTo->setMinimumDate( ui->dateFrom->date() );
+    ui->standByDays->setText(QString::number(1));
+    ui->officeDays->setText(QString::number(2));
+    ui->homeDays->setText(QString::number(3));
+    ui->flightDays->setText(QString::number(4));
 }
 
 void MainWindow::refresh_pilot_information( const QString& idPilot )

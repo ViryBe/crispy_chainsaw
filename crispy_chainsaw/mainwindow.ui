@@ -882,6 +882,12 @@
               </item>
               <item>
                <widget class="QLabel" name="flightDays">
+                <property name="font">
+                 <font>
+                  <family>Microsoft JhengHei Light</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
                 <property name="text">
                  <string>TextLabel</string>
                 </property>
@@ -920,6 +926,12 @@
             </item>
             <item>
              <widget class="QLabel" name="standByDays">
+              <property name="font">
+               <font>
+                <family>Microsoft JhengHei Light</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>TextLabel</string>
               </property>
@@ -956,6 +968,12 @@
             </item>
             <item>
              <widget class="QLabel" name="homeDays">
+              <property name="font">
+               <font>
+                <family>Microsoft JhengHei Light</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>TextLabel</string>
               </property>
@@ -992,6 +1010,12 @@
             </item>
             <item>
              <widget class="QLabel" name="officeDays">
+              <property name="font">
+               <font>
+                <family>Microsoft JhengHei Light</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>TextLabel</string>
               </property>
