@@ -4,6 +4,7 @@
 # VIM files
 *.swp
 *.un~
+tags
 
 # ignore Makefile as make are managed by qmake
 Makefile*
