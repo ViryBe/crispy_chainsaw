@@ -200,9 +200,11 @@ void MainWindow::on_validerB727_clicked()
 
 void MainWindow::on_officeButton_clicked()
 {
-    planningPilot newPlanningPilot(ui->pilotList->currentItem()->text());
+    QString id = ui->pilotList->currentItem()->text();
+    planningPilot newPlanningPilot(id);
     newPlanningPilot.setModal( true );
     newPlanningPilot.exec();
+        refresh_pilot_information(ui->pilotList->currentItem()->text());
 }
 
 void MainWindow::on_dateFromB737_userDateChanged(const QDate &date)

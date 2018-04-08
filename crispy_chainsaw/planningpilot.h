@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "db.h"
+#include "schedule.h"
 
 namespace Ui
 {

@@ -25,6 +25,7 @@ void planningPilot::on_buttonBox_accepted()
     QDate dateFrom = ui->dateFrom->date();
     QDate dateTo = ui->dateTo->date();
     for (int i = 0; i<=dateFrom.daysTo(dateTo); i ++){
+        _MANAGER.deleteWorkday(dateFrom.addDays(i), id);
         if (choix == "Congé"){
             _MANAGER.addWorkday(dateFrom.addDays(i), "off" , id, true);
         }
@@ -34,8 +35,7 @@ void planningPilot::on_buttonBox_accepted()
         else if (choix == "Simulateur"){
             _MANAGER.addWorkday(dateFrom.addDays(i), "simu" , id, true);
         }
-        else{
-            _MANAGER.deleteWorkday(dateFrom.addDays(i), id);
-        }
     }
+    PntDb pilot = _MANAGER.getPnt(id);
+    //ScheduleInstance::recomputeFrom(_MANAGER.getAcftModel(pilot.acft_modelname), pilot.role, dateFrom);
 }
