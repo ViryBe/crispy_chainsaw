@@ -73,30 +73,7 @@ void MainWindow::on_refreshButton_clicked()
 {
     QDate dateFrom = ui->dateFrom->date();
     QDate dateTo = ui->dateTo->date();
-    // TODO(claire) : calculer nb jours repos, vol, ...
-    QString flightDays, homeDays, standByDays, officeDays;
-    ui->flightDays->setText( flightDays );
-    ui->homeDays->setText( homeDays );
-    ui->standByDays->setText( standByDays );
-    ui->officeDays->setText( officeDays );
-}
-
-
-void MainWindow::on_planeManage_clicked()
-{
-    QString idPlane, namePlane;
-    newPlane NewPlane;
-    NewPlane.setModal( true );
-    NewPlane.updateInformation( idPlane, namePlane );
-    NewPlane.exec();
-}
-
-void MainWindow::on_planeAdd_clicked()
-{
-    // Création de la nouvelle boite de dialogue pour modifier les infos
-    newPlane NewPlane;
-    NewPlane.setModal( true );
-    NewPlane.exec();
+    refresh_pilot_days(ui->pilotList->currentItem()->text(), dateFrom, dateTo);
 }
 
 
@@ -109,13 +86,13 @@ void MainWindow::on_validerB737_clicked()
     QDate dateTo = ui->dateToB737->date();
 }
 
-void MainWindow::refresh_pilot_days()
+void MainWindow::refresh_pilot_days(const QString& id, QDate dateFrom, QDate dateTo)
 {
     ui->dateTo->setMinimumDate( ui->dateFrom->date() );
-    ui->standByDays->setText(QString::number(1));
-    ui->officeDays->setText(QString::number(2));
-    ui->homeDays->setText(QString::number(3));
-    ui->flightDays->setText(QString::number(4));
+    ui->standByDays->setText(QString::number(_MANAGER.cardInactiveDays(id, dateFrom, dateTo)));
+    ui->officeDays->setText(QString::number(_MANAGER.cardWorkdays(id, dateFrom, dateTo, "office")));
+    ui->homeDays->setText(QString::number(_MANAGER.cardWorkdays(id, dateFrom, dateTo, "off")));
+    ui->flightDays->setText(QString::number(_MANAGER.cardWorkdays(id, dateFrom, dateTo, "v_")));
 }
 
 void MainWindow::refresh_pilot_information( const QString& idPilot )
@@ -131,7 +108,7 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     ui->dateTo->setDate( date.addDays( 15 ) );
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB737->setDate( date.addDays( 15 ) );
-    refresh_pilot_days();
+    refresh_pilot_days(idPilot, date, date.addDays(15));
 //    qDebug() << pilotInfo.maxfreq;     // ok
     ui->limitationVol->setValue( pilotInfo.maxfreq );
     if ( pilotInfo.acft_modelname == "b727" ) {
@@ -223,7 +200,7 @@ void MainWindow::on_validerB727_clicked()
 
 void MainWindow::on_officeButton_clicked()
 {
-    planningPilot newPlanningPilot;
+    planningPilot newPlanningPilot(ui->pilotList->currentItem()->text());
     newPlanningPilot.setModal( true );
     newPlanningPilot.exec();
 }
