@@ -187,5 +187,5 @@ private:
 };
 
 /** Main manager for all the program */
-extern DbManager _MANAGER;
+extern DbManager gMANAGER;
 #endif

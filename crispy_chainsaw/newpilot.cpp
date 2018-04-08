@@ -39,7 +39,7 @@ void newPilot::on_buttonBox_accepted()
     pnt.role = role;
     pnt.acft_modelname = acftmodel;
     pnt.maxfreq = frequence;
-    _MANAGER.updatePnt( pnt );
+    gMANAGER.updatePnt( pnt );
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique

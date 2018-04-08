@@ -56,5 +56,5 @@ void Pnt::toDb()
 {
     // PntDb pdb(*this);
     PntDb pdb = static_cast<PntDb>( *this );
-    _MANAGER.updatePnt( pdb );
+    gMANAGER.updatePnt( pdb );
 }
