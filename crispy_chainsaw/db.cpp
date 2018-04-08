@@ -288,11 +288,10 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     query.bindValue( ":pntid", pntid.toLower() );
     query.bindValue( ":date", date.toString( kDATEFMT ) );
     if ( query.exec() ) {
-        // Result should be unique
-        query.first();
-        res = query.value( 0 ).toString().toUpper();
-        if ( res == "" ) {
-            throw date.toString( kDATEFMT );
+        if ( query.first() ) {
+            res = query.value( 0 ).toString().toUpper();
+        } else {
+            throw date;
         }
     } else {
         qDebug() << "exec statusOfPnt: " << query.lastError()

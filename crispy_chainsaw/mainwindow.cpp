@@ -156,27 +156,26 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     for ( auto id : pntsIds ) {
         auto pilot = _MANAGER.getPnt( id );
         for ( auto d = dateFrom; d <= dateTo; d = d.addDays( 1 ) ) {
-            auto info = _MANAGER.statusOfPnt( d, id );
-            if ( pilot.acft_modelname == "b737" ) {
-                // pilote de b737
-                if ( pilot.role == "cpt" ) {
-                    qDebug() << info;
-                } else
-                // First Officer
-                {
-                    qDebug() << info;
+            try {
+                auto info = _MANAGER.statusOfPnt( d, id );
+                if ( pilot.acft_modelname == "b737" ) { // pilote de b737
+                    if ( pilot.role == "cpt" ) {
+                        qDebug() << info;
+                    } else { // First officer
+                        qDebug() << info;
+                    }
+                } else { // b727
+                    if ( pilot.role == "cpt" ) {
+                        qDebug() << info;
+                    } else if ( pilot.role == "fo" ) {
+                        qDebug() << info;
+                    } else {
+                        // flight engineer
+                        qDebug() << info;
+                    }
                 }
-            } else
-            // pilote de B727
-            {
-                if ( pilot.role == "cpt" ) {
-                    qDebug() << info;
-                } else if ( pilot.role == "fo" ) {
-                    qDebug() << info;
-                } else {
-                    // flight engineer
-                    qDebug() << info;
-                }
+            } catch (const QDate& d) {
+                qDebug() << d.toString( "yyyy-MM-dd" );
             }
         }
     }
