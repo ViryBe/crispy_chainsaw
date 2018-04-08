@@ -16,8 +16,8 @@ int main( int argc, char* argv[] )
     gMANAGER.init( path );
 
     ScheduleInstance::test();
-    gMANAGER.createScheduleView( "testview", QDate(2018, 10, 10),
-                                 QDate( 2018, 10, 12 ));
+    gMANAGER.createScheduleView( "testview", QDate( 2018, 4, 8 ),
+                                 QDate( 2018, 4, 10 ));
     MainWindow w;
     w.show();
 
