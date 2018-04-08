@@ -37,10 +37,6 @@ private slots:
     void on_pilotManage_clicked();
     void on_refreshButton_clicked();
 
-    // plane tab
-    void on_planeManage_clicked();
-    void on_planeAdd_clicked();
-
     // B737 tab
     void on_validerB737_clicked();
     void on_dateFrom_userDateChanged( const QDate& date );
@@ -53,7 +49,7 @@ private:
     Ui::MainWindow* ui;
     std::vector<QString> pntsIds;
     void refresh_pilot_information( const QString& idPilot );
-    void refresh_pilot_days();
+    void refresh_pilot_days(const QString& idPilot, QDate, QDate);
     void refresh_pilot_list();
     void update_tables( QDate dateFrom, QDate dateTo );
 };
