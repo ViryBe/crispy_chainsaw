@@ -7,7 +7,7 @@
 tags
 
 # ignore Makefile as make are managed by qmake
-Makefile*
+crispy_chainsaw/Makefile*
 
 *.o
 
