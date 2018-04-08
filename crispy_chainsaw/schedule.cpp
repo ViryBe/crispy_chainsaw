@@ -25,18 +25,24 @@ ScheduleInstance::ScheduleInstance(
     // Init domains
     domain.resize( n + 1 );
     current_domain.resize( n + 1 );
-    QDate today = dbeg;
-    QString fl_st;
     for ( int i = 1; i <= n; i++ ) {
         std::vector<QString> crewmem;
-        // Retrieve available pilots
-        fl_st = ( i - 1 ) / m_model.maxfreq;
-        today.addDays( ( i - 1 ) % m_model.maxfreq );
+        QString fl_st = "v" + QString::number(
+                    ( i - 1 ) % m_model.maxfreq + 1 );
+        QDate today = dbeg.addDays( ( i - 1 ) / m_model.maxfreq );
+
         if ( _MANAGER.workForced( today, m_model.name, m_role, fl_st ) ) {
             // If workday forced, keep it
             crewmem = {
                 _MANAGER.getWorkingPnt( today, m_model.name, m_role, fl_st )};
         } else { // Delete previous and get idle pnts
+            try { // Try to remove existing days if they exist
+                auto assignedpnt = _MANAGER.getWorkingPnt( today, m_model.name,
+                                                           m_role, fl_st );
+                _MANAGER.deleteWorkday( today, assignedpnt );
+            } catch (const QString& msg) {
+                qDebug() << msg;
+            }
             crewmem = _MANAGER.getIdlePnts( m_model.name, m_role, today );
         }
 
@@ -267,7 +273,7 @@ void ScheduleInstance::print()
 
 bool ScheduleInstance::test()
 {
-    QString role = "cpt";
+    QString role = QString::fromStdString( "cpt" );
     AcftModelDb mod;
     mod.name = "a";
     mod.maxfreq = 2;
