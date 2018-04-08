@@ -21,7 +21,7 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="pilotTab">
        <property name="sizePolicy">
@@ -1173,7 +1173,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="capB737Tab">
+         <widget class="QTableView" name="capB737Tab">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -1191,11 +1191,11 @@
           <property name="textElideMode">
            <enum>Qt::ElideMiddle</enum>
           </property>
-          <attribute name="horizontalHeaderCascadingSectionResizes">
+          <attribute name="horizontalHeaderHighlightSections">
            <bool>true</bool>
           </attribute>
-          <attribute name="horizontalHeaderMinimumSectionSize">
-           <number>20</number>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
           </attribute>
          </widget>
         </item>
@@ -1207,7 +1207,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="foB737Tab"/>
+         <widget class="QTableView" name="foB737Tab"/>
         </item>
        </layout>
       </widget>
@@ -1318,7 +1318,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="capB727Tab"/>
+         <widget class="QTableView" name="capB727Tab"/>
         </item>
         <item>
          <widget class="QLabel" name="label_18">
@@ -1328,7 +1328,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="foB727Tab"/>
+         <widget class="QTableView" name="foB727Tab"/>
         </item>
         <item>
          <widget class="QLabel" name="label_19">
@@ -1338,7 +1338,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="feB727Tab"/>
+         <widget class="QTableView" name="feB727Tab"/>
         </item>
        </layout>
       </widget>

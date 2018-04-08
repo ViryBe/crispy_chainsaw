@@ -14,7 +14,7 @@ void newPilot::on_buttonBox_accepted()
     QString code = "", name = "", role = "", acftmodel = "";
     code = ui->codePilotEdit->text();
     name = ui->namePilotEdit->text();
-    int frequence = 0, days;
+    int frequence = 0;
     if ( ui->B727Cdt->isChecked() ) {
         acftmodel = "b727";
         role = "cpt";
@@ -30,7 +30,6 @@ void newPilot::on_buttonBox_accepted()
     } else if ( ui->B737FO->isChecked() ) {
         acftmodel = "b737";
         role = "fo";
-        ;
     }
     frequence = ui->frequenceSpin->value();
 
