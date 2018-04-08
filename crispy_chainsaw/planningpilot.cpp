@@ -24,8 +24,7 @@ void planningPilot::on_buttonBox_accepted()
     QString choix = ui->choixStatut->currentText();
     QDate dateFrom = ui->dateFrom->date();
     QDate dateTo = ui->dateTo->date();
-    qDebug() << choix ;
-    for (int i = 0; i<dateFrom.daysTo(dateTo); i ++){
+    for (int i = 0; i<=dateFrom.daysTo(dateTo); i ++){
         if (choix == "Congé"){
             _MANAGER.addWorkday(dateFrom.addDays(i), "off" , id, true);
         }
