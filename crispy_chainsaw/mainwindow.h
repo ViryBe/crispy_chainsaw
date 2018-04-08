@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "db.h"
+#include "schedule.h"
 #include "newpilot.h"
 #include "newplane.h"
 #include "planningpilot.h"

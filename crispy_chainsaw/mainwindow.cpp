@@ -152,6 +152,12 @@ void MainWindow::on_dateFrom_userDateChanged( const QDate& date )
 }
 
 void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
+    /* Two options here: either we iterate through all pnts,
+     * or pnts are gathered considering the table to fill (i.e. using
+     * appropriate getPnts method). The latter method has the advantage of
+     * having a more precise context in the loop (defined role, defined
+     * aircraft) which allowes to rebuild the schedule without fetching back
+     * neither the aircraft model nor the role from the database */
 {
     for ( auto id : pntsIds ) {
         auto pilot = _MANAGER.getPnt( id );
@@ -175,7 +181,21 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
                     }
                 }
             } catch (const QDate& d) {
-                qDebug() << d.toString( "yyyy-MM-dd" );
+                qDebug() << "couldn't fetch data for pnt:" << id
+                         << "on the:" << d.toString( "yyyy-MM-dd" );
+                auto regenerate = QMessageBox::question(
+                        this, "Emploi du temps incomplet",
+                        "Regenerer l'emploi du temps?",
+                        QMessageBox::Yes | QMessageBox::No,
+                        QMessageBox::Yes );
+                if ( regenerate == QMessageBox::Yes ) {
+                    auto pnt = _MANAGER.getPnt( id );
+                    auto acftmod = _MANAGER.getAcftModel( pnt.acft_modelname );
+                    auto regen = ScheduleInstance( acftmod, pnt.role,
+                                                   dateFrom, dateTo );
+                    regen.updateDb( _MANAGER );
+                    qDebug() << "regeneration asked";
+                }
             }
         }
     }
