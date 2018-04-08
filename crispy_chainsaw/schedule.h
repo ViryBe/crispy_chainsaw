@@ -103,7 +103,8 @@ private:
     QString m_role;
     QDate m_startdate;
 
-    struct workRegister {
+    struct workRegister
+    {
         int weekflight = 0;
         int monthflight = 0;
         int yearflight = 0;
@@ -112,9 +113,9 @@ private:
         int yearservice = 0;
 
         bool operator<=( const workRegister& wr );
-        bool check(); ///< Check time limits constraints
-        void addFlight(); ///< Adds a flight to register
-        void removeFlight(); ///< Removes a flight from register
+        bool check();            ///< Check time limits constraints
+        void addFlight();        ///< Adds a flight to register
+        void removeFlight();     ///< Removes a flight from register
     };
 
     // Data for the csp solver

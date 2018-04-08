@@ -17,10 +17,9 @@ void DbManager::init( const QString& path )
 void DbManager::addPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
-    QString qustr =
-        "INSERT INTO Pnt "
-        "(id, name, role, acft_modelname, maxfreq) VALUES "
-        "(:id, :name, :role, :amod, :mf)";
+    QString qustr = "INSERT INTO Pnt "
+                    "(id, name, role, acft_modelname, maxfreq) VALUES "
+                    "(:id, :name, :role, :amod, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -94,12 +93,12 @@ void DbManager::deletePnt( QString pid )
     }
 }
 
-void DbManager::addWorkday(
-        QDate date, QString st, QString pntid, bool forced )
+void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced )
 {
     QSqlQuery query( m_db );
-    QString qustr = "INSERT INTO Workday (workdate, status, pntid, forced) VALUES "
-                    "(:date, :status, :pntid, :f)";
+    QString qustr =
+        "INSERT INTO Workday (workdate, status, pntid, forced) VALUES "
+        "(:date, :status, :pntid, :f)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -137,31 +136,32 @@ void DbManager::deleteWorkday( QDate date, QString pntid )
     }
 }
 
-std::vector<WorkdayDb> DbManager::getWorkdays( QString pntid,
-        QDate from, QDate to, QString status)
+std::vector<WorkdayDb> DbManager::getWorkdays(
+    QString pntid, QDate from, QDate to, QString status )
 {
     std::vector<WorkdayDb> rslt;
     QSqlQuery query( m_db );
     QString qustr = "SELECT workdate, status, pntid, forced FROM "
-            "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
-            "pntid LIKE :pid AND "
-            "status LIKE :st AND "
-            "workdate >= :from AND workdate <= :to";
+                    "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
+                    "pntid LIKE :pid AND "
+                    "status LIKE :st AND "
+                    "workdate >= :from AND workdate <= :to";
     if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare getWorkdays: " <<  query.lastError();
+        qDebug() << "prepare getWorkdays: " << query.lastError();
     }
-    query.bindValue( ":pid", pntid);
-    query.bindValue( ":st", status);
-    query.bindValue( ":from", from);
-    query.bindValue( ":to", to);
+    query.bindValue( ":pid", pntid );
+    query.bindValue( ":st", status );
+    query.bindValue( ":from", from );
+    query.bindValue( ":to", to );
     if ( query.exec() ) {
         while ( query.next() ) {
             WorkdayDb wd;
-            wd.workdate = QDate::fromString(query.value(0).toString(), kDATEFMT);
-            wd.pntid = query.value(1).toString().toLower();
-            wd.status = query.value(2).toString().toUpper();
-            wd.forced = query.value(3).toBool();
-            rslt.push_back(wd);
+            wd.workdate =
+                QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
+            wd.pntid = query.value( 1 ).toString().toLower();
+            wd.status = query.value( 2 ).toString().toUpper();
+            wd.forced = query.value( 3 ).toBool();
+            rslt.push_back( wd );
         }
     } else {
         qDebug() << "getWorkdayserr: " << query.lastError();
@@ -210,8 +210,8 @@ QDate DbManager::getLastScheduledDay()
     }
     if ( query.exec() ) {
         if ( query.first() ) {
-            lastday = QDate::fromString( query.value( 0 ).toString(),
-                                         kDATEFMT );
+            lastday =
+                QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
         } else {
             throw "no scheduled day";
         }
@@ -254,8 +254,8 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
     return workdays;
 }
 
-QString DbManager::getWorkingPnt( QDate date, QString model, QString role,
-                                  QString status )
+QString DbManager::getWorkingPnt(
+    QDate date, QString model, QString role, QString status )
 {
     QString pntid;
     QSqlQuery query( m_db );
@@ -310,8 +310,7 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     return res;
 }
 
-int
-DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
+int DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
 {
     int card = 0;
     QSqlQuery query( m_db );
@@ -395,8 +394,8 @@ std::vector<QString> DbManager::getPnts( QString model, QString role )
     return pnts;
 }
 
-std::vector<QString>
-DbManager::getPnts( QDate date, QString status, QString model, QString role )
+std::vector<QString> DbManager::getPnts(
+    QDate date, QString status, QString model, QString role )
 {
     std::vector<QString> pnts;
     QSqlQuery query( m_db );

@@ -32,9 +32,9 @@ struct AcftModelDb
 /** Representation of a day of a pnt in the database */
 struct WorkdayDb
 {
-    QDate workdate;     ///< Date of the day
-    QString status;     ///< Which work (e.g. simulator, office, v1, etc.)
-    QString pntid;      ///< Pnt concerned
+    QDate workdate;          ///< Date of the day
+    QString status;          ///< Which work (e.g. simulator, office, v1, etc.)
+    QString pntid;           ///< Pnt concerned
     bool forced = false;     ///< Whether workday has been added manually
 };
 
@@ -78,8 +78,8 @@ public:
      * @param f begin date
      * @param t end date
      * @param s status wanted */
-    std::vector<WorkdayDb> getWorkdays( QString i, QDate f, QDate t,
-                                        QString s = kSQLWILDCARD );
+    std::vector<WorkdayDb> getWorkdays(
+        QString i, QDate f, QDate t, QString s = kSQLWILDCARD );
 
     /** Asserts whether a flight has a crew assigned manually
      * @param d date of the flight
@@ -87,9 +87,8 @@ public:
      * @param r role needed (defaults to sqlite wildcard)
      * @param s status of the flight (defaults to sqlite wildcard)
      * @returns true iff a pnt matches the requirements */
-    bool workForced(
-            const QDate& d, const QString& m = kSQLWILDCARD,
-            const QString& r = kSQLWILDCARD, const QString& s = kSQLWILDCARD );
+    bool workForced( const QDate& d, const QString& m = kSQLWILDCARD,
+        const QString& r = kSQLWILDCARD, const QString& s = kSQLWILDCARD );
 
     /** @returns date of the last day scheduled automatically */
     QDate getLastScheduledDay();
@@ -142,8 +141,8 @@ public:
      * @param m model of aircraft
      * @param r role required (captain, first officer, ...)
      * @returns all pnts matching the requirements */
-    std::vector<QString> getPnts( QString m = kSQLWILDCARD,
-                                  QString r = kSQLWILDCARD );
+    std::vector<QString> getPnts(
+        QString m = kSQLWILDCARD, QString r = kSQLWILDCARD );
 
     /** Retrieves pnts with a given status on a given day of a certain model
      * and having a certain role in the crew (great to fill the schedule!)
@@ -152,9 +151,8 @@ public:
      * @param s status wanted
      * @param m aircraft model
      * @param r role of pnt in the crew */
-    std::vector<QString> getPnts(
-            QDate d, QString s = kSQLWILDCARD, QString m = kSQLWILDCARD,
-            QString r = kSQLWILDCARD );
+    std::vector<QString> getPnts( QDate d, QString s = kSQLWILDCARD,
+        QString m = kSQLWILDCARD, QString r = kSQLWILDCARD );
 
     /** Retrieves members without workday
      * @param m model concerned
@@ -168,8 +166,8 @@ public:
     AcftModelDb getAcftModel( const QString& n );
 
     /** Creates a view to fill a schedule table view */
-    void createScheduleView( QString n, QDate f, QDate t, QString m,
-                             QString r );
+    void createScheduleView(
+        QString n, QDate f, QDate t, QString m, QString r );
 
     /** A test function using see_status
      * @returns true if tests succeed */
