@@ -56,7 +56,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="choixStatut">
      <item>
       <property name="text">
        <string>Congé</string>
