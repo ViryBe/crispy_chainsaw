@@ -109,7 +109,7 @@ void MainWindow::on_validerB737_clicked()
     QDate dateTo = ui->dateToB737->date();
 }
 
-void MainWindow::refresh_pilot_days( QDate dateFrom, QDate dateTo )
+void MainWindow::refresh_pilot_days()
 {
     ui->dateTo->setMinimumDate( ui->dateFrom->date() );
 }
@@ -127,7 +127,7 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     ui->dateTo->setDate( date.addDays( 15 ) );
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB737->setDate( date.addDays( 15 ) );
-    refresh_pilot_days( date, date.addDays( 15 ) );
+    refresh_pilot_days();
 //    qDebug() << pilotInfo.maxfreq;     // ok
     ui->limitationVol->setValue( pilotInfo.maxfreq );
     if ( pilotInfo.acft_modelname == "b727" ) {
@@ -222,4 +222,16 @@ void MainWindow::on_vacancesButton_clicked()
     planningPilot newPlanningPilot;
     newPlanningPilot.setModal( true );
     newPlanningPilot.exec();
+}
+
+void MainWindow::on_dateFromB737_userDateChanged(const QDate &date)
+{
+    ui->dateToB737->setDate( date.addDays( 15 ) );
+    ui->dateToB737->setMinimumDate( ui->dateFromB737->date() );
+}
+
+void MainWindow::on_dateFromB727_userDateChanged(const QDate &date)
+{
+    ui->dateToB727->setDate( date.addDays( 15 ) );
+    ui->dateToB727->setMinimumDate( ui->dateFromB727->date() );
 }

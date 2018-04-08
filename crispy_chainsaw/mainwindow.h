@@ -49,11 +49,15 @@ private slots:
 
     void on_vacancesButton_clicked();
 
+    void on_dateFromB737_userDateChanged(const QDate &date);
+
+    void on_dateFromB727_userDateChanged(const QDate &date);
+
 private:
     Ui::MainWindow* ui;
     std::vector<QString> pntsIds;
     void refresh_pilot_information( const QString& idPilot );
-    void refresh_pilot_days( QDate dateFrom, QDate dateTo );
+    void refresh_pilot_days();
     void refresh_pilot_list();
     void update_tables( QDate dateFrom, QDate dateTo );
 };
