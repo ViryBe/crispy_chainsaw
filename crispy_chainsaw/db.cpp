@@ -310,32 +310,40 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     return res;
 }
 
-int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
+int
+DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
 {
     int card = 0;
-    int numberofdays = begin.daysTo( end );
     QSqlQuery query( m_db );
     QString qustr = "SELECT COUNT(workdate) FROM "
                     "Workday INNER JOIN Pnt ON Pnt.id = Workday.pntid WHERE "
                     "Pnt.id LIKE :pntid AND "
-                    "Workday.workdate BETWEEN :db AND :de";
+                    "Workday.workdate BETWEEN :db AND :de AND "
+                    "Workday.status LIKE :job";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare cardInactiveDays: " << query.lastError();
     }
     query.bindValue( ":pntid", id.toLower() );
     query.bindValue( ":db", begin.toString( kDATEFMT ) );
     query.bindValue( ":de", end.toString( kDATEFMT ) );
+    query.bindValue( ":job", job );
     if ( query.exec() ) {
         if ( query.first() ) {
-            int nwd = query.value( 0 ).toInt();
-            card = numberofdays - nwd;
+            card = query.value( 0 ).toInt();
         } else {
-            throw "can't count inactive days";
+            throw "can't count working days";
         }
     } else {
-        qDebug() << "exec cardInactiveDays: " << query.lastError();
+        qDebug() << "exec cardworkingdays: " << query.lastError();
     }
     return card;
+}
+
+int DbManager::cardInactiveDays( QString id, QDate begin, QDate end )
+{
+    int numberofdays = begin.daysTo( end );
+    int nwd = cardWorkdays( id, begin, end );
+    return numberofdays - nwd;
 }
 
 PntDb DbManager::getPnt( QString pntid )

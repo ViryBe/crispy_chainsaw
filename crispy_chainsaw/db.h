@@ -119,6 +119,13 @@ public:
      * @return the status as a string (e.g. off, v1, etc.) */
     QString statusOfPnt( const QDate d, const QString i );
 
+    /** Counts number of days of work
+     * @param i id of pnt
+     * @param b begin date
+     * @param e end date
+     * @param j job requested */
+    int cardWorkdays( QString i, QDate b, QDate e, QString j = kSQLWILDCARD );
+
     /** Count incative days between two dates
      * @param i identifier of the pnt
      * @param b beginning of the period
