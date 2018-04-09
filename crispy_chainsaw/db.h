@@ -64,7 +64,7 @@ public:
      * @param s status of the day (e.g. off, v1, etc.)
      * @param i id of the pilot concerned
      * @param f manually (forced) workday */
-    void addWorkday( QDate d, QString s, QString i, bool f );
+    void addWorkday( QDate d, QString s, QString i, bool f = false );
 
     /** Same as above but takes directly a Workday structure */
     void addWorkday( const WorkdayDb& );
@@ -89,8 +89,8 @@ public:
      * @param r role needed (defaults to sqlite wildcard)
      * @param s status of the flight (defaults to sqlite wildcard)
      * @returns true iff a pnt matches the requirements */
-    bool workForced( const QDate& d, const QString& m = kSQLWILDCARD,
-        const QString& r = kSQLWILDCARD, const QString& s = kSQLWILDCARD );
+    bool workForced( QDate d, QString m = kSQLWILDCARD,
+                     QString r = kSQLWILDCARD, QString s = kSQLWILDCARD );
 
     /** @returns date of the last day scheduled automatically */
     QDate getLastScheduledDay();
@@ -125,7 +125,7 @@ public:
      * @param d date of the day
      * @param i id (two characters) of the pnt
      * @return the status as a string (e.g. off, v1, etc.) */
-    QString statusOfPnt( const QDate d, const QString i );
+    QString statusOfPnt( QDate d, QString i );
 
     /** Counts number of days of work
      * @param i id of pnt
@@ -169,11 +169,11 @@ public:
      * @param r role concerned
      * @param d date of the day */
     std::vector<QString> getIdlePnts(
-        const QString& m, const QString& r, const QDate& d );
+            QDate d, QString m = kSQLWILDCARD, QString r = kSQLWILDCARD );
 
     /** Get all data on an aircraft model
      * @param n name of the model */
-    AcftModelDb getAcftModel( const QString& n );
+    AcftModelDb getAcftModel( QString n );
 
     /** Creates a view to fill a schedule table view
      * @param n name of the view

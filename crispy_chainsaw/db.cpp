@@ -169,8 +169,8 @@ std::vector<WorkdayDb> DbManager::getWorkdays(
     return rslt;
 }
 
-bool DbManager::workForced( const QDate& date, const QString& model,
-    const QString& role, const QString& status )
+bool DbManager::workForced( QDate date, QString model, QString role,
+                            QString status )
 {
     int nrslt = 0;
     QSqlQuery query( m_db );
@@ -461,8 +461,7 @@ std::vector<QString> DbManager::getPnts(
     return pnts;
 }
 
-std::vector<QString> DbManager::getIdlePnts(
-    const QString& m, const QString& r, const QDate& d )
+std::vector<QString> DbManager::getIdlePnts( QDate d, QString m, QString r )
 {
     std::vector<QString> pnts;
     QSqlQuery query( m_db );
@@ -497,7 +496,7 @@ std::vector<QString> DbManager::getIdlePnts(
     return pnts;
 }
 
-AcftModelDb DbManager::getAcftModel( const QString& name )
+AcftModelDb DbManager::getAcftModel( QString name )
 {
     AcftModelDb acftmod;
     QSqlQuery query( m_db );
@@ -543,8 +542,6 @@ void DbManager::createScheduleView( QString view_name, QDate from_date,
             qDebug() << "preparing views: " << query.lastError();
         }
         qDebug() << "preview:" << qustr;
-        //query.bindValue( ":vn", "v" + today.toString( kVIEWNAME ) );
-        //query.bindValue( ":date", today.toString( kVIEWNAME ) );
         if ( !query.exec() ) {
             qDebug() << "creating view: " << query.lastError();
         }
@@ -577,10 +574,6 @@ void DbManager::createScheduleView( QString view_name, QDate from_date,
     qDebug() << "query: " << qustr;
     if ( !query.prepare( qustr ) ) {
         qDebug() << "finalview:" << query.lastError();
-    }
-    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
-        QDate today = from_date.addDays( i );
-        //query.bindValue( ":d" + i, today.toString( kVIEWNAME ) );
     }
     query.bindValue( ":vn", view_name );
     if ( !query.exec() ) {

@@ -43,7 +43,7 @@ ScheduleInstance::ScheduleInstance(
             } catch ( const QString& msg ) {
                 qDebug() << msg;
             }
-            crewmem = gMANAGER.getIdlePnts( m_model.name, m_role, today );
+            crewmem = gMANAGER.getIdlePnts( today, m_model.name, m_role );
         }
 
         domain[ i ].resize( crewmem.size() );
