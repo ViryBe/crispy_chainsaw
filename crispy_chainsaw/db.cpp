@@ -436,7 +436,14 @@ std::vector<QString> DbManager::getIdlePnts(
                     "id NOT IN ("
                     "SELECT DISTINCT Pnt.id FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid WHERE "
-                    "Workday.workdate LIKE :date)";
+                    "Workday.workdate LIKE :date AND "
+                    "Workday.status NOT LIKE 'standby') "
+                    "UNION "
+                    "SELECT Pnt.id FROM Pnt INNER JOIN Workday ON "
+                    "Pnt.id = Workday.pntid AND "
+                    "Workday.status LIKE 'standby' AND "
+                    "Workday.workdate LIKE :date AND "
+                    "role LIKE :role AND acft_modelname LIKE :mod";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getIdlePnts: " << query.lastError()
                  << "\nrequest:" << qustr;

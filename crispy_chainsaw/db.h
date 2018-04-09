@@ -11,6 +11,7 @@ const QString kSQLWILDCARD = "%";
 /** Representation of the pnt in the database */
 struct PntDb
 {
+    enum Role { eCpt, eFirstOfficer, eFlightEngineer };
     QString id;       ///< Unique id based on pnt's name
     QString name;     ///< Name of the staff member
     QString role;     ///< Role of the crew member (e.g. cpt for captain)
@@ -32,6 +33,7 @@ struct AcftModelDb
 /** Representation of a day of a pnt in the database */
 struct WorkdayDb
 {
+    enum Status { eV1, eV2, eV3, eOffice, eOff, eStandBy, eSimu };
     QDate workdate;          ///< Date of the day
     QString status;          ///< Which work (e.g. simulator, office, v1, etc.)
     QString pntid;           ///< Pnt concerned
@@ -154,7 +156,7 @@ public:
     std::vector<QString> getPnts( QDate d, QString s = kSQLWILDCARD,
         QString m = kSQLWILDCARD, QString r = kSQLWILDCARD );
 
-    /** Retrieves members without workday
+    /** Retrieves members without workday or with workdays marked as standby
      * @param m model concerned
      * @param r role concerned
      * @param d date of the day */
