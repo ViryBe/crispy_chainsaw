@@ -147,14 +147,30 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
  * neither the aircraft model nor the role from the database */
 {
     auto nbDays = dateFrom.daysTo( dateTo );
-    QSqlQueryModel* model = new QSqlQueryModel;
-    for ( int j = 0; j <= nbDays; j++ ) {
-        model->setHeaderData(
-            j, Qt::Horizontal,
-            QObject::tr(
-                "test" ) );     // dateFrom.addDays(j).toString("dd")));
+    QString kVIEWNAME = "yyyyMMdd";
+    QString basequstr = "SELECT pntid";
+    for ( auto i = 0; i <= nbDays; i++ ) {
+        QDate today = dateFrom.addDays( i );
+        basequstr += ", c" + today.toString( kVIEWNAME );
     }
-    ui->capB727Tab->setModel( model );
+    basequstr += " FROM ScheduleView";
+
+    // B727 captains
+    QSqlQueryModel* b727cpt_model = new QSqlQueryModel;
+    {
+        QString b727cpt_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
+                                "role LIKE cpt";
+        b727cpt_model->setQuery( b727cpt_qustr );
+    }
+
+    b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
+    for ( int j = 0; j <= nbDays; j++ ) {
+        QString header = dateFrom.addDays( j ).toString( "dd" );
+        b727cpt_model->setHeaderData(
+                j + 1, Qt::Horizontal,
+                QObject::tr( header.toStdString().c_str() ) );
+    }
+    ui->capB727Tab->setModel( b727cpt_model );
     /*std::map<QString, int> dict;
     ui->capB727Tab->setColumnCount(nbDays);
     ui->capB737Tab->setColumnCount(nbDays);
