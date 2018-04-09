@@ -105,6 +105,14 @@ public:
     std::vector<WorkdayDb> getAutomaticallySetWorkdays(
         QDate f, QDate t, QString r = kSQLWILDCARD, QString m = kSQLWILDCARD );
 
+    /** Attach one workday for each pnt of the database on a date. Workdays are
+     * added with status 'standby'.
+     * @param d date
+     * @param m aircraft model (default to wildcard)
+     * @param r role (default to wildcard) */
+    void fillWorkdays( QDate d, QString m = kSQLWILDCARD,
+                       QString r = kSQLWILDCARD );
+
     /** Returns id of pnt working on a specified flight
      * @param d date of the flight
      * @param m model of aircraft on the flight

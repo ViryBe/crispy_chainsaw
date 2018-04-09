@@ -254,6 +254,26 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
     return workdays;
 }
 
+void DbManager::fillWorkdays( QDate date, QString mod, QString role)
+{
+    auto idle_pnts = getIdlePnts( mod, role, date );
+    for ( auto pntid : idle_pnts ) {
+        QSqlQuery query( m_db );
+        QString qustr = "INSERT INTO Workday "
+                        "(pntid, workdate, status) VALUES "
+                        "(:pid, :wdate, standby)";
+        if ( !query.prepare( qustr ) )  {
+            qDebug() << "prepare fillWorkdays:" << query.lastError();
+        }
+        query.bindValue( ":pid", pntid );
+        query.bindValue( ":wdate", date.toString( kDATEFMT ) );
+        if ( !query.exec() ) {
+            qDebug() << "exec fillWorkdays (ignore if unique constraint):"
+                     << query.lastError();
+        }
+    }
+}
+
 QString DbManager::getWorkingPnt(
     QDate date, QString model, QString role, QString status )
 {
