@@ -256,21 +256,36 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
 
 void DbManager::fillWorkdays( QDate date, QString mod, QString role)
 {
-    auto idle_pnts = getIdlePnts( mod, role, date );
+    // Get workdayless pnts
+    std::vector<QString> idle_pnts;
+    QSqlQuery query( m_db );
+    QString qustr = "SELECT id FROM Pnt WHERE "
+                    "role LIKE :role AND acft_modelname LIKE :mod AND "
+                    "id NOT IN ("
+                    "SELECT DISTINCT Pnt.id FROM Pnt INNER JOIN Workday ON "
+                    "Pnt.id = Workday.pntid WHERE "
+                    "Workday.workdate LIKE :date)";
+    if ( !query.prepare( qustr ) ) {
+        qDebug() << "preparing workdayless pnts:" << query.lastError();
+    }
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
+    query.bindValue( ":role", role );
+    query.bindValue( ":mod", mod );
+    if ( query.exec() ) {
+        while ( query.next() ) {
+            idle_pnts.push_back( query.value( 0 ).toString().toUpper() );
+        }
+    } else {
+        qDebug() << "exec workdayless pnts:" << query.lastError();
+    }
+
+    // Add a standby workday for each of them
     for ( auto pntid : idle_pnts ) {
-        QSqlQuery query( m_db );
-        QString qustr = "INSERT INTO Workday "
-                        "(pntid, workdate, status) VALUES "
-                        "(:pid, :wdate, standby)";
-        if ( !query.prepare( qustr ) )  {
-            qDebug() << "prepare fillWorkdays:" << query.lastError();
-        }
-        query.bindValue( ":pid", pntid );
-        query.bindValue( ":wdate", date.toString( kDATEFMT ) );
-        if ( !query.exec() ) {
-            qDebug() << "exec fillWorkdays (ignore if unique constraint):"
-                     << query.lastError();
-        }
+        WorkdayDb wd;
+        wd.workdate = date;
+        wd.status = "standby";
+        wd.pntid = pntid;
+        addWorkday( wd );
     }
 }
 
