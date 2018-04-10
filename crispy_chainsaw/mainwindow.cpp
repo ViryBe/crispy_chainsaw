@@ -178,6 +178,14 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
                 j + 1, Qt::Horizontal,
                 QObject::tr( header.toStdString().c_str() ) );
     }
+    QSqlQueryModel* dummy_model = new QSqlQueryModel;
+    {
+        QString qustr = "SELECT * FROM Pnt";
+        dummy_model->setQuery( qustr );
+    }
+
+    ui->capB737Tab->setModel( dummy_model );
+
     ui->capB727Tab->setModel( b727cpt_model );
     /*std::map<QString, int> dict;
     ui->capB727Tab->setColumnCount(nbDays);
