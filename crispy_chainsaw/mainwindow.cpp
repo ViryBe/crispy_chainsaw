@@ -20,7 +20,7 @@ void MainWindow::refresh_pilot_list()
 {
     ui->pilotList->clear();
     pntsIds.clear();
-    pntsIds = _MANAGER.getPnts();
+    pntsIds = gMANAGER.getPnts();
     std::sort( pntsIds.begin(), pntsIds.end() );
     for ( auto id : pntsIds ) {
         ui->pilotList->addItem( id.toUpper() );
@@ -40,7 +40,7 @@ void MainWindow::on_pilotAdd_clicked()
 void MainWindow::on_pilotManage_clicked()
 {
     QString idPilot = ui->pilotList->currentItem()->text();
-    auto pilotInfo = _MANAGER.getPnt( idPilot );
+    auto pilotInfo = gMANAGER.getPnt( idPilot );
 
     // Création de la nouvelle boite de dialogue pour modifier les infos
     newPilot NewPilot( pilotInfo );
@@ -57,7 +57,7 @@ void MainWindow::on_pilotDelete_clicked()
         "Etes vous surs de vouloir supprimer ce pilote ?",
         QMessageBox::Yes | QMessageBox::No );
     if ( reply == QMessageBox::Yes ) {
-        _MANAGER.deletePnt( ui->pilotList->currentItem()->text() );
+        gMANAGER.deletePnt( ui->pilotList->currentItem()->text() );
         refresh_pilot_list();
     }
 }
@@ -73,7 +73,8 @@ void MainWindow::on_refreshButton_clicked()
 {
     QDate dateFrom = ui->dateFrom->date();
     QDate dateTo = ui->dateTo->date();
-    refresh_pilot_days(ui->pilotList->currentItem()->text(), dateFrom, dateTo);
+    refresh_pilot_days(
+        ui->pilotList->currentItem()->text(), dateFrom, dateTo );
 }
 
 
@@ -86,18 +87,23 @@ void MainWindow::on_validerB737_clicked()
     QDate dateTo = ui->dateToB737->date();
 }
 
-void MainWindow::refresh_pilot_days(const QString& id, QDate dateFrom, QDate dateTo)
+void MainWindow::refresh_pilot_days(
+    const QString& id, QDate dateFrom, QDate dateTo )
 {
     ui->dateTo->setMinimumDate( ui->dateFrom->date() );
-    ui->standByDays->setText(QString::number(_MANAGER.cardInactiveDays(id, dateFrom, dateTo)));
-    ui->officeDays->setText(QString::number(_MANAGER.cardWorkdays(id, dateFrom, dateTo, "office")));
-    ui->homeDays->setText(QString::number(_MANAGER.cardWorkdays(id, dateFrom, dateTo, "off")));
-    ui->flightDays->setText(QString::number(_MANAGER.cardWorkdays(id, dateFrom, dateTo, "v_")));
+    ui->standByDays->setText(
+        QString::number( gMANAGER.cardInactiveDays( id, dateFrom, dateTo ) ) );
+    ui->officeDays->setText( QString::number(
+        gMANAGER.cardWorkdays( id, dateFrom, dateTo, "office" ) ) );
+    ui->homeDays->setText( QString::number(
+        gMANAGER.cardWorkdays( id, dateFrom, dateTo, "off" ) ) );
+    ui->flightDays->setText( QString::number(
+        gMANAGER.cardWorkdays( id, dateFrom, dateTo, "v_" ) ) );
 }
 
 void MainWindow::refresh_pilot_information( const QString& idPilot )
 {
-    auto pilotInfo = _MANAGER.getPnt( idPilot );
+    auto pilotInfo = gMANAGER.getPnt( idPilot );
     ui->codePilotBDD->setText( pilotInfo.id );
     ui->pilotNameBDD->setText( pilotInfo.name );
     // set the date from today to + 15 days
@@ -108,8 +114,8 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     ui->dateTo->setDate( date.addDays( 15 ) );
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB737->setDate( date.addDays( 15 ) );
-    refresh_pilot_days(idPilot, date, date.addDays(15));
-//    qDebug() << pilotInfo.maxfreq;     // ok
+    refresh_pilot_days( idPilot, date, date.addDays( 15 ) );
+    //    qDebug() << pilotInfo.maxfreq;     // ok
     ui->limitationVol->setValue( pilotInfo.maxfreq );
     if ( pilotInfo.acft_modelname == "b727" ) {
         if ( pilotInfo.role == "cpt" ) {
@@ -133,24 +139,38 @@ void MainWindow::on_dateFrom_userDateChanged( const QDate& date )
 }
 
 void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
-    /* Two options here: either we iterate through all pnts,
-     * or pnts are gathered considering the table to fill (i.e. using
-     * appropriate getPnts method). The latter method has the advantage of
-     * having a more precise context in the loop (defined role, defined
-     * aircraft) which allowes to rebuild the schedule without fetching back
-     * neither the aircraft model nor the role from the database */
+/* Two options here: either we iterate through all pnts,
+ * or pnts are gathered considering the table to fill (i.e. using
+ * appropriate getPnts method). The latter method has the advantage of
+ * having a more precise context in the loop (defined role, defined
+ * aircraft) which allowes to rebuild the schedule without fetching back
+ * neither the aircraft model nor the role from the database */
 {
-    auto nbDays = dateFrom.daysTo(dateTo);
-    QSqlTableModel *modelB727Cap = new QSqlTableModel;
-    QSqlTableModel *modelB727FE = new QSqlTableModel;
-    QSqlTableModel *modelB727FO = new QSqlTableModel;
-    QSqlTableModel *modelB737Cap = new QSqlTableModel;
-    QSqlTableModel *modelB737FO = new QSqlTableModel;
-    ui->capB727Tab->setModel(modelB727Cap);
-    ui->capB737Tab->setModel(modelB737Cap);
-    ui->feB727Tab->setModel(modelB727FE);
-    ui->foB727Tab->setModel(modelB727FO);
-    ui->foB737Tab->setModel(modelB737FO);
+    auto nbDays = dateFrom.daysTo( dateTo );
+    QString kVIEWNAME = "yyyyMMdd";
+    QString basequstr = "SELECT pntid";
+    for ( auto i = 0; i <= nbDays; i++ ) {
+        QDate today = dateFrom.addDays( i );
+        basequstr += ", c" + today.toString( kVIEWNAME );
+    }
+    basequstr += " FROM ScheduleView";
+
+    // B727 captains
+    QSqlQueryModel* b727cpt_model = new QSqlQueryModel;
+    {
+        QString b727cpt_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
+                                "role LIKE cpt";
+        b727cpt_model->setQuery( b727cpt_qustr );
+    }
+
+    b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
+    for ( int j = 0; j <= nbDays; j++ ) {
+        QString header = dateFrom.addDays( j ).toString( "dd" );
+        b727cpt_model->setHeaderData(
+                j + 1, Qt::Horizontal,
+                QObject::tr( header.toStdString().c_str() ) );
+    }
+    ui->capB727Tab->setModel( b727cpt_model );
     /*std::map<QString, int> dict;
     ui->capB727Tab->setColumnCount(nbDays);
     ui->capB737Tab->setColumnCount(nbDays);
@@ -158,11 +178,11 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     ui->foB727Tab->setColumnCount(nbDays);
     ui->foB737Tab->setColumnCount(nbDays);
     for ( auto id : pntsIds ) {
-        auto pilot = _MANAGER.getPnt( id );
+        auto pilot = gMANAGER.getPnt( id );
         for ( int j = 0; j <= dateFrom.daysTo(dateTo); j++) {
             ui->capB727Tab
             try {
-                auto info = _MANAGER.statusOfPnt( d, id );
+                auto info = gMANAGER.statusOfPnt( d, id );
                 if ( pilot.acft_modelname == "b737" ) { // pilote de b737
                     if ( pilot.role == "cpt" ) {
                         qDebug() << info;
@@ -188,11 +208,11 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
                         QMessageBox::Yes | QMessageBox::No,
                         QMessageBox::Yes );
                 if ( regenerate == QMessageBox::Yes ) {
-                    auto pnt = _MANAGER.getPnt( id );
-                    auto acftmod = _MANAGER.getAcftModel( pnt.acft_modelname );
+                    auto pnt = gMANAGER.getPnt( id );
+                    auto acftmod = gMANAGER.getAcftModel( pnt.acft_modelname );
                     auto regen = ScheduleInstance( acftmod, pnt.role,
                                                    dateFrom, dateTo );
-                    regen.updateDb( _MANAGER );
+                    regen.updateDb( gMANAGER );
                     qDebug() << "regeneration asked";
                 }
             }
@@ -212,20 +232,20 @@ void MainWindow::on_validerB727_clicked()
 void MainWindow::on_officeButton_clicked()
 {
     QString id = ui->pilotList->currentItem()->text();
-    planningPilot newPlanningPilot(id);
+    planningPilot newPlanningPilot( id );
     newPlanningPilot.setModal( true );
     newPlanningPilot.exec();
-        refresh_pilot_information(ui->pilotList->currentItem()->text());
+    refresh_pilot_information( ui->pilotList->currentItem()->text() );
 }
 
-void MainWindow::on_dateFromB737_userDateChanged(const QDate &date)
+void MainWindow::on_dateFromB737_userDateChanged( const QDate& date )
 {
     ui->dateToB737->setDate( date.addDays( 15 ) );
     ui->dateToB737->setMinimumDate( ui->dateFromB737->date() );
 }
 
-void MainWindow::on_dateFromB727_userDateChanged(const QDate &date)
+void MainWindow::on_dateFromB727_userDateChanged( const QDate& date )
 {
-    ui->dateToB727->setDate(date.addDays(15));
+    ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB727->setMinimumDate( ui->dateFromB727->date() );
 }

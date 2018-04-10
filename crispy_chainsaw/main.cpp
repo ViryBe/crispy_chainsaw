@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QMainWindow>
 
-DbManager _MANAGER{};
+DbManager gMANAGER{};
 
 
 int main( int argc, char* argv[] )
@@ -13,9 +13,11 @@ int main( int argc, char* argv[] )
     QApplication a( argc, argv );
 
     const QString path = QCoreApplication::applicationDirPath() + "/dummy.db";
-    _MANAGER.init( path );
+    gMANAGER.init( path );
 
     ScheduleInstance::test();
+    gMANAGER.createScheduleView( "testview", QDate( 2018, 4, 8 ),
+                                 QDate( 2018, 4, 10 ));
     MainWindow w;
     w.show();
 

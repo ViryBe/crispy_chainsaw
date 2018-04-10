@@ -17,10 +17,9 @@ void DbManager::init( const QString& path )
 void DbManager::addPnt( PntDb pdb )
 {
     QSqlQuery query( m_db );
-    QString qustr =
-        "INSERT INTO Pnt "
-        "(id, name, role, acft_modelname, maxfreq) VALUES "
-        "(:id, :name, :role, :amod, :mf)";
+    QString qustr = "INSERT INTO Pnt "
+                    "(id, name, role, acft_modelname, maxfreq) VALUES "
+                    "(:id, :name, :role, :amod, :mf)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addPnt: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -94,12 +93,12 @@ void DbManager::deletePnt( QString pid )
     }
 }
 
-void DbManager::addWorkday(
-        QDate date, QString st, QString pntid, bool forced )
+void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced )
 {
     QSqlQuery query( m_db );
-    QString qustr = "INSERT INTO Workday (workdate, status, pntid, forced) VALUES "
-                    "(:date, :status, :pntid, :f)";
+    QString qustr =
+        "INSERT INTO Workday (workdate, status, pntid, forced) VALUES "
+        "(:date, :status, :pntid, :f)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -137,31 +136,32 @@ void DbManager::deleteWorkday( QDate date, QString pntid )
     }
 }
 
-std::vector<WorkdayDb> DbManager::getWorkdays( QString pntid,
-        QDate from, QDate to, QString status)
+std::vector<WorkdayDb> DbManager::getWorkdays(
+    QString pntid, QDate from, QDate to, QString status )
 {
     std::vector<WorkdayDb> rslt;
     QSqlQuery query( m_db );
     QString qustr = "SELECT workdate, status, pntid, forced FROM "
-            "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
-            "pntid LIKE :pid AND "
-            "status LIKE :st AND "
-            "workdate >= :from AND workdate <= :to";
+                    "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
+                    "pntid LIKE :pid AND "
+                    "status LIKE :st AND "
+                    "workdate >= :from AND workdate <= :to";
     if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare getWorkdays: " <<  query.lastError();
+        qDebug() << "prepare getWorkdays: " << query.lastError();
     }
-    query.bindValue( ":pid", pntid);
-    query.bindValue( ":st", status);
-    query.bindValue( ":from", from);
-    query.bindValue( ":to", to);
+    query.bindValue( ":pid", pntid );
+    query.bindValue( ":st", status );
+    query.bindValue( ":from", from );
+    query.bindValue( ":to", to );
     if ( query.exec() ) {
         while ( query.next() ) {
             WorkdayDb wd;
-            wd.workdate = QDate::fromString(query.value(0).toString(), kDATEFMT);
-            wd.pntid = query.value(1).toString().toLower();
-            wd.status = query.value(2).toString().toUpper();
-            wd.forced = query.value(3).toBool();
-            rslt.push_back(wd);
+            wd.workdate =
+                QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
+            wd.pntid = query.value( 1 ).toString().toLower();
+            wd.status = query.value( 2 ).toString().toUpper();
+            wd.forced = query.value( 3 ).toBool();
+            rslt.push_back( wd );
         }
     } else {
         qDebug() << "getWorkdayserr: " << query.lastError();
@@ -169,8 +169,8 @@ std::vector<WorkdayDb> DbManager::getWorkdays( QString pntid,
     return rslt;
 }
 
-bool DbManager::workForced( const QDate& date, const QString& model,
-    const QString& role, const QString& status )
+bool DbManager::workForced( QDate date, QString model, QString role,
+                            QString status )
 {
     int nrslt = 0;
     QSqlQuery query( m_db );
@@ -210,8 +210,8 @@ QDate DbManager::getLastScheduledDay()
     }
     if ( query.exec() ) {
         if ( query.first() ) {
-            lastday = QDate::fromString( query.value( 0 ).toString(),
-                                         kDATEFMT );
+            lastday =
+                QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
         } else {
             throw "no scheduled day";
         }
@@ -254,8 +254,43 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
     return workdays;
 }
 
-QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
-    const QString& role, const QString& status )
+void DbManager::fillWorkdays( QDate date, QString mod, QString role)
+{
+    // Get workdayless pnts
+    std::vector<QString> idle_pnts;
+    QSqlQuery query( m_db );
+    QString qustr = "SELECT id FROM Pnt WHERE "
+                    "role LIKE :role AND acft_modelname LIKE :mod AND "
+                    "id NOT IN ("
+                    "SELECT DISTINCT Pnt.id FROM Pnt INNER JOIN Workday ON "
+                    "Pnt.id = Workday.pntid WHERE "
+                    "Workday.workdate LIKE :date)";
+    if ( !query.prepare( qustr ) ) {
+        qDebug() << "preparing workdayless pnts:" << query.lastError();
+    }
+    query.bindValue( ":date", date.toString( kDATEFMT ) );
+    query.bindValue( ":role", role );
+    query.bindValue( ":mod", mod );
+    if ( query.exec() ) {
+        while ( query.next() ) {
+            idle_pnts.push_back( query.value( 0 ).toString().toUpper() );
+        }
+    } else {
+        qDebug() << "exec workdayless pnts:" << query.lastError();
+    }
+
+    // Add a standby workday for each of them
+    for ( auto pntid : idle_pnts ) {
+        WorkdayDb wd;
+        wd.workdate = date;
+        wd.status = "standby";
+        wd.pntid = pntid;
+        addWorkday( wd );
+    }
+}
+
+QString DbManager::getWorkingPnt(
+    QDate date, QString model, QString role, QString status )
 {
     QString pntid;
     QSqlQuery query( m_db );
@@ -276,7 +311,7 @@ QString DbManager::getWorkingPnt( const QDate& date, const QString& model,
         if ( query.first() ) {
             pntid = QString( query.value( 0 ).toString() );
         } else {
-            throw "no working pnt";
+            throw QString::fromStdString( "no working pnt" );
         }
     } else {
         qDebug() << "exec getWorkingPnt: " << query.lastError();
@@ -310,8 +345,7 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
     return res;
 }
 
-int
-DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
+int DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
 {
     int card = 0;
     QSqlQuery query( m_db );
@@ -395,8 +429,8 @@ std::vector<QString> DbManager::getPnts( QString model, QString role )
     return pnts;
 }
 
-std::vector<QString>
-DbManager::getPnts( QDate date, QString status, QString model, QString role )
+std::vector<QString> DbManager::getPnts(
+    QDate date, QString status, QString model, QString role )
 {
     std::vector<QString> pnts;
     QSqlQuery query( m_db );
@@ -427,8 +461,7 @@ DbManager::getPnts( QDate date, QString status, QString model, QString role )
     return pnts;
 }
 
-std::vector<QString> DbManager::getIdlePnts(
-    const QString& m, const QString& r, const QDate& d )
+std::vector<QString> DbManager::getIdlePnts( QDate d, QString m, QString r )
 {
     std::vector<QString> pnts;
     QSqlQuery query( m_db );
@@ -437,7 +470,14 @@ std::vector<QString> DbManager::getIdlePnts(
                     "id NOT IN ("
                     "SELECT DISTINCT Pnt.id FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid WHERE "
-                    "Workday.workdate LIKE :date)";
+                    "Workday.workdate LIKE :date AND "
+                    "Workday.status NOT LIKE 'standby') "
+                    "UNION "
+                    "SELECT Pnt.id FROM Pnt INNER JOIN Workday ON "
+                    "Pnt.id = Workday.pntid AND "
+                    "Workday.status LIKE 'standby' AND "
+                    "Workday.workdate LIKE :date AND "
+                    "role LIKE :role AND acft_modelname LIKE :mod";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getIdlePnts: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -456,7 +496,7 @@ std::vector<QString> DbManager::getIdlePnts(
     return pnts;
 }
 
-AcftModelDb DbManager::getAcftModel( const QString& name )
+AcftModelDb DbManager::getAcftModel( QString name )
 {
     AcftModelDb acftmod;
     QSqlQuery query( m_db );
@@ -483,6 +523,62 @@ AcftModelDb DbManager::getAcftModel( const QString& name )
                  << "\nrequest:" << qustr;
     }
     return acftmod;
+}
+
+void DbManager::createScheduleView( QString view_name, QDate from_date,
+                                    QDate to_date )
+{
+    QString kVIEWNAME = "yyyyMMdd";
+    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
+        QDate today = from_date.addDays( i );
+        QSqlQuery query( m_db );
+        QString qustr =
+            "CREATE TEMP VIEW v" + today.toString( kVIEWNAME ) +
+            "(pntid, acftmodel, role, status) AS "
+            "SELECT Pnt.id, Pnt.acft_modelname, Pnt.role, Workday.status FROM "
+            "Pnt OUTER LEFT JOIN Workday ON Pnt.id = Workday.pntid WHERE "
+            "Workday.workdate LIKE '" + today.toString( kDATEFMT ) + "'";
+        if ( !query.prepare( qustr ) ) {
+            qDebug() << "preparing views: " << query.lastError();
+        }
+        qDebug() << "preview:" << qustr;
+        if ( !query.exec() ) {
+            qDebug() << "creating view: " << query.lastError();
+        }
+    }
+    QSqlQuery query( m_db );
+    // CREATE VIEW viewname (id, d0, d1, ..., dn)
+    QString qustr = "CREATE TEMP VIEW " + view_name + " (id, acftmodel, role";
+    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
+        QDate today = from_date.addDays( i );
+        qustr += ", c" + today.toString( kVIEWNAME );
+    }
+    qustr += ") AS ";
+    // AS SELECT pntid, vd1.status, ..., vdn.status
+    qustr += "SELECT v" + from_date.toString( kVIEWNAME ) + ".pntid, ";
+    qustr += "v" + from_date.toString( kVIEWNAME ) + ".acftmodel, ";
+    qustr += "v" + from_date.toString( kVIEWNAME ) + ".role";
+    for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
+        QDate today = from_date.addDays( i );
+        qustr += ", v" + today.toString( kVIEWNAME );
+        qustr += ".status";
+    }
+    // FROM vd1 INNER JOIN vd2 ON pntid INNER JOIN vd3 ON pntid ...
+    qustr += " FROM v" + from_date.toString( kVIEWNAME );
+    for ( auto i = 1; i <= from_date.daysTo( to_date ); i++ ) {
+        QDate today = from_date.addDays( i );
+        qustr += " OUTER LEFT JOIN v" + today.toString( kVIEWNAME );
+        qustr += " ON v" + today.toString( kVIEWNAME) + ".pntid "
+                 "= v" + from_date.toString( kVIEWNAME ) + ".pntid";
+    }
+    qDebug() << "query: " << qustr;
+    if ( !query.prepare( qustr ) ) {
+        qDebug() << "finalview:" << query.lastError();
+    }
+    query.bindValue( ":vn", view_name );
+    if ( !query.exec() ) {
+        qDebug() << "final view exec:" << query.lastError();
+    }
 }
 
 bool DbManager::test()

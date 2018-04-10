@@ -25,17 +25,17 @@ void planningPilot::on_buttonBox_accepted()
     QDate dateFrom = ui->dateFrom->date();
     QDate dateTo = ui->dateTo->date();
     for (int i = 0; i<=dateFrom.daysTo(dateTo); i ++){
-        _MANAGER.deleteWorkday(dateFrom.addDays(i), id);
+        gMANAGER.deleteWorkday(dateFrom.addDays(i), id);
         if (choix == "Congé"){
-            _MANAGER.addWorkday(dateFrom.addDays(i), "off" , id, true);
+            gMANAGER.addWorkday(dateFrom.addDays(i), "off" , id, true);
         }
         else if (choix == "Bureau"){
-            _MANAGER.addWorkday(dateFrom.addDays(i), "office" , id, true);
+            gMANAGER.addWorkday(dateFrom.addDays(i), "office" , id, true);
         }
         else if (choix == "Simulateur"){
-            _MANAGER.addWorkday(dateFrom.addDays(i), "simu" , id, true);
+            gMANAGER.addWorkday(dateFrom.addDays(i), "simu" , id, true);
         }
     }
-    PntDb pilot = _MANAGER.getPnt(id);
-    //ScheduleInstance::recomputeFrom(_MANAGER.getAcftModel(pilot.acft_modelname), pilot.role, dateFrom);
+    PntDb pilot = gMANAGER.getPnt(id);
+    //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(pilot.acft_modelname), pilot.role, dateFrom);
 }
