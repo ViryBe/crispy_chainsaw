@@ -141,11 +141,16 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
      * neither the aircraft model nor the role from the database */
 {
     auto nbDays = dateFrom.daysTo(dateTo);
-    QSqlQueryModel *model = new QSqlQueryModel;
-    for (int j=0; j<= nbDays; j++){
-        model->setHeaderData(j, Qt::Horizontal, QObject::tr("test")); //dateFrom.addDays(j).toString("dd")));
-    }
-    ui->capB727Tab->setModel(model);
+    QSqlTableModel *modelB727Cap = new QSqlTableModel;
+    QSqlTableModel *modelB727FE = new QSqlTableModel;
+    QSqlTableModel *modelB727FO = new QSqlTableModel;
+    QSqlTableModel *modelB737Cap = new QSqlTableModel;
+    QSqlTableModel *modelB737FO = new QSqlTableModel;
+    ui->capB727Tab->setModel(modelB727Cap);
+    ui->capB737Tab->setModel(modelB737Cap);
+    ui->feB727Tab->setModel(modelB727FE);
+    ui->foB727Tab->setModel(modelB727FO);
+    ui->foB737Tab->setModel(modelB737FO);
     /*std::map<QString, int> dict;
     ui->capB727Tab->setColumnCount(nbDays);
     ui->capB737Tab->setColumnCount(nbDays);
