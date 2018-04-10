@@ -159,8 +159,15 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     QSqlQueryModel* b727cpt_model = new QSqlQueryModel;
     {
         QString b727cpt_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
-                                "role LIKE cpt";
+                                "role LIKE 'cpt'";
         b727cpt_model->setQuery( b727cpt_qustr );
+    }
+    {
+        auto acftmodel = gMANAGER.getAcftModel( "b727" );
+        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom, dateTo );
+        qDebug() << "schedule generated";
+        gensched.updateDb( gMANAGER );
+        gMANAGER.fillWorkdays(dateFrom);
     }
 
     b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
