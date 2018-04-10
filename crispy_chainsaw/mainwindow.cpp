@@ -167,8 +167,9 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
         auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom, dateTo );
         qDebug() << "schedule generated";
         gensched.updateDb( gMANAGER );
-        gMANAGER.fillWorkdays(dateFrom);
     }
+    gMANAGER.fillWorkdays(dateFrom);
+    gMANAGER.createScheduleView( "b727cpt", dateFrom, dateTo );
 
     b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
     for ( int j = 0; j <= nbDays; j++ ) {
