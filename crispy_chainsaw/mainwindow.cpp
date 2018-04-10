@@ -147,8 +147,18 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
  * neither the aircraft model nor the role from the database */
 {
     auto nbDays = dateFrom.daysTo( dateTo );
+    { // Schedule generation
+        auto acftmodel = gMANAGER.getAcftModel( "b727" );
+        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom, dateTo );
+        qDebug() << "schedule generated";
+        gensched.updateDb( gMANAGER );
+    }
+
+    gMANAGER.fillWorkdays(dateFrom);
+    gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
+
     QString kVIEWNAME = "yyyyMMdd";
-    QString basequstr = "SELECT pntid";
+    QString basequstr = "SELECT id";
     for ( auto i = 0; i <= nbDays; i++ ) {
         QDate today = dateFrom.addDays( i );
         basequstr += ", c" + today.toString( kVIEWNAME );
@@ -160,16 +170,9 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     {
         QString b727cpt_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
                                 "role LIKE 'cpt'";
+        qDebug() << "queryb727cpt:" << b727cpt_qustr;
         b727cpt_model->setQuery( b727cpt_qustr );
     }
-    {
-        auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom, dateTo );
-        qDebug() << "schedule generated";
-        gensched.updateDb( gMANAGER );
-    }
-    gMANAGER.fillWorkdays(dateFrom);
-    gMANAGER.createScheduleView( "b727cpt", dateFrom, dateTo );
 
     b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
     for ( int j = 0; j <= nbDays; j++ ) {
@@ -178,62 +181,8 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
                 j + 1, Qt::Horizontal,
                 QObject::tr( header.toStdString().c_str() ) );
     }
-    QSqlQueryModel* dummy_model = new QSqlQueryModel;
-    {
-        QString qustr = "SELECT * FROM Pnt";
-        dummy_model->setQuery( qustr );
-    }
-
-    ui->capB737Tab->setModel( dummy_model );
 
     ui->capB727Tab->setModel( b727cpt_model );
-    /*std::map<QString, int> dict;
-    ui->capB727Tab->setColumnCount(nbDays);
-    ui->capB737Tab->setColumnCount(nbDays);
-    ui->feB727Tab->setColumnCount(nbDays);
-    ui->foB727Tab->setColumnCount(nbDays);
-    ui->foB737Tab->setColumnCount(nbDays);
-    for ( auto id : pntsIds ) {
-        auto pilot = gMANAGER.getPnt( id );
-        for ( int j = 0; j <= dateFrom.daysTo(dateTo); j++) {
-            ui->capB727Tab
-            try {
-                auto info = gMANAGER.statusOfPnt( d, id );
-                if ( pilot.acft_modelname == "b737" ) { // pilote de b737
-                    if ( pilot.role == "cpt" ) {
-                        qDebug() << info;
-                    } else { // First officer
-                        qDebug() << info;
-                    }
-                } else { // b727
-                    if ( pilot.role == "cpt" ) {
-                        qDebug() << info;
-                    } else if ( pilot.role == "fo" ) {
-                        qDebug() << info;
-                    } else {
-                        // flight engineer
-                        qDebug() << info;
-                    }
-                }
-            } catch (const QDate& d) {
-                qDebug() << "couldn't fetch data for pnt:" << id
-                         << "on the:" << d.toString( "yyyy-MM-dd" );
-                auto regenerate = QMessageBox::question(
-                        this, "Emploi du temps incomplet",
-                        "Regenerer l'emploi du temps?",
-                        QMessageBox::Yes | QMessageBox::No,
-                        QMessageBox::Yes );
-                if ( regenerate == QMessageBox::Yes ) {
-                    auto pnt = gMANAGER.getPnt( id );
-                    auto acftmod = gMANAGER.getAcftModel( pnt.acft_modelname );
-                    auto regen = ScheduleInstance( acftmod, pnt.role,
-                                                   dateFrom, dateTo );
-                    regen.updateDb( gMANAGER );
-                    qDebug() << "regeneration asked";
-                }
-            }
-        }
-    } */
 }
 
 
