@@ -158,12 +158,11 @@ bool ScheduleInstance::check( int i, int j )
     auto wr = workload.at( v[ i ] );
     auto pnt = gMANAGER.getPnt( v[ i ] );
     valid &= pnt.maxfreq > 0 ? pnt.maxfreq > wr.flights : true;
-    if ( !wr.check() && v[ j ] == v[ i ] ) {
-        // Even if times are not respected, only days requiring this pnt should
-        // be blamed, not others. If legal constraints are not respected but
-        // v[j] does not involve pilot of v[i], true is returned nonetheless as
-        // the two workdays do not show incompatibilites.
-        valid &= false;
+    if ( v[ j ] == v[ i ] ) {
+        float wft = ( wr.flights + 1 ) * kTIMEPERFLIGHT;
+        valid &= wft <= kMAXFLIGHTWEEK &&
+                 wft + wr.mPrevFlightTime.month <= kMAXFLIGHTMONTH &&
+                 wft + wr.mPrevFlightTime.year <= kMAXFLIGHTYEAR;
     }
     if (     // If two flights happen the same day...
         ( ( i - 1 ) / mModel.maxfreq ) == ( ( j - 1 ) / mModel.maxfreq ) ) {
