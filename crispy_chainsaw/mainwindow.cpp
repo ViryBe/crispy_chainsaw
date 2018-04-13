@@ -149,7 +149,7 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     auto nbDays = dateFrom.daysTo( dateTo );
     { // Schedule generation
         auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom, dateTo );
+        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom );
         qDebug() << "schedule generated";
         gensched.updateDb( gMANAGER );
     }

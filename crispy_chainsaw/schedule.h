@@ -54,19 +54,12 @@ struct Flight
 class ScheduleInstance
 {
 public:
-    /** Creates a schedule defined by the dates of beginning and end.
-     * @param m model of the aircraft concerned by this schedule
-     * @param r role concerned by the schedule
-     * @param db date of the beginning of the schedule
-     * @param de date of the end of the schedule */
-    ScheduleInstance( const AcftModelDb& m, QString r, QDate db, QDate de );
-
-    /** Creates a 15 days schedule defined by the dates of beginning.
+    /** Creates a schedule spanning over one week.
      * @param m model of the aircraft concerned by this schedule
      * @param r role concerned by the schedule
      * @param db date of the beginning of the schedule */
-    ScheduleInstance(
-        const AcftModelDb& m, QString r, QDate db = QDate::currentDate() );
+    ScheduleInstance( const AcftModelDb& m, QString r,
+                      QDate db = QDate::currentDate() );
 
     /** Schedules the flights given as parameter
      * @param m model of aircraft
@@ -99,18 +92,21 @@ public:
 
 private:
     // Misc data
-    AcftModelDb m_model;
-    QString m_role;
-    QDate m_startdate;
+    AcftModelDb mModel;
+    QString mRole;
+    QDate mStartDate;
 
     struct workRegister
     {
-        int weekflight = 0;
-        int monthflight = 0;
-        int yearflight = 0;
-        int weekservice = 0;
-        int monthservice = 0;
-        int yearservice = 0;
+        int flights = 0;
+        int serviceDays = 0;
+
+        struct prevFlightTime {
+            float month = 0.;
+            float year = 0.;
+        };
+
+        prevFlightTime mPrevFlightTime;
 
         bool operator<=( const workRegister& wr );
         bool check();            ///< Check time limits constraints
@@ -126,7 +122,8 @@ private:
         v;     ///< Values of the variables v[0] is a pseudo var
     std::vector<std::vector<QString>> domain;     ///< Domain of each variable
     std::vector<std::vector<QString>> current_domain;
-    std::map<QString, workRegister> workload;
+    std::map<QString, workRegister>
+        workload; ///< Maps pntid to number of flights newly attributed
 
     /** Calls tree search methods to solve the *binary* constraint satisfaction
      * problem, i.e. the creation of the schedule. Works in place, modifying
