@@ -81,6 +81,10 @@ public:
     /** Prints the deduced schedule to stdout */
     void print();
 
+    /** Get rest contraints compliancy status
+     * @returns true iff rest contraints are matched */
+    bool getRestCompliancy();
+
     /** Rebuilds the schedule from a specified date
      * @param m model of aircraft concerned
      * @param r role concerned
@@ -95,6 +99,7 @@ private:
     AcftModelDb mModel;
     QString mRole;
     QDate mStartDate;
+    bool mRestCompliancy; ///< Asserts whether rest contraints are matched
 
     struct workRegister
     {
@@ -137,6 +142,10 @@ private:
     /** Check for constraints, true  iff no constraint violated by neither
      * var i nor var j */
     bool check( int i, int j );
+
+    /** Checks for rest constraints. Triggered post computation
+     * @returns true if complies to constraints */
+    bool checkRest();
 
     /** Backtrack tree search method, label for forward step, i.e.
      * tries to find an instatiation for variable [i]

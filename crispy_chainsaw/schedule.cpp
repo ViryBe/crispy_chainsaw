@@ -5,14 +5,14 @@ const int kMAXFLIGHTMONTH = 100;     ///< Flight time per month
 const int kMAXFLIGHTYEAR = 900;      ///< Flight time per year
 const int kMAXSERVWEEK = 60;         ///< Time of service per week
 const int kMAXSERVMONTH = 190;       ///< Time of service per month
-const int kMINRESTSERV8 = 9;     ///< Rest time if less than 8 hours of service
-const int kMINRESTSERV89 = 10;     ///< Rest time if 8 or 9 hours of service
+const int kMINRESTSERV8 = 9;      ///< Rest time if less than 8 hours of service
+const int kMINRESTSERV89 = 10;    ///< Rest time if 8 or 9 hours of service
 const int kMINRESTSERV9 = 11;     ///< Rest time if more than 9 hours of service
 const int kMONTH = 28;            ///< Number of days in a month
 const int kWEEK = 7;              ///< Number of days in a week
+const int kYEAR = 365;            ///< Number of days in a year
 const float kTIMEPERFLIGHT = 2.5; ///< Mean time of a flight
 
-// Currently valid only for generation of one week schedule!
 ScheduleInstance::ScheduleInstance(
     const AcftModelDb& aModel, QString aRole, QDate dbeg )
 {
@@ -59,12 +59,6 @@ ScheduleInstance::ScheduleInstance(
     // Init flight number per pilot and sort domains
     std::vector<QString> pntids = gMANAGER.getPnts( mModel.name, aRole );
     for ( auto pid : pntids ) {
-        workRegister wr;
-        auto year = dbeg.year();
-        auto oneyearago = QDate( year - 1, dbeg.month(), dbeg.day() );
-        std::vector<WorkdayDb> wds =
-            gMANAGER.getWorkdays( pid, oneyearago, dbeg );
-
         /* Fill workregisters the following way:
          * * since a schedule is generated on one week, we suppose previous
          *   week is well scheduled, current week is a new one,
@@ -72,7 +66,13 @@ ScheduleInstance::ScheduleInstance(
          *   one month period, for this, take all the workdays from the date
          *   being one month before the *end* of the currently computed
          *   schedule
-         * * fuck off concerning the year */
+         * * idem for the year */
+        workRegister wr;
+        auto year = dbeg.year();
+        auto oneyearago =
+            QDate( year - 1, dbeg.month(), dbeg.day() ).addDays( kWEEK );
+        std::vector<WorkdayDb> wds =
+            gMANAGER.getWorkdays( pid, oneyearago, dbeg );
         for ( auto wd : wds ) {
             if ( wd.status == "v1" || wd.status == "v2" || wd.status == "v3" ) {
                 wr.mPrevFlightTime.year += wd.lapse;
@@ -87,6 +87,9 @@ ScheduleInstance::ScheduleInstance(
 
     // create schedule
     bcssp( n, Status::unknown );
+
+    // And check rest constraints
+    mRestCompliancy = checkRest();
 }
 
 int ScheduleInstance::bt_label( int i )
@@ -172,6 +175,10 @@ bool ScheduleInstance::check( int i, int j )
     return valid;
 }
 
+bool ScheduleInstance::checkRest() {
+    return true;
+}
+
 void ScheduleInstance::recomputeFrom(
     const AcftModelDb& amod, QString role, QDate dfrom )
 {
@@ -182,8 +189,10 @@ void ScheduleInstance::recomputeFrom(
     for ( WorkdayDb wday : autosetdays ) {
         gMANAGER.deleteWorkday( wday.workdate, wday.pntid );
     }
-    ScheduleInstance rescheduled = ScheduleInstance( amod, role, dfrom );
-    rescheduled.updateDb( gMANAGER );
+    for ( auto d = dfrom; d.daysTo( to ) > 0 ; d = d.addDays( kWEEK ) ) {
+        ScheduleInstance rescheduled = ScheduleInstance( amod, role, d );
+        rescheduled.updateDb( gMANAGER );
+    }
 }
 
 void ScheduleInstance::updateDb( DbManager dbm )
