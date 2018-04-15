@@ -175,7 +175,7 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     }
     {
         auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom, dateTo );
+        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom );
         qDebug() << "schedule generated";
         gensched.updateDb( gMANAGER );
     }
@@ -190,10 +190,8 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
                 QObject::tr( header.toStdString().c_str() ) );
     }
 
-    ui->foB727Tab->setModel( dummy_model );
     ui->foB737Tab->show();
     ui->capB727Tab->setModel( b727cpt_model );
-    ui->capB727Tab->show();
     /*std::map<QString, int> dict;
     ui->capB727Tab->setColumnCount(nbDays);
     ui->capB737Tab->setColumnCount(nbDays);
