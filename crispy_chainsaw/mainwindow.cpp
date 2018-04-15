@@ -143,7 +143,7 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
  * or pnts are gathered considering the table to fill (i.e. using
  * appropriate getPnts method). The latter method has the advantage of
  * having a more precise context in the loop (defined role, defined
- * aircraft) which allowes to rebuild the schedule without fetching back
+ * aircraft) which allows to rebuild the schedule without fetching back
  * neither the aircraft model nor the role from the database */
 {
     auto nbDays = dateFrom.daysTo( dateTo );
@@ -173,6 +173,14 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
         qDebug() << "queryb727cpt:" << b727cpt_qustr;
         b727cpt_model->setQuery( b727cpt_qustr );
     }
+    {
+        auto acftmodel = gMANAGER.getAcftModel( "b727" );
+        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom, dateTo );
+        qDebug() << "schedule generated";
+        gensched.updateDb( gMANAGER );
+    }
+    gMANAGER.fillWorkdays(dateFrom);
+    gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
 
     b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
     for ( int j = 0; j <= nbDays; j++ ) {
@@ -182,7 +190,57 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
                 QObject::tr( header.toStdString().c_str() ) );
     }
 
+    ui->foB727Tab->setModel( dummy_model );
+    ui->foB737Tab->show();
     ui->capB727Tab->setModel( b727cpt_model );
+    ui->capB727Tab->show();
+    /*std::map<QString, int> dict;
+    ui->capB727Tab->setColumnCount(nbDays);
+    ui->capB737Tab->setColumnCount(nbDays);
+    ui->feB727Tab->setColumnCount(nbDays);
+    ui->foB727Tab->setColumnCount(nbDays);
+    ui->foB737Tab->setColumnCount(nbDays);
+    for ( auto id : pntsIds ) {
+        auto pilot = gMANAGER.getPnt( id );
+        for ( int j = 0; j <= dateFrom.daysTo(dateTo); j++) {
+            ui->capB727Tab
+            try {
+                auto info = gMANAGER.statusOfPnt( d, id );
+                if ( pilot.acft_modelname == "b737" ) { // pilote de b737
+                    if ( pilot.role == "cpt" ) {
+                        qDebug() << info;
+                    } else { // First officer
+                        qDebug() << info;
+                    }
+                } else { // b727
+                    if ( pilot.role == "cpt" ) {
+                        qDebug() << info;
+                    } else if ( pilot.role == "fo" ) {
+                        qDebug() << info;
+                    } else {
+                        // flight engineer
+                        qDebug() << info;
+                    }
+                }
+            } catch (const QDate& d) {
+                qDebug() << "couldn't fetch data for pnt:" << id
+                         << "on the:" << d.toString( "yyyy-MM-dd" );
+                auto regenerate = QMessageBox::question(
+                        this, "Emploi du temps incomplet",
+                        "Regenerer l'emploi du temps?",
+                        QMessageBox::Yes | QMessageBox::No,
+                        QMessageBox::Yes );
+                if ( regenerate == QMessageBox::Yes ) {
+                    auto pnt = gMANAGER.getPnt( id );
+                    auto acftmod = gMANAGER.getAcftModel( pnt.acft_modelname );
+                    auto regen = ScheduleInstance( acftmod, pnt.role,
+                                                   dateFrom, dateTo );
+                    regen.updateDb( gMANAGER );
+                    qDebug() << "regeneration asked";
+                }
+            }
+        }
+    } */
 }
 
 
