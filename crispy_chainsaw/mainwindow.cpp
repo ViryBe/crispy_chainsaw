@@ -106,16 +106,15 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     auto pilotInfo = gMANAGER.getPnt( idPilot );
     ui->codePilotBDD->setText( pilotInfo.id );
     ui->pilotNameBDD->setText( pilotInfo.name );
-    // set the date from today to + 15 days
     QDate date = date.currentDate();
-    ui->dateFrom->setDate( date );
+    QDate dateMonth = date.addDays(1 - date.day());
+    ui->dateFrom->setDate( dateMonth );
     ui->dateFromB727->setDate( date );
     ui->dateFromB737->setDate( date );
-    ui->dateTo->setDate( date.addDays( 15 ) );
+    ui->dateTo->setDate( dateMonth.addMonths(1).addDays( -1));
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB737->setDate( date.addDays( 15 ) );
-    refresh_pilot_days( idPilot, date, date.addDays( 15 ) );
-    //    qDebug() << pilotInfo.maxfreq;     // ok
+    refresh_pilot_days( idPilot, dateMonth, dateMonth.addMonths(1).addDays( -1));
     ui->limitationVol->setValue( pilotInfo.maxfreq );
     if ( pilotInfo.acft_modelname == "b727" ) {
         if ( pilotInfo.role == "cpt" ) {
@@ -135,7 +134,7 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
 
 void MainWindow::on_dateFrom_userDateChanged( const QDate& date )
 {
-    ui->dateTo->setDate( date.addDays( 15 ) );
+    ui->dateTo->setDate( date.addMonths(1).addDays( -1) );
 }
 
 void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
@@ -282,4 +281,22 @@ void MainWindow::on_dateFromB727_userDateChanged( const QDate& date )
 {
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB727->setMinimumDate( ui->dateFromB727->date() );
+}
+
+void MainWindow::on_changeDureeB737_clicked()
+{
+    QDate date = ui->dateFromB737->date();
+    QString appareil = "B737";
+    ModifyFlight newModifyFlight( date, appareil);
+    newModifyFlight.setModal( true );
+    newModifyFlight.exec();
+}
+
+void MainWindow::on_changeDureeB727_clicked()
+{
+    QDate date = ui->dateFromB727->date();
+    QString appareil = "B727";
+    ModifyFlight newModifyFlight( date, appareil);
+    newModifyFlight.setModal( true );
+    newModifyFlight.exec();
 }

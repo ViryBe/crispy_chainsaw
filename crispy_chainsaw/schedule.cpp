@@ -5,91 +5,95 @@ const int kMAXFLIGHTMONTH = 100;     ///< Flight time per month
 const int kMAXFLIGHTYEAR = 900;      ///< Flight time per year
 const int kMAXSERVWEEK = 60;         ///< Time of service per week
 const int kMAXSERVMONTH = 190;       ///< Time of service per month
-const int kMINRESTSERV8 = 9;      ///< Rest time if less than 8 hours of service
-const int kMINRESTSERV89 = 10;    ///< Rest time if 8 or 9 hours of service
+const int kMINRESTSERV8 = 9;     ///< Rest time if less than 8 hours of service
+const int kMINRESTSERV89 = 10;     ///< Rest time if 8 or 9 hours of service
 const int kMINRESTSERV9 = 11;     ///< Rest time if more than 9 hours of service
 const int kMONTH = 28;            ///< Number of days in a month
 const int kWEEK = 7;              ///< Number of days in a week
 const int kYEAR = 365;            ///< Number of days in a year
-const float kTIMEPERFLIGHT = 2.5; ///< Mean time of a flight
+const float kTIMEPERFLIGHT = 2.5;     ///< Mean time of a flight
 
 ScheduleInstance::ScheduleInstance(
     const AcftModelDb& aModel, QString aRole, QDate dbeg )
 {
+    if ( gMANAGER.getLastScheduledDay() > QDate::currentDate().addDays( 7 ) ) {
+        mModel = aModel;
+        mRole = aRole;
+        mStartDate = dbeg;
 
-    mModel = aModel;
-    mRole = aRole;
-    mStartDate = dbeg;
+        // Number of variables = freq * number of days
+        n = mModel.maxfreq * static_cast<int>( kWEEK );
 
-    // Number of variables = freq * number of days
-    n = mModel.maxfreq * static_cast<int>( kWEEK );
+        // Init domains
+        domain.resize( n + 1 );
+        current_domain.resize( n + 1 );
+        for ( int i = 1; i <= n; i++ ) {
+            std::vector<QString> crewmem;
+            QString fl_st =
+                "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
+            QDate today = dbeg.addDays( ( i - 1 ) / mModel.maxfreq );
 
-    // Init domains
-    domain.resize( n + 1 );
-    current_domain.resize( n + 1 );
-    for ( int i = 1; i <= n; i++ ) {
-        std::vector<QString> crewmem;
-        QString fl_st =
-            "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
-        QDate today = dbeg.addDays( ( i - 1 ) / mModel.maxfreq );
-
-        if ( gMANAGER.workForced( today, mModel.name, mRole, fl_st ) ) {
-            // If workday forced, keep it
-            crewmem = {
-                gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st )};
-        } else {      // Delete previous and get idle pnts
-            try {     // Try to remove existing days if they exist
-                auto assignedpnt = gMANAGER.getWorkingPnt(
-                    today, mModel.name, mRole, fl_st );
-                gMANAGER.deleteWorkday( today, assignedpnt );
-            } catch ( const QString& msg ) {
-                qDebug() << msg;
+            if ( gMANAGER.workForced( today, mModel.name, mRole, fl_st ) ) {
+                // If workday forced, keep it
+                crewmem = {
+                    gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st )};
+            } else {      // Delete previous and get idle pnts
+                try {     // Try to remove existing days if they exist
+                    auto assignedpnt = gMANAGER.getWorkingPnt(
+                        today, mModel.name, mRole, fl_st );
+                    gMANAGER.deleteWorkday( today, assignedpnt );
+                } catch ( const QString& msg ) {
+                    qDebug() << msg;
+                }
+                crewmem = gMANAGER.getIdlePnts( today, mModel.name, mRole );
             }
-            crewmem = gMANAGER.getIdlePnts( today, mModel.name, mRole );
+
+            domain[ i ].resize( crewmem.size() );
+            domain[ i ] = crewmem;
+            current_domain[ i ].resize( crewmem.size() );
+            current_domain[ i ] = crewmem;
         }
 
-        domain[ i ].resize( crewmem.size() );
-        domain[ i ] = crewmem;
-        current_domain[ i ].resize( crewmem.size() );
-        current_domain[ i ] = crewmem;
-    }
+        v.resize( n + 1 );
 
-    v.resize( n + 1 );
-
-    // Init flight number per pilot and sort domains
-    std::vector<QString> pntids = gMANAGER.getPnts( mModel.name, aRole );
-    for ( auto pid : pntids ) {
-        /* Fill workregisters the following way:
-         * * since a schedule is generated on one week, we suppose previous
-         *   week is well scheduled, current week is a new one,
-         * * verify that the workdays added won't violate the constraint on a
-         *   one month period, for this, take all the workdays from the date
-         *   being one month before the *end* of the currently computed
-         *   schedule
-         * * idem for the year */
-        workRegister wr;
-        auto year = dbeg.year();
-        auto oneyearago =
-            QDate( year - 1, dbeg.month(), dbeg.day() ).addDays( kWEEK );
-        std::vector<WorkdayDb> wds =
-            gMANAGER.getWorkdays( pid, oneyearago, dbeg );
-        for ( auto wd : wds ) {
-            if ( wd.status == "v1" || wd.status == "v2" || wd.status == "v3" ) {
-                wr.mPrevFlightTime.year += wd.lapse;
-                wr.mPrevFlightTime.month +=
-                    ( dbeg.daysTo( wd.workdate ) <= kMONTH - kWEEK ) ?
-                    wd.lapse : 0.;
+        // Init flight number per pilot and sort domains
+        std::vector<QString> pntids = gMANAGER.getPnts( mModel.name, aRole );
+        for ( auto pid : pntids ) {
+            /* Fill workregisters the following way:
+             * * since a schedule is generated on one week, we suppose previous
+             *   week is well scheduled, current week is a new one,
+             * * verify that the workdays added won't violate the constraint on
+             * a
+             *   one month period, for this, take all the workdays from the date
+             *   being one month before the *end* of the currently computed
+             *   schedule
+             * * idem for the year */
+            workRegister wr;
+            auto year = dbeg.year();
+            auto oneyearago =
+                QDate( year - 1, dbeg.month(), dbeg.day() ).addDays( kWEEK );
+            std::vector<WorkdayDb> wds =
+                gMANAGER.getWorkdays( pid, oneyearago, dbeg );
+            for ( auto wd : wds ) {
+                if ( wd.status == "v1" || wd.status == "v2" ||
+                     wd.status == "v3" ) {
+                    wr.mPrevFlightTime.year += wd.lapse;
+                    wr.mPrevFlightTime.month +=
+                        ( dbeg.daysTo( wd.workdate ) <= kMONTH - kWEEK )
+                            ? wd.lapse
+                            : 0.;
+                }
             }
+            workload.emplace( std::make_pair( pid, wr ) );
         }
-        workload.emplace( std::make_pair( pid, wr ) );
+        sort_domains();
+
+        // create schedule
+        bcssp( n, Status::unknown );
+
+        // And check rest constraints
+        mRestCompliancy = checkRest();
     }
-    sort_domains();
-
-    // create schedule
-    bcssp( n, Status::unknown );
-
-    // And check rest constraints
-    mRestCompliancy = checkRest();
 }
 
 int ScheduleInstance::bt_label( int i )
@@ -175,9 +179,7 @@ bool ScheduleInstance::check( int i, int j )
     return valid;
 }
 
-bool ScheduleInstance::checkRest() {
-    return true;
-}
+bool ScheduleInstance::checkRest() { return true; }
 
 void ScheduleInstance::recomputeFrom(
     const AcftModelDb& amod, QString role, QDate dfrom )
@@ -189,7 +191,7 @@ void ScheduleInstance::recomputeFrom(
     for ( WorkdayDb wday : autosetdays ) {
         gMANAGER.deleteWorkday( wday.workdate, wday.pntid );
     }
-    for ( auto d = dfrom; d.daysTo( to ) > 0 ; d = d.addDays( kWEEK ) ) {
+    for ( auto d = dfrom; d.daysTo( to ) > 0; d = d.addDays( kWEEK ) ) {
         ScheduleInstance rescheduled = ScheduleInstance( amod, role, d );
         rescheduled.updateDb( gMANAGER );
     }
@@ -225,10 +227,7 @@ bool ScheduleInstance::workRegister::operator<=( const workRegister& aWr )
     return flights <= aWr.flights;
 }
 
-void ScheduleInstance::workRegister::addFlight()
-{
-    ++flights;
-}
+void ScheduleInstance::workRegister::addFlight() { ++flights; }
 
 void ScheduleInstance::workRegister::removeFlight()
 {
