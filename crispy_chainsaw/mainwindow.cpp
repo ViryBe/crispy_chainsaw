@@ -148,12 +148,20 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
 {
     auto nbDays = dateFrom.daysTo( dateTo );
     // Generate schedules
-    for (auto r : {"cpt", "fo"}) {
+    for (auto r : {"cpt", "fo", "fe"}) {
         auto acftmodel = gMANAGER.getAcftModel( "b727" );
         auto gensched = ScheduleInstance( acftmodel, r, dateFrom );
         qDebug() << "schedule generated for " << r;
         gensched.updateDb( gMANAGER );
     }
+    /*
+    for (auto r : {"cpt", "fo"}) {
+        auto acftmodel = gMANAGER.getAcftModel( "b737" );
+        auto gensched = ScheduleInstance( acftmodel, r, dateFrom );
+        qDebug() << "schedule generated for " << r;
+        gensched.updateDb( gMANAGER );
+    }
+    */
     gMANAGER.fillWorkdays(dateFrom);
     gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
 
