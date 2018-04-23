@@ -116,6 +116,13 @@ public:
     void fillWorkdays( QDate d, QString m = kSQLWILDCARD,
                        QString r = kSQLWILDCARD );
 
+    /** Edit the duration of a flight
+     * @param d date of the flight
+     * @param m model of the aircraft assigned to the flight
+     * @param s status of the flight
+     * @param t duration of flight */
+    void editFlightLapse(QDate d, QString m, QString s, QTime t);
+
     /** Returns id of pnt working on a specified flight
      * @param d date of the flight
      * @param m model of aircraft on the flight

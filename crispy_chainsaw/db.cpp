@@ -1,6 +1,7 @@
 #include "db.h"
 
 const QString kDATEFMT = "yyyy-MM-dd";
+const QString kTIMEFMT = "hhmm";
 
 void DbManager::init( const QString& path )
 {
@@ -291,6 +292,25 @@ void DbManager::fillWorkdays( QDate date, QString mod, QString role)
     }
 }
 
+void DbManager::editFlightLapse(QDate date, QString model, QString status,
+        QTime lapse)
+{
+    QSqlQuery query(m_db);
+    QString qustr = "UPDATE Workdays SET lapse = :l WHERE "
+        "workdate = :d AND statis LIKE :s AND pntid IN ("
+        "SELECT id FROM Pnt WHERE acft_modelname LIKE :m)";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare editFlightLapse" << query.lastError();
+    }
+    query.bindValue(":l", lapse.toString(kTIMEFMT));
+    query.bindValue(":m", model);
+    query.bindValue(":s", status);
+    query.bindValue(":d", date.toString(kDATEFMT));
+    if (!query.exec()) {
+        qDebug() << "error editFlightLapse:" << query.lastError();
+    }
+}
+
 QString DbManager::getWorkingPnt(
     QDate date, QString model, QString role, QString status )
 {
@@ -313,6 +333,7 @@ QString DbManager::getWorkingPnt(
         if ( query.first() ) {
             pntid = QString( query.value( 0 ).toString() );
         } else {
+            qDebug() << "no working pnt";
             throw QString::fromStdString( "no working pnt" );
         }
     } else {
