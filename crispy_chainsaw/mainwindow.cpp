@@ -155,9 +155,11 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     // Generate schedules
     for ( auto r : {"cpt", "fo", "fe"} ) {
         auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        auto gensched = ScheduleInstance( acftmodel, r, dateFrom );
-        qDebug() << "schedule generated for " << r;
-        gensched.updateDb( gMANAGER );
+        //ScheduleInstance::schedule(acftmodel, r, dateFrom, dateTo);
+        //auto gensched = ScheduleInstance( acftmodel, r, dateFrom );
+        //qDebug() << "schedule generated for " << r;
+        //gensched.updateDb( gMANAGER );
+        qDebug() << "schedules generated for b727";
     }
     /*
     for (auto r : {"cpt", "fo"}) {

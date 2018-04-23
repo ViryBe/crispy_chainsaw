@@ -74,6 +74,14 @@ public:
      * @param f flights to schedule */
     ScheduleInstance( const ScheduleInstance& s, const std::vector<Flight>& f );
 
+    /** Schedules minimal number of consecutive weeks such that the two dates
+     * given as arg are scheduled.
+     * @param m aircraft model of the schedule
+     * @param r role of the schedule
+     * @param b beginning date
+     * @param e end date */
+    static void schedule( const AcftModelDb& m, QString r, QDate b, QDate e);
+
     /** Updates database
      * @param dbm database manager */
     void updateDb( DbManager dbm );

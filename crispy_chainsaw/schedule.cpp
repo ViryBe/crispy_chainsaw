@@ -92,6 +92,17 @@ ScheduleInstance::ScheduleInstance(
     mRestCompliancy = checkRest();
 }
 
+void ScheduleInstance::schedule(const AcftModelDb& acftmod, QString role,
+        QDate dbeg, QDate dend)
+{
+    auto ndays = dbeg.daysTo(dend);
+    auto nweeks = ndays / kWEEK + 1;
+    for (auto i = 0 ; i < nweeks ; i++) {
+        auto gensched = ScheduleInstance(
+                acftmod, role, dbeg.addDays(i * kWEEK));
+        gensched.updateDb(gMANAGER);
+    }
+}
 
 int ScheduleInstance::bt_label( int i )
 {
