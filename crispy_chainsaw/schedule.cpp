@@ -16,85 +16,82 @@ const float kTIMEPERFLIGHT = 2.5;     ///< Mean time of a flight
 ScheduleInstance::ScheduleInstance(
     const AcftModelDb& aModel, QString aRole, QDate dbeg )
 {
-    if ( gMANAGER.getLastScheduledDay() > QDate::currentDate().addDays( 7 ) ) {
-        mModel = aModel;
-        mRole = aRole;
-        mStartDate = dbeg;
 
-        // Number of variables = freq * number of days
-        n = mModel.maxfreq * static_cast<int>( kWEEK );
+    mModel = aModel;
+    mRole = aRole;
+    mStartDate = dbeg;
 
-        // Init domains
-        domain.resize( n + 1 );
-        current_domain.resize( n + 1 );
-        for ( int i = 1; i <= n; i++ ) {
-            std::vector<QString> crewmem;
-            QString fl_st =
-                "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
-            QDate today = dbeg.addDays( ( i - 1 ) / mModel.maxfreq );
+    // Number of variables = freq * number of days
+    n = mModel.maxfreq * static_cast<int>( kWEEK );
 
-            if ( gMANAGER.workForced( today, mModel.name, mRole, fl_st ) ) {
-                // If workday forced, keep it
-                crewmem = {
-                    gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st )};
-            } else {      // Delete previous and get idle pnts
-                try {     // Try to remove existing days if they exist
-                    auto assignedpnt = gMANAGER.getWorkingPnt(
-                        today, mModel.name, mRole, fl_st );
-                    gMANAGER.deleteWorkday( today, assignedpnt );
-                } catch ( const QString& msg ) {
-                    qDebug() << msg;
-                }
-                crewmem = gMANAGER.getIdlePnts( today, mModel.name, mRole );
+    // Init domains
+    domain.resize( n + 1 );
+    current_domain.resize( n + 1 );
+    for ( int i = 1; i <= n; i++ ) {
+        std::vector<QString> crewmem;
+        QString fl_st = "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
+        QDate today = dbeg.addDays( ( i - 1 ) / mModel.maxfreq );
+
+        if ( gMANAGER.workForced( today, mModel.name, mRole, fl_st ) ) {
+            // If workday forced, keep it
+            crewmem = {
+                gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st )};
+        } else {      // Delete previous and get idle pnts
+            try {     // Try to remove existing days if they exist
+                auto assignedpnt =
+                    gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st );
+                gMANAGER.deleteWorkday( today, assignedpnt );
+            } catch ( const QString& msg ) {
+                qDebug() << msg;
             }
-
-            domain[ i ].resize( crewmem.size() );
-            domain[ i ] = crewmem;
-            current_domain[ i ].resize( crewmem.size() );
-            current_domain[ i ] = crewmem;
+            crewmem = gMANAGER.getIdlePnts( today, mModel.name, mRole );
         }
 
-        v.resize( n + 1 );
-
-        // Init flight number per pilot and sort domains
-        std::vector<QString> pntids = gMANAGER.getPnts( mModel.name, aRole );
-        for ( auto pid : pntids ) {
-            /* Fill workregisters the following way:
-             * * since a schedule is generated on one week, we suppose previous
-             *   week is well scheduled, current week is a new one,
-             * * verify that the workdays added won't violate the constraint on
-             * a
-             *   one month period, for this, take all the workdays from the date
-             *   being one month before the *end* of the currently computed
-             *   schedule
-             * * idem for the year */
-            workRegister wr;
-            auto year = dbeg.year();
-            auto oneyearago =
-                QDate( year - 1, dbeg.month(), dbeg.day() ).addDays( kWEEK );
-            std::vector<WorkdayDb> wds =
-                gMANAGER.getWorkdays( pid, oneyearago, dbeg );
-            for ( auto wd : wds ) {
-                if ( wd.status == "v1" || wd.status == "v2" ||
-                     wd.status == "v3" ) {
-                    wr.mPrevFlightTime.year += wd.lapse;
-                    wr.mPrevFlightTime.month +=
-                        ( dbeg.daysTo( wd.workdate ) <= kMONTH - kWEEK )
-                            ? wd.lapse
-                            : 0.;
-                }
-            }
-            workload.emplace( std::make_pair( pid, wr ) );
-        }
-        sort_domains();
-
-        // create schedule
-        bcssp( n, Status::unknown );
-
-        // And check rest constraints
-        mRestCompliancy = checkRest();
+        domain[ i ].resize( crewmem.size() );
+        domain[ i ] = crewmem;
+        current_domain[ i ].resize( crewmem.size() );
+        current_domain[ i ] = crewmem;
     }
+
+    v.resize( n + 1 );
+
+    // Init flight number per pilot and sort domains
+    std::vector<QString> pntids = gMANAGER.getPnts( mModel.name, aRole );
+    for ( auto pid : pntids ) {
+        /* Fill workregisters the following way:
+         * * since a schedule is generated on one week, we suppose previous
+         *   week is well scheduled, current week is a new one,
+         * * verify that the workdays added won't violate the constraint on
+         * a
+         *   one month period, for this, take all the workdays from the date
+         *   being one month before the *end* of the currently computed
+         *   schedule
+         * * idem for the year */
+        workRegister wr;
+        auto year = dbeg.year();
+        auto oneyearago =
+            QDate( year - 1, dbeg.month(), dbeg.day() ).addDays( kWEEK );
+        std::vector<WorkdayDb> wds =
+            gMANAGER.getWorkdays( pid, oneyearago, dbeg );
+        for ( auto wd : wds ) {
+            if ( wd.status == "v1" || wd.status == "v2" || wd.status == "v3" ) {
+                wr.mPrevFlightTime.year += wd.lapse;
+                wr.mPrevFlightTime.month +=
+                    ( dbeg.daysTo( wd.workdate ) <= kMONTH - kWEEK ) ? wd.lapse
+                                                                     : 0.;
+            }
+        }
+        workload.emplace( std::make_pair( pid, wr ) );
+    }
+    sort_domains();
+
+    // create schedule
+    bcssp( n, Status::unknown );
+
+    // And check rest constraints
+    mRestCompliancy = checkRest();
 }
+
 
 int ScheduleInstance::bt_label( int i )
 {
