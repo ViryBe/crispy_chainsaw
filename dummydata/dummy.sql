@@ -98,3 +98,7 @@ values ('2018-04-10', 'v1', 'fd');
 insert into Workday (workdate, status, pntid)
 values ('2018-04-10', 'v2', 'fc');
 
+-- Fill data to be represented (i.e. pseudo real data)
+insert into Acft_model(name, maxfreq, crew, nop, ntot)
+values ('b737', 3, 2, 3, 7);
+
