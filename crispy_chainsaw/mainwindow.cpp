@@ -111,10 +111,10 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     ui->dateFrom->setDate( dateMonth );
     ui->dateFromB727->setDate( date );
     ui->dateFromB737->setDate( date );
-    ui->dateTo->setDate( dateMonth.addDays( -1).addMonths(1) );
+    ui->dateTo->setDate( dateMonth.addMonths(1).addDays( -1));
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB737->setDate( date.addDays( 15 ) );
-    refresh_pilot_days( idPilot, dateMonth, dateMonth.addDays( -1).addMonths(1) );
+    refresh_pilot_days( idPilot, dateMonth, dateMonth.addMonths(1).addDays( -1));
     ui->limitationVol->setValue( pilotInfo.maxfreq );
     if ( pilotInfo.acft_modelname == "b727" ) {
         if ( pilotInfo.role == "cpt" ) {
@@ -134,7 +134,7 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
 
 void MainWindow::on_dateFrom_userDateChanged( const QDate& date )
 {
-    ui->dateTo->setDate( date.addDays( -1).addMonths(1) );
+    ui->dateTo->setDate( date.addMonths(1).addDays( -1) );
 }
 
 void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
