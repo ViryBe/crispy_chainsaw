@@ -2,7 +2,6 @@
 #define NEWPILOT_H
 
 #include "db.h"
-#include "pnt.h"
 #include <QDialog>
 
 namespace Ui

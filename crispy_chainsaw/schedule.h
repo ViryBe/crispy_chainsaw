@@ -3,7 +3,6 @@
 
 #include "acftmodel.h"
 #include "db.h"
-#include "pnt.h"
 #include <QDate>
 #include <algorithm>
 #include <vector>

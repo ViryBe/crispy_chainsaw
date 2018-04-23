@@ -9,9 +9,7 @@ QT += sql core gui widgets
 CONFIG += release
 
 # Input
-HEADERS += db.h mainwindow.h pnt.h \
-    workday.h \
-    acftmodel.h \
+HEADERS += db.h mainwindow.h \
     schedule.h \
     newpilot.h \
     planningpilot.h \
@@ -20,9 +18,7 @@ FORMS += mainwindow.ui \
     newpilot.ui \
     planningpilot.ui \
     modifyflight.ui
-SOURCES += db.cpp main.cpp mainwindow.cpp pnt.cpp \
-    workday.cpp \
-    acftmodel.cpp \
+SOURCES += db.cpp main.cpp mainwindow.cpp \
     schedule.cpp \
     newpilot.cpp \
     planningpilot.cpp \
