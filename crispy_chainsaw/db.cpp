@@ -1,6 +1,7 @@
 #include "db.h"
 
 const QString kDATEFMT = "yyyy-MM-dd";
+const QString kTIMEFMT = "hhmm";
 
 void DbManager::init( const QString& path )
 {
@@ -73,7 +74,7 @@ void DbManager::updatePnt( PntDb pdb )
                 modifyPnt( pdb );
             }
         } else {
-            throw "couldn't evaluate existence";
+            qDebug() << "pdb not found in database";
         }
     } else {
         qDebug() << "exec updatePnt: " << query.lastError();
@@ -194,7 +195,7 @@ bool DbManager::workForced( QDate date, QString model, QString role,
         if ( query.first() ) {
             nrslt = query.value( 0 ).toInt();
         } else {
-            throw "no pnt forced";
+            qDebug() << "no pnt forced";
         }
     } else {
         qDebug() << "exec workForced: " << query.lastError();
@@ -215,7 +216,7 @@ QDate DbManager::getLastScheduledDay()
             lastday =
                 QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
         } else {
-            throw "no scheduled day";
+            qDebug() << "no scheduled day";
         }
     } else {
         qDebug() << "exec getlastschedule: " << query.lastError();
@@ -291,6 +292,25 @@ void DbManager::fillWorkdays( QDate date, QString mod, QString role)
     }
 }
 
+void DbManager::editFlightLapse(QDate date, QString model, QString status,
+        QTime lapse)
+{
+    QSqlQuery query(m_db);
+    QString qustr = "UPDATE Workdays SET lapse = :l WHERE "
+        "workdate = :d AND statis LIKE :s AND pntid IN ("
+        "SELECT id FROM Pnt WHERE acft_modelname LIKE :m)";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare editFlightLapse" << query.lastError();
+    }
+    query.bindValue(":l", lapse.toString(kTIMEFMT));
+    query.bindValue(":m", model);
+    query.bindValue(":s", status);
+    query.bindValue(":d", date.toString(kDATEFMT));
+    if (!query.exec()) {
+        qDebug() << "error editFlightLapse:" << query.lastError();
+    }
+}
+
 QString DbManager::getWorkingPnt(
     QDate date, QString model, QString role, QString status )
 {
@@ -313,7 +333,7 @@ QString DbManager::getWorkingPnt(
         if ( query.first() ) {
             pntid = QString( query.value( 0 ).toString() );
         } else {
-            throw QString::fromStdString( "no working pnt" );
+            qDebug() << "no working pnt";
         }
     } else {
         qDebug() << "exec getWorkingPnt: " << query.lastError();
@@ -338,7 +358,8 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
         if ( query.first() ) {
             res = query.value( 0 ).toString().toUpper();
         } else {
-            throw date;
+            qDebug() << "no pnt found while fetching status" <<
+                date.toString(kDATEFMT);
         }
     } else {
         qDebug() << "exec statusOfPnt: " << query.lastError()
@@ -367,7 +388,7 @@ int DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
         if ( query.first() ) {
             card = query.value( 0 ).toInt();
         } else {
-            throw "can't count working days";
+            qDebug() << "can't count working days";
         }
     } else {
         qDebug() << "exec cardworkingdays: " << query.lastError();
@@ -518,7 +539,7 @@ AcftModelDb DbManager::getAcftModel( QString name )
             acftmod.nop = query.value( 3 ).toInt();
             acftmod.ntot = query.value( 4 ).toInt();
         } else {
-            throw "no acft model";
+            qDebug() << "no acft model";
         }
     } else {
         qDebug() << "exec getAcftModel: " << query.lastError()
