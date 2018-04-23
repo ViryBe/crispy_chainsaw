@@ -11,14 +11,6 @@ void loadSchedule(
     QDate = QDate::currentDate(), QDate = QDate::currentDate().addDays( 15 ) );
 void createSchedule( QDate, QDate );
 
-/** Flight requirement, to be entered in schedule */
-struct Flight
-{
-    QDate date;            ///< Date of the flight
-    AcftModelDb model;     ///< Model of aircraft concerned
-    int position;          ///< Position of flight during day (1st, 2nd, etc.)
-};
-
 /** # Definition
  * The aim of the schedule is to provide a crew for each flight. To lighten
  * the object, a schedule concerns *only one* aircraft model and *only one*
@@ -59,19 +51,6 @@ public:
      * @param db date of the beginning of the schedule */
     ScheduleInstance( const AcftModelDb& m, QString r,
                       QDate db = QDate::currentDate() );
-
-    /** Schedules the flights given as parameter
-     * @param m model of aircraft
-     * @param r role concerned
-     * @param f flights to schedule */
-    ScheduleInstance( QString r, const std::vector<Flight>& f );
-
-    /** Completes an already existing schedule with new flights. Already
-     * existing flights are not modified, an error is raised if the already
-     * existing schedule is not consistent.
-     * @param s schedule to complete
-     * @param f flights to schedule */
-    ScheduleInstance( const ScheduleInstance& s, const std::vector<Flight>& f );
 
     /** Schedules minimal number of consecutive weeks such that the two dates
      * given as arg are scheduled.
