@@ -65,6 +65,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QDateEdit" name="dateEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="displayFormat">
         <string>dd/MM/yyyy</string>
        </property>
@@ -74,7 +77,7 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="pasEffectue">
        <property name="text">
         <string>non effectué</string>
        </property>
