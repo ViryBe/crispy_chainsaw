@@ -2,6 +2,7 @@
 
 const QString kDATEFMT = "yyyy-MM-dd";
 const QString kTIMEFMT = "hhmm";
+const QString kVIEWNAME = "yyyyMMdd";
 
 void DbManager::init( const QString& path )
 {
@@ -546,6 +547,20 @@ AcftModelDb DbManager::getAcftModel( QString name )
                  << "\nrequest:" << qustr;
     }
     return acftmod;
+}
+
+QString DbManager::scheduleViewQuery(QDate dbeg, QDate dend, QString amod,
+        QString role)
+{
+    auto nbdays = dbeg.daysTo(dend);
+    QString qustr = "SELECT id";
+    for ( auto i = 0; i <= nbdays; i++ ) {
+        QDate today = dbeg.addDays( i );
+        qustr += ", c" + today.toString( kVIEWNAME );
+    }
+    qustr += " FROM ScheduleView WHERE acftmodel ";
+    qustr += "LIKE '" + amod + "' AND role LIKE '" + role +"'";
+    return qustr;
 }
 
 void DbManager::createScheduleView( QString view_name, QDate from_date,

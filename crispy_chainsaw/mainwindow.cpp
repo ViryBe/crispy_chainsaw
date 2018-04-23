@@ -166,23 +166,13 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     gMANAGER.fillWorkdays( dateFrom );
     gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
 
-    // Set misc requests and models
-    QString kVIEWNAME = "yyyyMMdd";
-    QString basequstr = "SELECT id";
-    for ( auto i = 0; i <= nbDays; i++ ) {
-        QDate today = dateFrom.addDays( i );
-        basequstr += ", c" + today.toString( kVIEWNAME );
-    }
-    basequstr += " FROM ScheduleView";
-
     // {cpt, fo, fe}
     QSqlQueryModel* b727models[] = {
         new QSqlQueryModel, new QSqlQueryModel, new QSqlQueryModel};
     QString b727roles[] = {QString( "cpt" ), QString( "fo" ), QString( "fe" )};
     for ( int i = 0; i < 3; i++ ) {
-        QString qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
-                                    "role LIKE '" +
-                        b727roles[ i ] + "'";
+        QString qustr = DbManager::scheduleViewQuery(dateFrom, dateTo, "b727",
+                b727roles[i]);
         qDebug() << "query:" << qustr;
         b727models[ i ]->setQuery( qustr );
         b727models[ i ]->setHeaderData(
@@ -197,9 +187,8 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     QSqlQueryModel* b737models[] = {new QSqlQueryModel, new QSqlQueryModel};
     QString b737roles[] = {QString( "cpt" ), QString( "fo" )};
     for ( int i = 0; i < 2; i++ ) {
-        QString qustr = basequstr + " WHERE acftmodel LIKE 'b737' AND "
-                                    "role LIKE '" +
-                        b737roles[ i ] + "'";
+        QString qustr = DbManager::scheduleViewQuery(dateFrom, dateTo, "b737",
+                b737roles[i]);
         qDebug() << "query:" << qustr;
         b737models[ i ]->setQuery( qustr );
         b737models[ i ]->setHeaderData(
@@ -211,50 +200,11 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
         }
     }
 
-    // B727 captains
-    /*
-    QSqlQueryModel* b727cpt_model = new QSqlQueryModel;
-    {
-        QString b727cpt_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
-                                "role LIKE 'cpt'";
-        qDebug() << "queryb727cpt:" << b727cpt_qustr;
-        b727cpt_model->setQuery( b727cpt_qustr );
-    }
-    b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
-    for ( int j = 0; j <= nbDays; j++ ) {
-        QString header = dateFrom.addDays( j ).toString( "dd" );
-        b727cpt_model->setHeaderData(
-                j + 1, Qt::Horizontal,
-                QObject::tr( header.toStdString().c_str() ) );
-    }
-    */
-
-    // ui->foB737Tab->show();
     ui->capB727Tab->setModel( b727models[ 0 ] );
     ui->foB727Tab->setModel( b727models[ 1 ] );
     ui->feB727Tab->setModel( b727models[ 2 ] );
     ui->capB737Tab->setModel( b737models[ 0 ] );
     ui->foB737Tab->setModel( b737models[ 1 ] );
-    // ui->capB727Tab->setModel( b727cpt_model );
-    // ui->foB727Tab->setModel(b727fo_model);
-
-    // B727 first office
-    /*
-    QSqlQueryModel* b727fo_model = new QSqlQueryModel;
-    {
-        QString b727fo_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
-            "role LIKE 'fo'";
-        qDebug() << "queryb727fo:" << b727fo_qustr;
-        b727fo_model->setQuery(b727fo_qustr);
-    }
-    b727fo_model->setHeaderData(0, Qt::Horizontal, QObject::tr("PNT"));
-    for (int j = 0; j <= nbDays; j++) {
-        QString header = dateFrom.addDays(j).toString("dd");
-        b727fo_model->setHeaderData(
-                j+1, Qt::Horizontal,
-                QObject::tr(header.toStdString().c_str()));
-    }
-    */
 }
 
 
