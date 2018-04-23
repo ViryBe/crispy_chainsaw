@@ -37,6 +37,7 @@ struct WorkdayDb
     QDate workdate;          ///< Date of the day
     QString status;          ///< Which work (e.g. simulator, office, v1, etc.)
     QString pntid;           ///< Pnt concerned
+    float lapse = 0.;        ///< Duration of the workday
     bool forced = false;     ///< Whether workday has been added manually
 };
 
@@ -63,8 +64,10 @@ public:
      * @param d date of the day
      * @param s status of the day (e.g. off, v1, etc.)
      * @param i id of the pilot concerned
-     * @param f manually (forced) workday */
-    void addWorkday( QDate d, QString s, QString i, bool f = false );
+     * @param f manually (forced) workday
+     * @param l lapse of the workday */
+    void addWorkday( QDate d, QString s, QString i, bool f = false,
+                     float l = 0. );
 
     /** Same as above but takes directly a Workday structure */
     void addWorkday( const WorkdayDb& );

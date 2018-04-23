@@ -93,12 +93,13 @@ void DbManager::deletePnt( QString pid )
     }
 }
 
-void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced )
+void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced,
+                            float lapse )
 {
     QSqlQuery query( m_db );
     QString qustr =
-        "INSERT INTO Workday (workdate, status, pntid, forced) VALUES "
-        "(:date, :status, :pntid, :f)";
+        "INSERT INTO Workday (workdate, status, pntid, forced, lapse) VALUES "
+        "(:date, :status, :pntid, :f, :l)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare addWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -107,6 +108,7 @@ void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced )
     query.bindValue( ":status", st.toLower() );
     query.bindValue( ":pntid", pntid.toLower() );
     query.bindValue( ":f", forced );
+    query.bindValue( ":l", lapse );
     if ( !query.exec() ) {
         qDebug() << "exec addWorkday: " << query.lastError()
                  << "\nrequest:" << qustr;
@@ -115,7 +117,7 @@ void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced )
 
 void DbManager::addWorkday( const WorkdayDb& wd )
 {
-    addWorkday( wd.workdate, wd.status, wd.pntid, wd.forced );
+    addWorkday( wd.workdate, wd.status, wd.pntid, wd.forced, wd.lapse );
 }
 
 void DbManager::deleteWorkday( QDate date, QString pntid )
