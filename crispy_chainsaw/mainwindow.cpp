@@ -147,16 +147,17 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
  * neither the aircraft model nor the role from the database */
 {
     auto nbDays = dateFrom.daysTo( dateTo );
-    { // Schedule generation
+    // Generate schedules
+    for (auto r : {"cpt", "fo"}) {
         auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom );
-        qDebug() << "schedule generated";
+        auto gensched = ScheduleInstance( acftmodel, r, dateFrom );
+        qDebug() << "schedule generated for " << r;
         gensched.updateDb( gMANAGER );
     }
-
     gMANAGER.fillWorkdays(dateFrom);
     gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
 
+    // Set misc requests and models
     QString kVIEWNAME = "yyyyMMdd";
     QString basequstr = "SELECT id";
     for ( auto i = 0; i <= nbDays; i++ ) {
@@ -165,7 +166,42 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     }
     basequstr += " FROM ScheduleView";
 
+    // {cpt, fo, fe}
+    QSqlQueryModel* b727models[] = {new QSqlQueryModel, new QSqlQueryModel,
+        new QSqlQueryModel};
+    QString b727roles[] = {QString("cpt"), QString("fo"), QString("fe")};
+    for (int i = 0 ; i < 3; i++) {
+        QString qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
+            "role LIKE '" + b727roles[i] + "'";
+        qDebug() << "query:" << qustr;
+        b727models[i]->setQuery(qustr);
+        b727models[i]->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
+        for ( int j = 0; j <= nbDays; j++ ) {
+            QString header = dateFrom.addDays( j ).toString( "dd" );
+            b727models[i]->setHeaderData(
+                    j + 1, Qt::Horizontal,
+                    QObject::tr( header.toStdString().c_str() ) );
+        }
+    }
+
+    QSqlQueryModel* b737models[] = {new QSqlQueryModel, new QSqlQueryModel};
+    QString b737roles[] = {QString("cpt"), QString("fo")};
+    for (int i = 0 ; i < 2; i++) {
+        QString qustr = basequstr + " WHERE acftmodel LIKE 'b737' AND "
+            "role LIKE '" + b737roles[i] + "'";
+        qDebug() << "query:" << qustr;
+        b737models[i]->setQuery(qustr);
+        b737models[i]->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
+        for ( int j = 0; j <= nbDays; j++ ) {
+            QString header = dateFrom.addDays( j ).toString( "dd" );
+            b737models[i]->setHeaderData(
+                    j + 1, Qt::Horizontal,
+                    QObject::tr( header.toStdString().c_str() ) );
+        }
+    }
+
     // B727 captains
+    /*
     QSqlQueryModel* b727cpt_model = new QSqlQueryModel;
     {
         QString b727cpt_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
@@ -173,15 +209,6 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
         qDebug() << "queryb727cpt:" << b727cpt_qustr;
         b727cpt_model->setQuery( b727cpt_qustr );
     }
-    {
-        auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        auto gensched = ScheduleInstance( acftmodel, "cpt", dateFrom );
-        qDebug() << "schedule generated";
-        gensched.updateDb( gMANAGER );
-    }
-    gMANAGER.fillWorkdays(dateFrom);
-    gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
-
     b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
     for ( int j = 0; j <= nbDays; j++ ) {
         QString header = dateFrom.addDays( j ).toString( "dd" );
@@ -189,56 +216,34 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
                 j + 1, Qt::Horizontal,
                 QObject::tr( header.toStdString().c_str() ) );
     }
+    */
 
-    ui->foB737Tab->show();
-    ui->capB727Tab->setModel( b727cpt_model );
-    /*std::map<QString, int> dict;
-    ui->capB727Tab->setColumnCount(nbDays);
-    ui->capB737Tab->setColumnCount(nbDays);
-    ui->feB727Tab->setColumnCount(nbDays);
-    ui->foB727Tab->setColumnCount(nbDays);
-    ui->foB737Tab->setColumnCount(nbDays);
-    for ( auto id : pntsIds ) {
-        auto pilot = gMANAGER.getPnt( id );
-        for ( int j = 0; j <= dateFrom.daysTo(dateTo); j++) {
-            ui->capB727Tab
-            try {
-                auto info = gMANAGER.statusOfPnt( d, id );
-                if ( pilot.acft_modelname == "b737" ) { // pilote de b737
-                    if ( pilot.role == "cpt" ) {
-                        qDebug() << info;
-                    } else { // First officer
-                        qDebug() << info;
-                    }
-                } else { // b727
-                    if ( pilot.role == "cpt" ) {
-                        qDebug() << info;
-                    } else if ( pilot.role == "fo" ) {
-                        qDebug() << info;
-                    } else {
-                        // flight engineer
-                        qDebug() << info;
-                    }
-                }
-            } catch (const QDate& d) {
-                qDebug() << "couldn't fetch data for pnt:" << id
-                         << "on the:" << d.toString( "yyyy-MM-dd" );
-                auto regenerate = QMessageBox::question(
-                        this, "Emploi du temps incomplet",
-                        "Regenerer l'emploi du temps?",
-                        QMessageBox::Yes | QMessageBox::No,
-                        QMessageBox::Yes );
-                if ( regenerate == QMessageBox::Yes ) {
-                    auto pnt = gMANAGER.getPnt( id );
-                    auto acftmod = gMANAGER.getAcftModel( pnt.acft_modelname );
-                    auto regen = ScheduleInstance( acftmod, pnt.role,
-                                                   dateFrom, dateTo );
-                    regen.updateDb( gMANAGER );
-                    qDebug() << "regeneration asked";
-                }
-            }
-        }
-    } */
+    //ui->foB737Tab->show();
+    ui->capB727Tab->setModel(b727models[0]);
+    ui->foB727Tab->setModel(b727models[1]);
+    ui->feB727Tab->setModel(b727models[2]);
+    ui->capB737Tab->setModel(b737models[0]);
+    ui->foB737Tab->setModel(b737models[1]);
+    //ui->capB727Tab->setModel( b727cpt_model );
+    //ui->foB727Tab->setModel(b727fo_model);
+
+    // B727 first office
+    /*
+    QSqlQueryModel* b727fo_model = new QSqlQueryModel;
+    {
+        QString b727fo_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
+            "role LIKE 'fo'";
+        qDebug() << "queryb727fo:" << b727fo_qustr;
+        b727fo_model->setQuery(b727fo_qustr);
+    }
+    b727fo_model->setHeaderData(0, Qt::Horizontal, QObject::tr("PNT"));
+    for (int j = 0; j <= nbDays; j++) {
+        QString header = dateFrom.addDays(j).toString("dd");
+        b727fo_model->setHeaderData(
+                j+1, Qt::Horizontal,
+                QObject::tr(header.toStdString().c_str()));
+    }
+    */
 }
 
 
