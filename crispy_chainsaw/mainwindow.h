@@ -6,6 +6,7 @@
 #include "newplane.h"
 #include "planningpilot.h"
 #include "schedule.h"
+#include "modifyflight.h"
 #include "ui_mainwindow.h"
 #include <QAction>
 #include <QMainWindow>
@@ -44,6 +45,10 @@ private slots:
     void on_dateFromB737_userDateChanged( const QDate& date );
     void on_dateFromB727_userDateChanged( const QDate& date );
     void on_officeButton_clicked();
+
+    void on_changeDureeB737_clicked();
+
+    void on_changeDureeB727_clicked();
 
 private:
     Ui::MainWindow* ui;

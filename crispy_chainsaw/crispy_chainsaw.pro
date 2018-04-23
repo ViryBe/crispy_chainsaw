@@ -14,13 +14,16 @@ HEADERS += db.h mainwindow.h pnt.h \
     acftmodel.h \
     schedule.h \
     newpilot.h \
-    planningpilot.h
+    planningpilot.h \
+    modifyflight.h
 FORMS += mainwindow.ui \
     newpilot.ui \
-    planningpilot.ui
+    planningpilot.ui \
+    modifyflight.ui
 SOURCES += db.cpp main.cpp mainwindow.cpp pnt.cpp \
     workday.cpp \
     acftmodel.cpp \
     schedule.cpp \
     newpilot.cpp \
-    planningpilot.cpp
+    planningpilot.cpp \
+    modifyflight.cpp
