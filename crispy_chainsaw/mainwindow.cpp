@@ -151,54 +151,43 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
  * aircraft) which allows to rebuild the schedule without fetching back
  * neither the aircraft model nor the role from the database */
 {
-    auto nbDays = dateFrom.daysTo( dateTo );
     // Generate schedules
-    for ( auto r : {"cpt", "fo", "fe"} ) {
-        auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        ScheduleInstance::schedule(acftmodel, r, dateFrom, dateTo);
-    }
-    qDebug() << "schedules generated for b727";
-    for (auto r : {"cpt", "fo"}) {
-        auto acftmodel = gMANAGER.getAcftModel( "b737" );
-        ScheduleInstance::schedule(acftmodel, r, dateFrom, dateTo);
-    }
+    auto genSched = [&] ( QString acftname, std::vector<QString> roles ) {
+        for (auto r : roles) {
+            auto acftmodel = gMANAGER.getAcftModel(acftname);
+            ScheduleInstance::schedule(acftmodel, r, dateFrom, dateTo);
+        }
+    };
+    genSched("b727", {"cpt", "fo", "fe"});
+    genSched("b737", {"cpt", "fo"});
+    auto nbDays = dateFrom.daysTo( dateTo );
     qDebug() << "schedule generated for b737";
     gMANAGER.fillWorkdays( dateFrom );
     gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
 
-    // {cpt, fo, fe}
-    QSqlQueryModel* b727models[] = {
+    // Set query models (link schedule to table views)
+    auto setQuModel = [&] ( QString acftname, std::vector<QString> roles,
+            std::vector<QSqlQueryModel*>& models ) {
+        for (auto i = 0u ; i < roles.size() ; i++) {
+            QString qustr = DbManager::scheduleViewQuery(dateFrom, dateTo,
+                    acftname, roles[i]);
+            models[i]->setQuery(qustr);
+            models[i]->setHeaderData(
+                    0, Qt::Horizontal, QObject::tr( "PNT" ) );
+            for ( int j = 0; j <= nbDays; j++ ) {
+                QString header = dateFrom.addDays( j ).toString( "dd" );
+                models[ i ]->setHeaderData( j + 1, Qt::Horizontal,
+                        QObject::tr( header.toStdString().c_str() ) );
+            }
+        }
+    };
+    std::vector<QSqlQueryModel*> b727models = {
         new QSqlQueryModel, new QSqlQueryModel, new QSqlQueryModel};
-    QString b727roles[] = {QString( "cpt" ), QString( "fo" ), QString( "fe" )};
-    for ( int i = 0; i < 3; i++ ) {
-        QString qustr = DbManager::scheduleViewQuery(dateFrom, dateTo, "b727",
-                b727roles[i]);
-        qDebug() << "query:" << qustr;
-        b727models[ i ]->setQuery( qustr );
-        b727models[ i ]->setHeaderData(
-            0, Qt::Horizontal, QObject::tr( "PNT" ) );
-        for ( int j = 0; j <= nbDays; j++ ) {
-            QString header = dateFrom.addDays( j ).toString( "dd" );
-            b727models[ i ]->setHeaderData( j + 1, Qt::Horizontal,
-                QObject::tr( header.toStdString().c_str() ) );
-        }
-    }
+    setQuModel("b727", {"cpt", "fo", "fe"}, b727models);
 
-    QSqlQueryModel* b737models[] = {new QSqlQueryModel, new QSqlQueryModel};
-    QString b737roles[] = {QString( "cpt" ), QString( "fo" )};
-    for ( int i = 0; i < 2; i++ ) {
-        QString qustr = DbManager::scheduleViewQuery(dateFrom, dateTo, "b737",
-                b737roles[i]);
-        qDebug() << "query:" << qustr;
-        b737models[ i ]->setQuery( qustr );
-        b737models[ i ]->setHeaderData(
-            0, Qt::Horizontal, QObject::tr( "PNT" ) );
-        for ( int j = 0; j <= nbDays; j++ ) {
-            QString header = dateFrom.addDays( j ).toString( "dd" );
-            b737models[ i ]->setHeaderData( j + 1, Qt::Horizontal,
-                QObject::tr( header.toStdString().c_str() ) );
-        }
-    }
+    std::vector<QSqlQueryModel*> b737models = {
+        new QSqlQueryModel, new QSqlQueryModel};
+    setQuModel("b737", {"cpt", "fo"}, b737models);
 
     ui->capB727Tab->setModel( b727models[ 0 ] );
     ui->foB727Tab->setModel( b727models[ 1 ] );
