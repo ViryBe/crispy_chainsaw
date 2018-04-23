@@ -162,7 +162,10 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     genSched("b737", {"cpt", "fo"});
     auto nbDays = dateFrom.daysTo( dateTo );
     qDebug() << "schedule generated for b737";
-    gMANAGER.fillWorkdays( dateFrom );
+    for ( QDate d = dateFrom ; d.daysTo(dateTo) >= 0 ; d = d.addDays(1) ) {
+        gMANAGER.fillWorkdays(d);
+    }
+    //gMANAGER.fillWorkdays( dateFrom );
     gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
 
     // Set query models (link schedule to table views)
