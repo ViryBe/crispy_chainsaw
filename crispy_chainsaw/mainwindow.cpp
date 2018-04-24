@@ -144,13 +144,9 @@ void MainWindow::on_dateFrom_userDateChanged( const QDate& date )
 }
 
 void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
-/* Two options here: either we iterate through all pnts,
- * or pnts are gathered considering the table to fill (i.e. using
- * appropriate getPnts method). The latter method has the advantage of
- * having a more precise context in the loop (defined role, defined
- * aircraft) which allows to rebuild the schedule without fetching back
- * neither the aircraft model nor the role from the database */
 {
+    auto nbDays = dateFrom.daysTo( dateTo );
+    auto kDATEFMT = "yyyyMMdd"; // Not necessarily the same as in the db.cpp
     // Generate schedules
     auto genSched = [&] ( QString acftname, std::vector<QString> roles ) {
         for (auto r : roles) {
@@ -160,20 +156,21 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
     };
     genSched("b727", {"cpt", "fo", "fe"});
     genSched("b737", {"cpt", "fo"});
-    auto nbDays = dateFrom.daysTo( dateTo );
     qDebug() << "schedule generated for b737";
     for ( QDate d = dateFrom ; d.daysTo(dateTo) >= 0 ; d = d.addDays(1) ) {
         gMANAGER.fillWorkdays(d);
     }
     //gMANAGER.fillWorkdays( dateFrom );
-    gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
+    auto viewname = "ScheduleView" + dateFrom.toString(kDATEFMT) +
+        dateTo.toString(kDATEFMT);
+    gMANAGER.createScheduleView( viewname, dateFrom, dateTo );
 
     // Set query models (link schedule to table views)
     auto setQuModel = [&] ( QString acftname, std::vector<QString> roles,
             std::vector<QSqlQueryModel*>& models ) {
         for (auto i = 0u ; i < roles.size() ; i++) {
-            QString qustr = DbManager::scheduleViewQuery(dateFrom, dateTo,
-                    acftname, roles[i]);
+            QString qustr = DbManager::scheduleViewQuery(viewname, dateFrom,
+                    dateTo, acftname, roles[i]);
             models[i]->setQuery(qustr);
             models[i]->setHeaderData(
                     0, Qt::Horizontal, QObject::tr( "PNT" ) );

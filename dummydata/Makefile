@@ -8,3 +8,6 @@ dummy.db: dummy.sql
 
 install:
 	cp $(TARGET) ../crispy_chainsaw/
+
+clean:
+	rm $(TARGET)
