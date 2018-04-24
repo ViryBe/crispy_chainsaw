@@ -287,7 +287,7 @@ void DbManager::fillWorkdays( QDate date, QString mod, QString role)
     for ( auto pntid : idle_pnts ) {
         WorkdayDb wd;
         wd.workdate = date;
-        wd.status = "standby";
+        wd.status = "stby";
         wd.pntid = pntid;
         addWorkday( wd );
     }
@@ -495,11 +495,11 @@ std::vector<QString> DbManager::getIdlePnts( QDate d, QString m, QString r )
                     "SELECT DISTINCT Pnt.id FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid WHERE "
                     "Workday.workdate LIKE :date AND "
-                    "Workday.status NOT LIKE 'standby') "
+                    "Workday.status NOT LIKE 'stby') "
                     "UNION "
                     "SELECT Pnt.id FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid AND "
-                    "Workday.status LIKE 'standby' AND "
+                    "Workday.status LIKE 'stby' AND "
                     "Workday.workdate LIKE :date AND "
                     "role LIKE :role AND acft_modelname LIKE :mod";
     if ( !query.prepare( qustr ) ) {
