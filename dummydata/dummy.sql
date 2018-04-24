@@ -101,4 +101,12 @@ values ('2018-04-10', 'v2', 'fc');
 -- Fill data to be represented (i.e. pseudo real data)
 insert into Acft_model(name, maxfreq, crew, nop, ntot)
 values ('b737', 3, 2, 3, 7);
+insert into Pnt (id, name, role, maxfreq, acft_modelname)
+values('ta', 'tadf adf', 'cpt', 0, 'b737');
+insert into Pnt (id, name, role, maxfreq, acft_modelname)
+values('tb', 'tadf adf', 'cpt', 0, 'b737');
+insert into Pnt (id, name, role, maxfreq, acft_modelname)
+values('tc', 'tadf adf', 'cpt', 0, 'b737');
+insert into Pnt (id, name, role, maxfreq, acft_modelname)
+values('td', 'tadf adf', 'cpt', 0, 'b737');
 

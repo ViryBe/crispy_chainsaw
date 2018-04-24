@@ -62,7 +62,7 @@ ScheduleInstance::ScheduleInstance(
          * * since a schedule is generated on one week, we suppose previous
          *   week is well scheduled, current week is a new one,
          * * verify that the workdays added won't violate the constraint on
-         * a
+         *   a
          *   one month period, for this, take all the workdays from the date
          *   being one month before the *end* of the currently computed
          *   schedule
