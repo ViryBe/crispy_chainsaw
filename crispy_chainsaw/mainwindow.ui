@@ -1461,21 +1461,24 @@
      <string>Fichier</string>
     </property>
     <addaction name="actionExporter"/>
+    <addaction name="actionExporter_B737"/>
+    <addaction name="actionExporter_pilotes"/>
    </widget>
    <addaction name="menuFichier"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExporter">
    <property name="text">
-    <string>Exporter</string>
+    <string>Exporter B727</string>
+   </property>
+  </action>
+  <action name="actionExporter_B737">
+   <property name="text">
+    <string>Exporter B737</string>
+   </property>
+  </action>
+  <action name="actionExporter_pilotes">
+   <property name="text">
+    <string>Exporter pilotes</string>
    </property>
   </action>
  </widget>
