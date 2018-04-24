@@ -1214,11 +1214,20 @@
           <property name="textElideMode">
            <enum>Qt::ElideMiddle</enum>
           </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>40</number>
+          </attribute>
           <attribute name="horizontalHeaderHighlightSections">
            <bool>true</bool>
           </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>40</number>
+          </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
           </attribute>
          </widget>
         </item>
@@ -1230,7 +1239,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableView" name="foB737Tab"/>
+         <widget class="QTableView" name="foB737Tab">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>40</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>40</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1390,7 +1409,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableView" name="foB727Tab"/>
+         <widget class="QTableView" name="foB727Tab">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>40</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>40</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="label_19">
@@ -1400,7 +1429,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableView" name="feB727Tab"/>
+         <widget class="QTableView" name="feB727Tab">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>40</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>40</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>30</number>
+          </attribute>
+         </widget>
         </item>
        </layout>
       </widget>
