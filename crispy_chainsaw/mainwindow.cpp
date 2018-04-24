@@ -12,6 +12,9 @@ MainWindow::MainWindow( QWidget* parent )
         on_validerB737_clicked();
         on_validerB727_clicked();
     }
+    QDate dateFrom = ui->dateFromB727->date();
+    QDate dateTo = ui->dateToB727->date();
+    update_tables( dateFrom, dateTo );
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -39,6 +42,7 @@ void MainWindow::on_pilotAdd_clicked()
     NewPilot.setModal( true );
     NewPilot.exec();
     refresh_pilot_list();
+    //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(pilot.acft_modelname), pilot.role, ui->dateFromB727->date());
 }
 
 void MainWindow::on_pilotManage_clicked()
@@ -53,6 +57,7 @@ void MainWindow::on_pilotManage_clicked()
     NewPilot.exec();
 
     refresh_pilot_information( idPilot );
+    //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(pilotInfo.acft_modelname), pilotInfo.role, ui->dateFromB727->date());
 }
 
 void MainWindow::on_pilotDelete_clicked()
@@ -243,3 +248,179 @@ void MainWindow::on_changeDureeB727_clicked()
     newModifyFlight.setModal( true );
     newModifyFlight.exec();
 }
+
+void MainWindow::on_actionExporter_triggered()
+{
+    QDate date = ui->dateFromB727->date();
+    QDate dateTo = ui->dateToB727->date();
+    QString filtre;
+    QString fichier = QFileDialog::getSaveFileName(this, "Choisir l'emplacement",  "planning_B727_" + date.toString("yyyyMMdd")
+                                                   + dateTo.toString("_yyyyMMdd"), "CSV Files (*.csv)", &filtre);
+    // [Collect model data to QString]
+    QString textData;
+    textData += "De, " + date.toString("yyyy_MM_dd") +", Au, "+ dateTo.toString("yyyy_MM_dd") + "\n";
+    QAbstractItemModel *model = ui->capB727Tab->model();
+    int rows = model->rowCount();
+    int columns = model->columnCount();
+    textData += "\nCaptain\nPNT, ";
+
+    for (int j = 0; j < columns; j++) {
+
+            textData += date.addDays(j).toString("dd");
+            textData += ", ";      // for .csv file format
+    }
+    textData += "\n";
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+
+                textData += model->data(model->index(i,j)).toString();
+                textData += ", ";      // for .csv file format
+        }
+        textData += "\n";             // (optional: for new line segmentation)
+    }
+
+    model = ui->foB727Tab->model();
+    rows = model->rowCount();
+    columns = model->columnCount();
+    textData += "\nFirst Officer\nPNT, ";
+    for (int j = 0; j < columns; j++) {
+
+            textData += date.addDays(j).toString("dd");
+            textData += ", ";      // for .csv file format
+    }
+    textData += "\n";
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+
+                textData += model->data(model->index(i,j)).toString();
+                textData += ", ";      // for .csv file format
+        }
+        textData += "\n";             // (optional: for new line segmentation)
+    }
+
+    model = ui->feB727Tab->model();
+    rows = model->rowCount();
+    columns = model->columnCount();
+    textData += "\nFlight Engineer\nPNT, ";
+
+    for (int j = 0; j < columns; j++) {
+
+            textData += date.addDays(j).toString("dd");
+            textData += ", ";      // for .csv file format
+    }
+    textData += "\n";
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+
+                textData += model->data(model->index(i,j)).toString();
+                textData += ", ";      // for .csv file format
+        }
+        textData += "\n";             // (optional: for new line segmentation)
+    }
+
+    // [Save to file] (header file <QFile> needed)
+    // .csv
+    QFile csvFile(fichier);
+    if(csvFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+
+        QTextStream out(&csvFile);
+        out << textData;
+
+        csvFile.close();
+    }
+}
+
+void MainWindow::on_actionExporter_B737_triggered()
+{
+    QDate date = ui->dateFromB737->date();
+    QDate dateTo = ui->dateToB737->date();
+    QString filtre;
+    QString fichier = QFileDialog::getSaveFileName(this, "Choisir l'emplacement",  "planning_B737_" + date.toString("yyyyMMdd")
+                                                   + dateTo.toString("_yyyyMMdd"), "CSV Files (*.csv)", &filtre);
+    // [Collect model data to QString]
+    QString textData;
+    textData += "De, " + date.toString("yyyy_MM_dd") +", Au, "+ dateTo.toString("yyyy_MM_dd") + "\n";
+    QAbstractItemModel *model = ui->capB737Tab->model();
+    int rows = model->rowCount();
+    int columns = model->columnCount();
+    textData += "\nCaptain\nPNT, ";
+
+    for (int j = 0; j < columns; j++) {
+
+            textData += date.addDays(j).toString("dd");
+            textData += ", ";      // for .csv file format
+    }
+    textData += "\n";
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+
+                textData += model->data(model->index(i,j)).toString();
+                textData += ", ";      // for .csv file format
+        }
+        textData += "\n";             // (optional: for new line segmentation)
+    }
+
+    model = ui->foB737Tab->model();
+    rows = model->rowCount();
+    columns = model->columnCount();
+    textData += "\nFirst Officer\nPNT, ";
+    for (int j = 0; j < columns; j++) {
+
+            textData += date.addDays(j).toString("dd");
+            textData += ", ";      // for .csv file format
+    }
+    textData += "\n";
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+
+                textData += model->data(model->index(i,j)).toString();
+                textData += ", ";      // for .csv file format
+        }
+        textData += "\n";             // (optional: for new line segmentation)
+    }
+
+
+    // [Save to file] (header file <QFile> needed)
+    // .csv
+    QFile csvFile(fichier);
+    if(csvFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+
+        QTextStream out(&csvFile);
+        out << textData;
+
+        csvFile.close();
+    }
+}
+
+void MainWindow::on_actionExporter_pilotes_triggered()
+{
+    QDate dateFrom = ui->dateFrom->date();
+    QDate dateTo = ui->dateTo->date();
+    QString filtre;
+    QString fichier = QFileDialog::getSaveFileName(this, "Choisir l'emplacement",  "récapitulatif_pilotes_" + dateFrom.toString("yyyyMMdd")
+                                                   + dateTo.toString("_yyyyMMdd"), "CSV Files (*.csv)", &filtre);
+    // [Collect model data to QString]
+    QString textData;
+    textData += "De, " + dateFrom.toString("yyyy_MM_dd") +", Au, "+ dateTo.toString("yyyy_MM_dd") + "\n\n";
+    textData += "PNT, STBY, OFFICE, OFF, SIMU, FLIGHT\n";
+    for ( auto id : pntsIds ) {
+        textData += id + ", " +
+        QString::number( gMANAGER.cardInactiveDays( id, dateFrom, dateTo ) ) + ", " +
+        QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "office" ) ) + ", " +
+        QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "off" ) ) + ", " +
+                QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "simu" ) ) + ", " +
+        QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "v_" ) )  + "\n ";
+    }
+
+    // [Save to file] (header file <QFile> needed)
+    // .csv
+    QFile csvFile(fichier);
+    if(csvFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+
+        QTextStream out(&csvFile);
+        out << textData;
+
+        csvFile.close();
+    }
+}
+

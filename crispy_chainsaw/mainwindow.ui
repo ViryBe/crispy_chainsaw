@@ -1447,9 +1447,38 @@
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1002</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFichier">
+    <property name="title">
+     <string>Fichier</string>
+    </property>
+    <addaction name="actionExporter"/>
+    <addaction name="actionExporter_B737"/>
+    <addaction name="actionExporter_pilotes"/>
+   </widget>
+   <addaction name="menuFichier"/>
+  </widget>
   <action name="actionExporter">
    <property name="text">
-    <string>Exporter</string>
+    <string>Exporter B727</string>
+   </property>
+  </action>
+  <action name="actionExporter_B737">
+   <property name="text">
+    <string>Exporter B737</string>
+   </property>
+  </action>
+  <action name="actionExporter_pilotes">
+   <property name="text">
+    <string>Exporter pilotes</string>
    </property>
   </action>
  </widget>

@@ -16,6 +16,8 @@
 #include <algorithm>
 #include <map>
 #include <vector>
+#include <QFileDialog>
+#include <QTextStream>
 
 namespace Ui
 {
@@ -49,6 +51,12 @@ private slots:
     void on_changeDureeB737_clicked();
 
     void on_changeDureeB727_clicked();
+
+    void on_actionExporter_triggered();
+
+    void on_actionExporter_B737_triggered();
+
+    void on_actionExporter_pilotes_triggered();
 
 private:
     Ui::MainWindow* ui;
