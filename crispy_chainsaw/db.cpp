@@ -549,8 +549,8 @@ AcftModelDb DbManager::getAcftModel( QString name )
     return acftmod;
 }
 
-QString DbManager::scheduleViewQuery(QDate dbeg, QDate dend, QString amod,
-        QString role)
+QString DbManager::scheduleViewQuery(QString view_name, QDate dbeg, QDate dend,
+        QString amod, QString role)
 {
     auto nbdays = dbeg.daysTo(dend);
     QString qustr = "SELECT UPPER(id)";
@@ -558,7 +558,7 @@ QString DbManager::scheduleViewQuery(QDate dbeg, QDate dend, QString amod,
         QDate today = dbeg.addDays( i );
         qustr += ", UPPER(c" + today.toString( kVIEWNAME ) + ")";
     }
-    qustr += " FROM ScheduleView WHERE acftmodel ";
+    qustr += " FROM " + view_name + " WHERE acftmodel ";
     qustr += "LIKE '" + amod + "' AND role LIKE '" + role +"'";
     return qustr;
 }

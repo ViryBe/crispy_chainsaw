@@ -186,12 +186,13 @@ public:
     AcftModelDb getAcftModel( QString n );
 
     /** Creates query strings to manipulate the view
+     * @param v view name
      * @param b begin date
      * @param e end date
      * @param m aircraft model
-     * @param r role queried
-     */
-    static QString scheduleViewQuery(QDate b, QDate e, QString m, QString r);
+     * @param r role queried */
+    static QString scheduleViewQuery(QString v, QDate b, QDate e, QString m,
+            QString r);
 
     /** Creates a view to fill a schedule table view
      * @param n name of the view
