@@ -27,6 +27,8 @@ ScheduleInstance::ScheduleInstance(
     // Init domains
     domain.resize( n + 1 );
     current_domain.resize( n + 1 );
+    // First remove any standby status
+
     for ( int i = 1; i <= n; i++ ) {
         std::vector<QString> crewmem;
         QString fl_st = "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
@@ -34,16 +36,21 @@ ScheduleInstance::ScheduleInstance(
 
         if ( gMANAGER.workForced( today, mModel.name, mRole, fl_st ) ) {
             // If workday forced, keep it
-            crewmem = {
-                gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st )};
+            crewmem =
+                gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st );
         } else {      // Delete previous and get idle pnts
-            try {     // Try to remove existing days if they exist
-                auto assignedpnt =
-                    gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st );
-                gMANAGER.deleteWorkday( today, assignedpnt );
-            } catch ( const QString& msg ) {
-                qDebug() << msg;
+            // Try to remove existing days if they exist
+            auto assignedpnts =
+                gMANAGER.getWorkingPnt( today, mModel.name, mRole, fl_st );
+            for (auto apntid : assignedpnts) {
+                gMANAGER.deleteWorkday( today, apntid );
             }
+            auto stbypnts = gMANAGER.getWorkingPnt( today, mModel.name,
+                    mRole, "stby");
+            for (auto stbyid : stbypnts) {
+                gMANAGER.deleteWorkday( today, stbyid );
+            }
+            // Get standby pnts and delete their day (standby)
             crewmem = gMANAGER.getIdlePnts( today, mModel.name, mRole );
         }
 

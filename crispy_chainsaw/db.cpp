@@ -112,8 +112,8 @@ void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced,
     query.bindValue( ":f", forced );
     query.bindValue( ":l", lapse );
     if ( !query.exec() ) {
-        qDebug() << "exec addWorkday: " << query.lastError()
-                 << "\nrequest:" << qustr;
+        qDebug() << "exec addWorkday: " << query.lastError();
+        qDebug() << "on the" << date.toString(kDATEFMT);
     }
 }
 
@@ -312,10 +312,10 @@ void DbManager::editFlightLapse(QDate date, QString model, QString status,
     }
 }
 
-QString DbManager::getWorkingPnt(
+std::vector<QString> DbManager::getWorkingPnt(
     QDate date, QString model, QString role, QString status )
 {
-    QString pntid;
+    std::vector<QString> pntid;
     QSqlQuery query( m_db );
     QString qustr = "SELECT Pnt.id FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid WHERE "
@@ -331,10 +331,8 @@ QString DbManager::getWorkingPnt(
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", model.toLower() );
     if ( query.exec() ) {
-        if ( query.first() ) {
-            pntid = QString( query.value( 0 ).toString() );
-        } else {
-            qDebug() << "no working pnt";
+        while ( query.next() ) {
+            pntid.push_back( query.value( 0 ).toString() );
         }
     } else {
         qDebug() << "exec getWorkingPnt: " << query.lastError();
@@ -494,14 +492,7 @@ std::vector<QString> DbManager::getIdlePnts( QDate d, QString m, QString r )
                     "id NOT IN ("
                     "SELECT DISTINCT Pnt.id FROM Pnt INNER JOIN Workday ON "
                     "Pnt.id = Workday.pntid WHERE "
-                    "Workday.workdate LIKE :date AND "
-                    "Workday.status NOT LIKE 'stby') "
-                    "UNION "
-                    "SELECT Pnt.id FROM Pnt INNER JOIN Workday ON "
-                    "Pnt.id = Workday.pntid AND "
-                    "Workday.status LIKE 'stby' AND "
-                    "Workday.workdate LIKE :date AND "
-                    "role LIKE :role AND acft_modelname LIKE :mod";
+                    "Workday.workdate LIKE :date)";
     if ( !query.prepare( qustr ) ) {
         qDebug() << "prepare getIdlePnts: " << query.lastError()
                  << "\nrequest:" << qustr;

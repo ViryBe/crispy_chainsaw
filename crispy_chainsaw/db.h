@@ -123,13 +123,14 @@ public:
      * @param t duration of flight */
     void editFlightLapse(QDate d, QString m, QString s, QTime t);
 
-    /** Returns id of pnt working on a specified flight
+    /** Returns id of pnts working at a role
      * @param d date of the flight
      * @param m model of aircraft on the flight
      * @param r role needed for the flight
      * @param s status of the flight (v1, v2, v3)
      * @returns id of matching pnt, throws an exception else */
-    QString getWorkingPnt( QDate d, QString m, QString r, QString s );
+    std::vector<QString> getWorkingPnt( QDate d, QString m, QString r,
+            QString s );
 
     /** Retrieves status of pnt on one day
      * @param d date of the day
