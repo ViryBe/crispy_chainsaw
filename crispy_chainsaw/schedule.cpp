@@ -62,9 +62,8 @@ ScheduleInstance::ScheduleInstance(
          * * since a schedule is generated on one week, we suppose previous
          *   week is well scheduled, current week is a new one,
          * * verify that the workdays added won't violate the constraint on
-         *   a
-         *   one month period, for this, take all the workdays from the date
-         *   being one month before the *end* of the currently computed
+         *   a one month period, for this, take all the workdays from the
+         *   date being one month before the *end* of the currently computed
          *   schedule
          * * idem for the year */
         workRegister wr;
@@ -207,16 +206,24 @@ void ScheduleInstance::recomputeFrom(
 
 void ScheduleInstance::updateDb( DbManager dbm )
 {
-    // For each variable, update related workday
-    for ( int i = 1; i <= n; i++ ) {
-        WorkdayDb wddb;
-        wddb.forced = false;
-        wddb.pntid = v[ i ];
-        wddb.status = "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
-        wddb.workdate = mStartDate.addDays( ( i - 1 ) / mModel.maxfreq );
-        wddb.lapse = kTIMEPERFLIGHT;
+    if (consistent) {
+        // For each variable, update related workday
+        for ( int i = 1; i <= n; i++ ) {
+            WorkdayDb wddb;
+            wddb.forced = false;
+            wddb.pntid = v[ i ];
+            wddb.status = "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
+            wddb.workdate = mStartDate.addDays( ( i - 1 ) / mModel.maxfreq );
+            wddb.lapse = kTIMEPERFLIGHT;
 
-        dbm.addWorkday( wddb );
+            if (wddb.pntid == "") {
+                qDebug() << "NOT GOOD";
+            }
+
+            dbm.addWorkday( wddb );
+        }
+    } else {
+        qDebug() << "I won't save an inconsistent instance";
     }
 }
 
