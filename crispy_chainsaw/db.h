@@ -33,7 +33,7 @@ struct AcftModelDb
 /** Representation of a day of a pnt in the database */
 struct WorkdayDb
 {
-    enum Status { eV1, eV2, eV3, eOffice, eOff, eStandBy, eSimu };
+    enum Status { eV1, eV2, eV3, eOffice, eOff, eStBy, eSimu };
     QDate workdate;          ///< Date of the day
     QString status;          ///< Which work (e.g. simulator, office, v1, etc.)
     QString pntid;           ///< Pnt concerned
@@ -109,7 +109,7 @@ public:
         QDate f, QDate t, QString r = kSQLWILDCARD, QString m = kSQLWILDCARD );
 
     /** Attach one workday for each pnt of the database on a date. Workdays are
-     * added with status 'standby'.
+     * added with status 'stby'.
      * @param d date
      * @param m aircraft model (default to wildcard)
      * @param r role (default to wildcard) */
@@ -174,7 +174,7 @@ public:
     std::vector<QString> getPnts( QDate d, QString s = kSQLWILDCARD,
         QString m = kSQLWILDCARD, QString r = kSQLWILDCARD );
 
-    /** Retrieves members without workday or with workdays marked as standby
+    /** Retrieves members without workday or with workdays marked as stby
      * @param m model concerned
      * @param r role concerned
      * @param d date of the day */
