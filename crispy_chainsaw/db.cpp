@@ -553,10 +553,10 @@ QString DbManager::scheduleViewQuery(QDate dbeg, QDate dend, QString amod,
         QString role)
 {
     auto nbdays = dbeg.daysTo(dend);
-    QString qustr = "SELECT id";
+    QString qustr = "SELECT UPPER(id)";
     for ( auto i = 0; i <= nbdays; i++ ) {
         QDate today = dbeg.addDays( i );
-        qustr += ", c" + today.toString( kVIEWNAME );
+        qustr += ", UPPER(c" + today.toString( kVIEWNAME ) + ")";
     }
     qustr += " FROM ScheduleView WHERE acftmodel ";
     qustr += "LIKE '" + amod + "' AND role LIKE '" + role +"'";
