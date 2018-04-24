@@ -2,6 +2,7 @@
 
 const QString kDATEFMT = "yyyy-MM-dd";
 const QString kTIMEFMT = "hhmm";
+const QString kVIEWNAME = "yyyyMMdd";
 
 void DbManager::init( const QString& path )
 {
@@ -74,7 +75,7 @@ void DbManager::updatePnt( PntDb pdb )
                 modifyPnt( pdb );
             }
         } else {
-            throw "couldn't evaluate existence";
+            qDebug() << "pdb not found in database";
         }
     } else {
         qDebug() << "exec updatePnt: " << query.lastError();
@@ -195,7 +196,7 @@ bool DbManager::workForced( QDate date, QString model, QString role,
         if ( query.first() ) {
             nrslt = query.value( 0 ).toInt();
         } else {
-            throw "no pnt forced";
+            qDebug() << "no pnt forced";
         }
     } else {
         qDebug() << "exec workForced: " << query.lastError();
@@ -216,7 +217,7 @@ QDate DbManager::getLastScheduledDay()
             lastday =
                 QDate::fromString( query.value( 0 ).toString(), kDATEFMT );
         } else {
-            throw "no scheduled day";
+            qDebug() << "no scheduled day";
         }
     } else {
         qDebug() << "exec getlastschedule: " << query.lastError();
@@ -334,7 +335,6 @@ QString DbManager::getWorkingPnt(
             pntid = QString( query.value( 0 ).toString() );
         } else {
             qDebug() << "no working pnt";
-            throw QString::fromStdString( "no working pnt" );
         }
     } else {
         qDebug() << "exec getWorkingPnt: " << query.lastError();
@@ -359,7 +359,8 @@ QString DbManager::statusOfPnt( QDate date, QString pntid )
         if ( query.first() ) {
             res = query.value( 0 ).toString().toUpper();
         } else {
-            throw date;
+            qDebug() << "no pnt found while fetching status" <<
+                date.toString(kDATEFMT);
         }
     } else {
         qDebug() << "exec statusOfPnt: " << query.lastError()
@@ -388,7 +389,7 @@ int DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
         if ( query.first() ) {
             card = query.value( 0 ).toInt();
         } else {
-            throw "can't count working days";
+            qDebug() << "can't count working days";
         }
     } else {
         qDebug() << "exec cardworkingdays: " << query.lastError();
@@ -539,13 +540,27 @@ AcftModelDb DbManager::getAcftModel( QString name )
             acftmod.nop = query.value( 3 ).toInt();
             acftmod.ntot = query.value( 4 ).toInt();
         } else {
-            throw "no acft model";
+            qDebug() << "no acft model";
         }
     } else {
         qDebug() << "exec getAcftModel: " << query.lastError()
                  << "\nrequest:" << qustr;
     }
     return acftmod;
+}
+
+QString DbManager::scheduleViewQuery(QDate dbeg, QDate dend, QString amod,
+        QString role)
+{
+    auto nbdays = dbeg.daysTo(dend);
+    QString qustr = "SELECT id";
+    for ( auto i = 0; i <= nbdays; i++ ) {
+        QDate today = dbeg.addDays( i );
+        qustr += ", c" + today.toString( kVIEWNAME );
+    }
+    qustr += " FROM ScheduleView WHERE acftmodel ";
+    qustr += "LIKE '" + amod + "' AND role LIKE '" + role +"'";
+    return qustr;
 }
 
 void DbManager::createScheduleView( QString view_name, QDate from_date,

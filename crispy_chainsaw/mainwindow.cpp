@@ -8,6 +8,10 @@ MainWindow::MainWindow( QWidget* parent )
     refresh_pilot_list();
     auto idPilot = ui->pilotList->currentItem()->text();
     refresh_pilot_information( idPilot );
+    if ( gMANAGER.getLastScheduledDay() < QDate::currentDate().addDays( 7 ) ) {
+        on_validerB737_clicked();
+        on_validerB727_clicked();
+    }
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -85,6 +89,7 @@ void MainWindow::on_validerB737_clicked()
 {
     QDate dateFrom = ui->dateFromB737->date();
     QDate dateTo = ui->dateToB737->date();
+    update_tables( dateFrom, dateTo );
 }
 
 void MainWindow::refresh_pilot_days(
@@ -107,14 +112,15 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
     ui->codePilotBDD->setText( pilotInfo.id );
     ui->pilotNameBDD->setText( pilotInfo.name );
     QDate date = date.currentDate();
-    QDate dateMonth = date.addDays(1 - date.day());
+    QDate dateMonth = date.addDays( 1 - date.day() );
     ui->dateFrom->setDate( dateMonth );
     ui->dateFromB727->setDate( date );
     ui->dateFromB737->setDate( date );
-    ui->dateTo->setDate( dateMonth.addMonths(1).addDays( -1));
+    ui->dateTo->setDate( dateMonth.addMonths( 1 ).addDays( -1 ) );
     ui->dateToB727->setDate( date.addDays( 15 ) );
     ui->dateToB737->setDate( date.addDays( 15 ) );
-    refresh_pilot_days( idPilot, dateMonth, dateMonth.addMonths(1).addDays( -1));
+    refresh_pilot_days(
+        idPilot, dateMonth, dateMonth.addMonths( 1 ).addDays( -1 ) );
     ui->limitationVol->setValue( pilotInfo.maxfreq );
     if ( pilotInfo.acft_modelname == "b727" ) {
         if ( pilotInfo.role == "cpt" ) {
@@ -134,7 +140,7 @@ void MainWindow::refresh_pilot_information( const QString& idPilot )
 
 void MainWindow::on_dateFrom_userDateChanged( const QDate& date )
 {
-    ui->dateTo->setDate( date.addMonths(1).addDays( -1) );
+    ui->dateTo->setDate( date.addMonths( 1 ).addDays( -1 ) );
 }
 
 void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
@@ -145,112 +151,52 @@ void MainWindow::update_tables( QDate dateFrom, QDate dateTo )
  * aircraft) which allows to rebuild the schedule without fetching back
  * neither the aircraft model nor the role from the database */
 {
-    auto nbDays = dateFrom.daysTo( dateTo );
     // Generate schedules
-    for (auto r : {"cpt", "fo", "fe"}) {
-        auto acftmodel = gMANAGER.getAcftModel( "b727" );
-        auto gensched = ScheduleInstance( acftmodel, r, dateFrom );
-        qDebug() << "schedule generated for " << r;
-        gensched.updateDb( gMANAGER );
+    auto genSched = [&] ( QString acftname, std::vector<QString> roles ) {
+        for (auto r : roles) {
+            auto acftmodel = gMANAGER.getAcftModel(acftname);
+            ScheduleInstance::schedule(acftmodel, r, dateFrom, dateTo);
+        }
+    };
+    genSched("b727", {"cpt", "fo", "fe"});
+    genSched("b737", {"cpt", "fo"});
+    auto nbDays = dateFrom.daysTo( dateTo );
+    qDebug() << "schedule generated for b737";
+    for ( QDate d = dateFrom ; d.daysTo(dateTo) >= 0 ; d = d.addDays(1) ) {
+        gMANAGER.fillWorkdays(d);
     }
-    /*
-    for (auto r : {"cpt", "fo"}) {
-        auto acftmodel = gMANAGER.getAcftModel( "b737" );
-        auto gensched = ScheduleInstance( acftmodel, r, dateFrom );
-        qDebug() << "schedule generated for " << r;
-        gensched.updateDb( gMANAGER );
-    }
-    */
-    gMANAGER.fillWorkdays(dateFrom);
+    //gMANAGER.fillWorkdays( dateFrom );
     gMANAGER.createScheduleView( "ScheduleView", dateFrom, dateTo );
 
-    // Set misc requests and models
-    QString kVIEWNAME = "yyyyMMdd";
-    QString basequstr = "SELECT id";
-    for ( auto i = 0; i <= nbDays; i++ ) {
-        QDate today = dateFrom.addDays( i );
-        basequstr += ", c" + today.toString( kVIEWNAME );
-    }
-    basequstr += " FROM ScheduleView";
-
-    // {cpt, fo, fe}
-    QSqlQueryModel* b727models[] = {new QSqlQueryModel, new QSqlQueryModel,
-        new QSqlQueryModel};
-    QString b727roles[] = {QString("cpt"), QString("fo"), QString("fe")};
-    for (int i = 0 ; i < 3; i++) {
-        QString qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
-            "role LIKE '" + b727roles[i] + "'";
-        qDebug() << "query:" << qustr;
-        b727models[i]->setQuery(qustr);
-        b727models[i]->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
-        for ( int j = 0; j <= nbDays; j++ ) {
-            QString header = dateFrom.addDays( j ).toString( "dd" );
-            b727models[i]->setHeaderData(
-                    j + 1, Qt::Horizontal,
-                    QObject::tr( header.toStdString().c_str() ) );
+    // Set query models (link schedule to table views)
+    auto setQuModel = [&] ( QString acftname, std::vector<QString> roles,
+            std::vector<QSqlQueryModel*>& models ) {
+        for (auto i = 0u ; i < roles.size() ; i++) {
+            QString qustr = DbManager::scheduleViewQuery(dateFrom, dateTo,
+                    acftname, roles[i]);
+            models[i]->setQuery(qustr);
+            models[i]->setHeaderData(
+                    0, Qt::Horizontal, QObject::tr( "PNT" ) );
+            for ( int j = 0; j <= nbDays; j++ ) {
+                QString header = dateFrom.addDays( j ).toString( "dd" );
+                models[ i ]->setHeaderData( j + 1, Qt::Horizontal,
+                        QObject::tr( header.toStdString().c_str() ) );
+            }
         }
-    }
+    };
+    std::vector<QSqlQueryModel*> b727models = {
+        new QSqlQueryModel, new QSqlQueryModel, new QSqlQueryModel};
+    setQuModel("b727", {"cpt", "fo", "fe"}, b727models);
 
-    QSqlQueryModel* b737models[] = {new QSqlQueryModel, new QSqlQueryModel};
-    QString b737roles[] = {QString("cpt"), QString("fo")};
-    for (int i = 0 ; i < 2; i++) {
-        QString qustr = basequstr + " WHERE acftmodel LIKE 'b737' AND "
-            "role LIKE '" + b737roles[i] + "'";
-        qDebug() << "query:" << qustr;
-        b737models[i]->setQuery(qustr);
-        b737models[i]->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
-        for ( int j = 0; j <= nbDays; j++ ) {
-            QString header = dateFrom.addDays( j ).toString( "dd" );
-            b737models[i]->setHeaderData(
-                    j + 1, Qt::Horizontal,
-                    QObject::tr( header.toStdString().c_str() ) );
-        }
-    }
+    std::vector<QSqlQueryModel*> b737models = {
+        new QSqlQueryModel, new QSqlQueryModel};
+    setQuModel("b737", {"cpt", "fo"}, b737models);
 
-    // B727 captains
-    /*
-    QSqlQueryModel* b727cpt_model = new QSqlQueryModel;
-    {
-        QString b727cpt_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
-                                "role LIKE 'cpt'";
-        qDebug() << "queryb727cpt:" << b727cpt_qustr;
-        b727cpt_model->setQuery( b727cpt_qustr );
-    }
-    b727cpt_model->setHeaderData( 0, Qt::Horizontal, QObject::tr( "PNT" ) );
-    for ( int j = 0; j <= nbDays; j++ ) {
-        QString header = dateFrom.addDays( j ).toString( "dd" );
-        b727cpt_model->setHeaderData(
-                j + 1, Qt::Horizontal,
-                QObject::tr( header.toStdString().c_str() ) );
-    }
-    */
-
-    //ui->foB737Tab->show();
-    ui->capB727Tab->setModel(b727models[0]);
-    ui->foB727Tab->setModel(b727models[1]);
-    ui->feB727Tab->setModel(b727models[2]);
-    ui->capB737Tab->setModel(b737models[0]);
-    ui->foB737Tab->setModel(b737models[1]);
-    //ui->capB727Tab->setModel( b727cpt_model );
-    //ui->foB727Tab->setModel(b727fo_model);
-
-    // B727 first office
-    /*
-    QSqlQueryModel* b727fo_model = new QSqlQueryModel;
-    {
-        QString b727fo_qustr = basequstr + " WHERE acftmodel LIKE 'b727' AND "
-            "role LIKE 'fo'";
-        qDebug() << "queryb727fo:" << b727fo_qustr;
-        b727fo_model->setQuery(b727fo_qustr);
-    }
-    b727fo_model->setHeaderData(0, Qt::Horizontal, QObject::tr("PNT"));
-    for (int j = 0; j <= nbDays; j++) {
-        QString header = dateFrom.addDays(j).toString("dd");
-        b727fo_model->setHeaderData(
-                j+1, Qt::Horizontal,
-                QObject::tr(header.toStdString().c_str()));
-    }
-    */
+    ui->capB727Tab->setModel( b727models[ 0 ] );
+    ui->foB727Tab->setModel( b727models[ 1 ] );
+    ui->feB727Tab->setModel( b727models[ 2 ] );
+    ui->capB737Tab->setModel( b737models[ 0 ] );
+    ui->foB737Tab->setModel( b737models[ 1 ] );
 }
 
 
@@ -287,7 +233,7 @@ void MainWindow::on_changeDureeB737_clicked()
 {
     QDate date = ui->dateFromB737->date();
     QString appareil = "B737";
-    ModifyFlight newModifyFlight( date, appareil);
+    ModifyFlight newModifyFlight( date, appareil );
     newModifyFlight.setModal( true );
     newModifyFlight.exec();
 }
@@ -296,7 +242,7 @@ void MainWindow::on_changeDureeB727_clicked()
 {
     QDate date = ui->dateFromB727->date();
     QString appareil = "B727";
-    ModifyFlight newModifyFlight( date, appareil);
+    ModifyFlight newModifyFlight( date, appareil );
     newModifyFlight.setModal( true );
     newModifyFlight.exec();
 }
