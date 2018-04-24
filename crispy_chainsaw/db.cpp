@@ -566,6 +566,11 @@ QString DbManager::scheduleViewQuery(QString view_name, QDate dbeg, QDate dend,
 void DbManager::createScheduleView( QString view_name, QDate from_date,
                                     QDate to_date )
 {
+    // Remove views
+    cleanSmallViews(from_date, to_date);
+    // First delete a previously generated view (with outdated values)
+    deleteView(view_name);
+
     QString kVIEWNAME = "yyyyMMdd";
     for ( auto i = 0; i <= from_date.daysTo( to_date ); i++ ) {
         QDate today = from_date.addDays( i );
@@ -616,6 +621,28 @@ void DbManager::createScheduleView( QString view_name, QDate from_date,
     query.bindValue( ":vn", view_name );
     if ( !query.exec() ) {
         qDebug() << "final view exec:" << query.lastError();
+    }
+}
+
+void DbManager::cleanSmallViews(QDate dbeg, QDate dend)
+{
+    for (auto i = 0; i <= dbeg.daysTo(dend); i++) {
+        QDate today = dbeg.addDays(i);
+        QSqlQuery query(m_db);
+        QString qustr = "DROP VIEW v" + today.toString(kVIEWNAME);
+        query.prepare(qustr);
+        query.exec();
+    }
+}
+
+void DbManager::deleteView(QString view_name)
+{
+    QSqlQuery query( m_db );
+    QString qustr = "DROP VIEW " + view_name;
+    if (query.prepare(qustr)) {
+        query.exec();
+    } else {
+        qDebug() << "deleteView prep:" << query.lastError();
     }
 }
 

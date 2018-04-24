@@ -213,6 +213,11 @@ private:
     void addPnt( PntDb pdb );
 
     void modifyPnt( PntDb pdb );
+
+    /** Try to delete view with name v */
+    void deleteView( QString v);
+
+    void cleanSmallViews( QDate b, QDate e );
 };
 
 /** Main manager for all the program */
