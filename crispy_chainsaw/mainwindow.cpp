@@ -12,6 +12,9 @@ MainWindow::MainWindow( QWidget* parent )
         on_validerB737_clicked();
         on_validerB727_clicked();
     }
+    QDate dateFrom = ui->dateFromB727->date();
+    QDate dateTo = ui->dateToB727->date();
+    update_tables( dateFrom, dateTo );
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -39,6 +42,7 @@ void MainWindow::on_pilotAdd_clicked()
     NewPilot.setModal( true );
     NewPilot.exec();
     refresh_pilot_list();
+    //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(pilot.acft_modelname), pilot.role, ui->dateFromB727->date());
 }
 
 void MainWindow::on_pilotManage_clicked()
@@ -53,6 +57,7 @@ void MainWindow::on_pilotManage_clicked()
     NewPilot.exec();
 
     refresh_pilot_information( idPilot );
+    //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(pilotInfo.acft_modelname), pilotInfo.role, ui->dateFromB727->date());
 }
 
 void MainWindow::on_pilotDelete_clicked()
