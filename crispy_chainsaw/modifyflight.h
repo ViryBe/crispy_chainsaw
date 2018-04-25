@@ -2,6 +2,7 @@
 #define MODIFYFLIGHT_H
 
 #include <QDialog>
+#include "db.h"
 
 namespace Ui {
 class ModifyFlight;
@@ -20,6 +21,8 @@ private slots:
     void on_pasEffectue_stateChanged(int arg1);
 
     void on_dateEdit_userDateChanged(const QDate &date);
+
+    void on_buttonBox_accepted();
 
 private:
     QString appareil;
