@@ -101,8 +101,8 @@ void MainWindow::refresh_pilot_days(
     const QString& id, QDate dateFrom, QDate dateTo )
 {
     ui->dateTo->setMinimumDate( ui->dateFrom->date() );
-    ui->standByDays->setText(
-        QString::number( gMANAGER.cardInactiveDays( id, dateFrom, dateTo ) ) );
+    ui->standByDays->setText( QString::number(
+        gMANAGER.cardWorkdays( id, dateFrom, dateTo, "stby" ) ) );
     ui->officeDays->setText( QString::number(
         gMANAGER.cardWorkdays( id, dateFrom, dateTo, "office" ) ) );
     ui->homeDays->setText( QString::number(
@@ -264,7 +264,7 @@ void MainWindow::on_actionExporter_triggered()
     int columns = model->columnCount();
     textData += "\nCaptain\nPNT, ";
 
-    for (int j = 0; j < columns; j++) {
+    for (int j = 0; j < columns - 1; j++) {
 
             textData += date.addDays(j).toString("dd");
             textData += ", ";      // for .csv file format
@@ -283,7 +283,7 @@ void MainWindow::on_actionExporter_triggered()
     rows = model->rowCount();
     columns = model->columnCount();
     textData += "\nFirst Officer\nPNT, ";
-    for (int j = 0; j < columns; j++) {
+    for (int j = 0; j < columns - 1; j++) {
 
             textData += date.addDays(j).toString("dd");
             textData += ", ";      // for .csv file format
@@ -303,7 +303,7 @@ void MainWindow::on_actionExporter_triggered()
     columns = model->columnCount();
     textData += "\nFlight Engineer\nPNT, ";
 
-    for (int j = 0; j < columns; j++) {
+    for (int j = 0; j < columns - 1; j++) {
 
             textData += date.addDays(j).toString("dd");
             textData += ", ";      // for .csv file format
@@ -345,7 +345,7 @@ void MainWindow::on_actionExporter_B737_triggered()
     int columns = model->columnCount();
     textData += "\nCaptain\nPNT, ";
 
-    for (int j = 0; j < columns; j++) {
+    for (int j = 0; j < columns -1; j++) {
 
             textData += date.addDays(j).toString("dd");
             textData += ", ";      // for .csv file format
@@ -364,7 +364,7 @@ void MainWindow::on_actionExporter_B737_triggered()
     rows = model->rowCount();
     columns = model->columnCount();
     textData += "\nFirst Officer\nPNT, ";
-    for (int j = 0; j < columns; j++) {
+    for (int j = 0; j < columns - 1; j++) {
 
             textData += date.addDays(j).toString("dd");
             textData += ", ";      // for .csv file format
@@ -405,7 +405,7 @@ void MainWindow::on_actionExporter_pilotes_triggered()
     textData += "PNT, STBY, OFFICE, OFF, SIMU, FLIGHT\n";
     for ( auto id : pntsIds ) {
         textData += id + ", " +
-        QString::number( gMANAGER.cardInactiveDays( id, dateFrom, dateTo ) ) + ", " +
+        QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "stby" ) ) + ", " +
         QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "office" ) ) + ", " +
         QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "off" ) ) + ", " +
                 QString::number( gMANAGER.cardWorkdays( id, dateFrom, dateTo, "simu" ) ) + ", " +
