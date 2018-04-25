@@ -1,7 +1,6 @@
 #ifndef SCHEDULE_H
 #define SCHEDULE_H
 
-#include "acftmodel.h"
 #include "db.h"
 #include <QDate>
 #include <algorithm>
