@@ -89,7 +89,6 @@ ScheduleInstance::ScheduleInstance(
         }
         workload.emplace( std::make_pair( pid, wr ) );
     }
-    sort_domains();
 
     // create schedule
     bcssp( n, Status::unknown );
@@ -157,7 +156,7 @@ void ScheduleInstance::bcssp( int n, Status status )
     consistent = true;
     int i = 1;
     while ( status == Status::unknown ) {
-        sort_domains();
+        sort_domains( i );
         if ( consistent ) {
             i = bt_label( i );
         } else {
@@ -232,19 +231,11 @@ void ScheduleInstance::updateDb( DbManager dbm )
     }
 }
 
-bool ScheduleInstance::workRegister::operator<=( const workRegister& aWr )
+bool ScheduleInstance::workRegister::operator<( const workRegister& aWr )
 {
     float yeara = aWr.mPrevFlightTime.year + kTIMEPERFLIGHT * aWr.flights;
     float yearth = mPrevFlightTime.year + kTIMEPERFLIGHT + flights;
-    float montha = aWr.mPrevFlightTime.month + kTIMEPERFLIGHT * aWr.flights;
-    float monthth = mPrevFlightTime.month + kTIMEPERFLIGHT * flights;
-    if ( yearth != yeara ) {
-        return yearth <= yeara;
-    }
-    if ( monthth != montha ) {
-        return monthth <= montha;
-    }
-    return flights <= aWr.flights;
+    return yearth <= yeara;
 }
 
 void ScheduleInstance::workRegister::addFlight() { ++flights; }
@@ -262,17 +253,14 @@ bool ScheduleInstance::workRegister::check()
            mPrevFlightTime.year + wft <= kMAXFLIGHTYEAR;
 }
 
-void ScheduleInstance::sort_domains()
+void ScheduleInstance::sort_domains( int v )
 {
     auto cmp = [this]( QString p1, QString p2 ) {
-        return workload.find( p1 )->second <= workload.find( p2 )->second;
+        return workload.find( p1 )->second < workload.find( p2 )->second;
     };
 
-    for ( int i = 1; i <= n; i++ ) {
-        std::sort( domain[ i ].begin(), domain[ i ].end(), cmp );
-        std::sort(
-            current_domain[ i ].begin(), current_domain[ i ].end(), cmp );
-    }
+    std::sort( domain[ v ].begin(), domain[ v ].end(), cmp );
+    std::sort( current_domain[ v ].begin(), current_domain[ v ].end(), cmp );
 }
 
 void ScheduleInstance::print()

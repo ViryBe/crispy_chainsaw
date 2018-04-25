@@ -98,7 +98,7 @@ private:
 
         prevFlightTime mPrevFlightTime;
 
-        bool operator<=( const workRegister& wr );
+        bool operator<( const workRegister& wr );
         bool check();            ///< Check time limits constraints
         void addFlight();        ///< Adds a flight to register
         void removeFlight();     ///< Removes a flight from register
@@ -143,8 +143,9 @@ private:
     int bt_unlabel( int );
 
     /** Modifies order of values in the domain (since domains are
-     * implemented as lists) to favour instantiation of variables */
-    void sort_domains();
+     * implemented as lists) to favour instantiation of variables
+     * @param v number of the variable whose domain has to be sorted */
+    void sort_domains( int v);
 };
 
 #endif     // SCHEDULE_H
