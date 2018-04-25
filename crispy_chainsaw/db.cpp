@@ -384,7 +384,7 @@ int DbManager::cardWorkdays( QString id, QDate begin, QDate end, QString job )
     query.bindValue( ":pntid", id.toLower() );
     query.bindValue( ":db", begin.toString( kDATEFMT ) );
     query.bindValue( ":de", end.toString( kDATEFMT ) );
-    query.bindValue( ":job", job );
+    query.bindValue( ":job", job.toLower() );
     if ( query.exec() ) {
         if ( query.first() ) {
             card = query.value( 0 ).toInt();

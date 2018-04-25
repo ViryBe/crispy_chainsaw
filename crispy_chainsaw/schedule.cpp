@@ -114,7 +114,7 @@ int ScheduleInstance::bt_label( int i )
 {
     consistent = false;
     auto cd_copy = current_domain[ i ];
-    for ( auto j = 0; j < cd_copy.size() && !consistent; j++ ) {
+    for ( auto j = 0u; j < cd_copy.size() && !consistent; j++ ) {
         // Update value vector and flights count
         try {
             // Remove previously planned flight
