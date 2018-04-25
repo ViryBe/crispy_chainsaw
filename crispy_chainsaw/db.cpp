@@ -300,7 +300,7 @@ void DbManager::editFlightLapse(QDate date, QString model, QString status,
 {
     QSqlQuery query(m_db);
     QString qustr = "UPDATE Workday SET lapse = :l WHERE "
-        "workdate = :d AND statis LIKE :s AND pntid IN ("
+        "workdate = :d AND status LIKE :s AND pntid IN ("
         "SELECT id FROM Pnt WHERE acft_modelname LIKE :m)";
     if (!query.prepare(qustr)) {
         qDebug() << "prepare editFlightLapse" << query.lastError();
