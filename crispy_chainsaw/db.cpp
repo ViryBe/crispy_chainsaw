@@ -113,7 +113,8 @@ void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced,
     query.bindValue( ":l", lapse );
     if ( !query.exec() ) {
         qDebug() << "exec addWorkday: " << query.lastError();
-        qDebug() << "on the" << date.toString(kDATEFMT);
+        qDebug() << "on the" << date.toString(kDATEFMT) << "concerning"
+                 << pntid;
     }
 }
 
@@ -230,15 +231,16 @@ std::vector<WorkdayDb> DbManager::getAutomaticallySetWorkdays(
 {
     std::vector<WorkdayDb> workdays;
     QSqlQuery query( m_db );
-    QString qustr = "SELECT (workdate, status, pntid) FROM Workday, Pnt WHERE "
-                    "pntid = Pnt.id AND "
-                    "role LIKE :role AND "
-                    "acft_modelname LIKE :mod AND "
-                    "workdate <= :to AND "
-                    "workdate >= :from AND "
-                    "forced = 0";
+    QString qustr = "SELECT Workday.workdate, Workday.status, Workday.pntid "
+                    "FROM Workday INNER JOIN Pnt ON "
+                    "Workday.pntid = Pnt.id WHERE "
+                    "Pnt.role LIKE :role AND "
+                    "Pnt.acft_modelname LIKE :mod AND "
+                    "Workday.workdate BETWEEN :from AND :to AND "
+                    "Workday.forced = 0";
     if ( !query.prepare( qustr ) ) {
-        qDebug() << "prepare getautosetwdays: " << query.lastError();
+        qDebug() << "prepare getautosetwdays: " << query.lastError()
+                 << qustr;
     }
     query.bindValue( ":role", role.toLower() );
     query.bindValue( ":mod", amod.toLower() );

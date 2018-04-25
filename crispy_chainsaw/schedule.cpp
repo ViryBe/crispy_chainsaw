@@ -200,12 +200,14 @@ void ScheduleInstance::recomputeFrom(
 {
     // First clean the schedule
     QDate to = gMANAGER.getLastScheduledDay();
+    /*
     std::vector<WorkdayDb> autosetdays =
         gMANAGER.getAutomaticallySetWorkdays( dfrom, to, role, amod.name );
     for ( WorkdayDb wday : autosetdays ) {
         gMANAGER.deleteWorkday( wday.workdate, wday.pntid );
     }
-    for ( auto d = dfrom; d.daysTo( to ) > 0; d = d.addDays( kWEEK ) ) {
+    */
+    for ( auto d = dfrom; d.daysTo( to ) >= 0; d = d.addDays( kWEEK ) ) {
         ScheduleInstance rescheduled = ScheduleInstance( amod, role, d );
         rescheduled.updateDb( gMANAGER );
     }
@@ -222,10 +224,6 @@ void ScheduleInstance::updateDb( DbManager dbm )
             wddb.status = "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
             wddb.workdate = mStartDate.addDays( ( i - 1 ) / mModel.maxfreq );
             wddb.lapse = kTIMEPERFLIGHT;
-
-            if (wddb.pntid == "") {
-                qDebug() << "NOT GOOD";
-            }
 
             dbm.addWorkday( wddb );
         }
@@ -302,5 +300,7 @@ bool ScheduleInstance::test()
     ScheduleInstance si = ScheduleInstance( mod, role, QDate::currentDate() );
     si.print();
     si.updateDb( gMANAGER );
+    // Nevel call updateDb after the recomputeFrom
+    ScheduleInstance::recomputeFrom(mod, role, QDate::currentDate());
     return true;
 }
