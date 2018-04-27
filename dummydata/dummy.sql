@@ -20,7 +20,7 @@ create table Workday(
 	status text check(status in
 		('office', 'off', 'v1', 'v2', 'v3', 'simu', 'stby')),
 	pntid text not null,
-	lapse real default 0.,
+	lapse text default '0000',
 	forced integer default 0,
 	foreign key (pntid) references Pnt(id),
 	primary key(workdate, pntid)
@@ -74,7 +74,7 @@ values ('af', 'aefdfs fdsae', 'cpt', 0, 'a');
 -- Fill some workdays to be able to display them
 -- Aircraft model
 insert into Acft_model (name, maxfreq, nop, ntot)
-values ('b727', 2, 3, 4);
+values ('b727', 3, 3, 4);
 -- Four captains
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
 values ('fa', 'fdfae adf', 'cpt', 0, 'b727');
@@ -100,7 +100,7 @@ values ('2018-04-10', 'v2', 'fc');
 
 -- Fill data to be represented (i.e. pseudo real data)
 insert into Acft_model(name, maxfreq, crew, nop, ntot)
-values ('b737', 3, 2, 3, 7);
+values ('b737', 2, 2, 3, 7);
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
 values('ta', 'tadf adf', 'cpt', 0, 'b737');
 insert into Pnt (id, name, role, maxfreq, acft_modelname)
