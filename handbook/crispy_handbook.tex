@@ -1,0 +1,75 @@
+\documentclass{scrartcl}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage[compact]{titlesec}
+
+\setmainlanguage{french}
+\title{Manuel d'utilisation du programme de création d'emploi du temps
+\emph{Crispy Chainsaw}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Éléments fournis}
+\begin{itemize}
+  \item Exécutable du programme \texttt{crispy\_chainsaw.exe},
+  \item base de donnée pré remplie \texttt{dummy.db}.
+\end{itemize}
+
+\section{Installation}
+Placer le fichier exécutable dans le même dossier que le fichier de base de
+donnée.
+
+\section{Hypothèses de travail}
+\begin{itemize}
+  \item Les B737 effectuent 3 vols par jour,
+  \item les B727 effectuent 2 vols par jour.
+\end{itemize}
+
+\section{Onglet pilotes}
+Le premier onglet est dédié à la gestion du personnel. Un membre du personnel
+peut être sélectionné en cliquant sur son identifiant dans la colonne de gauche.
+Une fois la personne sélectionnée, il est possible
+\begin{itemize}
+  \item de modifier, supprimer un membre du personnel,
+  \item d'imposer un jour de travail à un personnel,
+  \item récapitulatif du planning par personne entre deux dates choisies, en
+    ayant au préalable appuyé sur rafraîchir.
+\end{itemize}
+
+\section{Onglets appareils}
+Chaque onglet appareil permet de présenter l'emploi du temps qui y est associe.
+La partie supérieure de l'onglet présente deux boutons en plus des choix de
+date. Ceux ci permettent de
+\begin{itemize}
+  \item \emph{Valider}: recalculer les emplois du temps,
+  \item \emph{Modifier durée du vol}: spécifier la durée d'un vol effectue.
+\end{itemize}
+
+\paragraph{Édition de la durée}
+L'édition de la durée de vol entraine l'ouverture d'une fenêtre qui permet
+\begin{itemize}
+  \item d'annuler le vol,
+  \item de spécifier la durée d'un vol, si celui là a été effectué.
+\end{itemize}
+
+\section{Menu d'export}
+Le menu export du bandeau supérieur permet d'exporter un emploi du temps ou les
+bilans des pilotes au
+format \texttt{csv}. Ces fichiers peuvent ensuite être interprétés par e.g.\ des
+tableurs.
+
+\section{Calcul des emplois du temps}
+L'algorithme assigne automatiquement les vols aux personnes de la manière
+suivante
+\begin{enumerate}
+  \item si le statut  a été spécifié via l'onglet pilotes, alors l'emploi du
+    temps ne le modifie pas,
+  \item sinon, tous les pilotes disponibles sont récupérés et un si un membre du
+    personnel peut occuper la fonction, alors la fonction lui est attribuée,
+  \item on passe au vol suivant.
+\end{enumerate}
+
+\end{document}
