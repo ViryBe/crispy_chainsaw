@@ -234,8 +234,8 @@ void ScheduleInstance::updateDb( DbManager dbm )
 bool ScheduleInstance::workRegister::operator<( const workRegister& aWr )
 {
     float yeara = aWr.mPrevFlightTime.year + kTIMEPERFLIGHT * aWr.flights;
-    float yearth = mPrevFlightTime.year + kTIMEPERFLIGHT + flights;
-    return yearth <= yeara;
+    float yearth = mPrevFlightTime.year + kTIMEPERFLIGHT * flights;
+    return yearth < yeara;
 }
 
 void ScheduleInstance::workRegister::addFlight() { ++flights; }
