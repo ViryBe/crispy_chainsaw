@@ -2,6 +2,7 @@
 #define NEWPILOT_H
 
 #include "db.h"
+#include "schedule.h"
 #include <QDialog>
 
 namespace Ui

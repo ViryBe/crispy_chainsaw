@@ -27,12 +27,12 @@ void newPilot::on_buttonBox_accepted()
     } else if ( ui->B727FO->isChecked() ) {
         acftmodel = "b727";
         role = "fo";
-    } else if ( ui->B737FO->isChecked() ) {
+    } else {
         acftmodel = "b737";
         role = "fo";
     }
     frequence = ui->frequenceSpin->value();
-
+    //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(acftmodel),pilot.role, QDate::currentDate());
     PntDb pnt;
     pnt.id = code;
     pnt.name =name;
@@ -40,6 +40,7 @@ void newPilot::on_buttonBox_accepted()
     pnt.acft_modelname = acftmodel;
     pnt.maxfreq = frequence;
     gMANAGER.updatePnt( pnt );
+    //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(acftmodel),role, QDate::currentDate());
 
     // add in bdd (id, name, function)
     // refresh list. Le tri par nom est effectué de façon automatique

@@ -35,6 +35,18 @@ void planningPilot::on_buttonBox_accepted()
         else if (choix == "Simulateur"){
             gMANAGER.addWorkday(dateFrom.addDays(i), "simu" , id, true);
         }
+        else if (choix == "StandBy"){
+            gMANAGER.addWorkday(dateFrom.addDays(i), "stby" , id, true);
+        }
+        else if (choix == "V1"){
+            gMANAGER.addWorkday(dateFrom.addDays(i), "v1" , id, true);
+        }
+        else if (choix == "V2"){
+            gMANAGER.addWorkday(dateFrom.addDays(i), "v2" , id, true);
+        }
+        else if (choix == "V3"){
+            gMANAGER.addWorkday(dateFrom.addDays(i), "v3" , id, true);
+        }
     }
     PntDb pilot = gMANAGER.getPnt(id);
     //ScheduleInstance::recomputeFrom(gMANAGER.getAcftModel(pilot.acft_modelname), pilot.role, dateFrom);

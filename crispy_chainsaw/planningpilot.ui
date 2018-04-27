@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>141</height>
+    <width>359</width>
+    <height>149</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,6 +77,33 @@
        <string>Libre</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>V1</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>V2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>V3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>StandBy</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Si vous rentrez un vol inexistant pour un pilote, rentrez tout l'équipage.</string>
+     </property>
     </widget>
    </item>
    <item>

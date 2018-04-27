@@ -14,7 +14,7 @@ MainWindow::MainWindow( QWidget* parent )
     }
     QDate dateFrom = ui->dateFromB727->date();
     QDate dateTo = ui->dateToB727->date();
-    update_tables( dateFrom, dateTo );
+    //update_tables( dateFrom, dateTo );
 }
 
 MainWindow::~MainWindow() { delete ui; }
