@@ -4,8 +4,12 @@
 ModifyFlight::ModifyFlight(QDate dateSend, QString plane, QWidget *parent) :
     QDialog(parent), ui(new Ui::ModifyFlight), appareil(plane)
 {
-    QTime time(2,30);
+
+    date = dateSend;
     ui->setupUi(this);
+    std::vector<WorkdayDb> wdb = gMANAGER.getWorkdays(appareil, date, ui->vol->currentText());
+    qDebug() << wdb[0].lapse;
+    QTime time = (wdb.size() >0)? QTime(wdb[0].lapse) : QTime(2,30);
     ui->dateEdit->setDate(dateSend);
     ui->time->setTime(time);
     if (dateSend.currentDate() > dateSend){
@@ -35,6 +39,9 @@ void ModifyFlight::on_pasEffectue_stateChanged(int arg1)
 
 void ModifyFlight::on_dateEdit_userDateChanged(const QDate &date)
 {
+    std::vector<WorkdayDb> wdb = gMANAGER.getWorkdays(appareil, date, ui->vol->currentText());
+    QTime time = (wdb.size() >0)? QTime(wdb[0].lapse) : QTime(2,30);
+    ui->time->setTime(time);
     if (date > date.currentDate()){
         ui->time->setEnabled(false);
         ui->vol->setEnabled(false);

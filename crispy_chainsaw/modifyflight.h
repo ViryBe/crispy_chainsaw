@@ -26,6 +26,7 @@ private slots:
 
 private:
     QString appareil;
+    QDate date;
     Ui::ModifyFlight *ui;
 };
 
