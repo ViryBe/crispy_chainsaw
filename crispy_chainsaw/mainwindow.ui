@@ -1458,7 +1458,7 @@
    </property>
    <widget class="QMenu" name="menuFichier">
     <property name="title">
-     <string>Fichier</string>
+     <string>Export</string>
     </property>
     <addaction name="actionExporter"/>
     <addaction name="actionExporter_B737"/>
