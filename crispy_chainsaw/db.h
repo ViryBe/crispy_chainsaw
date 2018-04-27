@@ -37,7 +37,7 @@ struct WorkdayDb
     QDate workdate;          ///< Date of the day
     QString status;          ///< Which work (e.g. simulator, office, v1, etc.)
     QString pntid;           ///< Pnt concerned
-    float lapse = 0.;        ///< Duration of the workday
+    QTime lapse = QTime(0, 0);  ///< Duration of the workday
     bool forced = false;     ///< Whether workday has been added manually
 };
 
@@ -67,7 +67,7 @@ public:
      * @param f manually (forced) workday
      * @param l lapse of the workday */
     void addWorkday( QDate d, QString s, QString i, bool f = false,
-                     float l = 0. );
+                     QTime l = QTime(0, 0));
 
     /** Same as above but takes directly a Workday structure */
     void addWorkday( const WorkdayDb& );
@@ -85,6 +85,12 @@ public:
      * @param s status wanted */
     std::vector<WorkdayDb> getWorkdays(
         QString i, QDate f, QDate t, QString s = kSQLWILDCARD );
+
+    /** Get a workday
+     * @param m aircraft model,
+     * @param d date
+     * @param s status */
+    std::vector<WorkdayDb> getWorkdays( QString m, QDate d, QString s);
 
     /** Asserts whether a flight has a crew assigned manually
      * @param d date of the flight

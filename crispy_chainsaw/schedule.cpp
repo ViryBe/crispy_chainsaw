@@ -81,10 +81,12 @@ ScheduleInstance::ScheduleInstance(
             gMANAGER.getWorkdays( pid, oneyearago, dbeg );
         for ( auto wd : wds ) {
             if ( wd.status == "v1" || wd.status == "v2" || wd.status == "v3" ) {
-                wr.mPrevFlightTime.year += wd.lapse;
+                wr.mPrevFlightTime.year += wd.lapse.hour() +
+                    wd.lapse.minute() / 60;
                 wr.mPrevFlightTime.month +=
-                    ( dbeg.daysTo( wd.workdate ) <= kMONTH - kWEEK ) ? wd.lapse
-                                                                     : 0.;
+                    ( dbeg.daysTo( wd.workdate ) <= kMONTH - kWEEK ) ?
+                    wd.lapse.hour() + wd.lapse.minute() / 60
+                    : 0.;
             }
         }
         workload.emplace( std::make_pair( pid, wr ) );
@@ -222,7 +224,8 @@ void ScheduleInstance::updateDb( DbManager dbm )
             wddb.pntid = v[ i ];
             wddb.status = "v" + QString::number( ( i - 1 ) % mModel.maxfreq + 1 );
             wddb.workdate = mStartDate.addDays( ( i - 1 ) / mModel.maxfreq );
-            wddb.lapse = kTIMEPERFLIGHT;
+            wddb.lapse = QTime(kTIMEPERFLIGHT,
+                    (kTIMEPERFLIGHT - static_cast<int>(kTIMEPERFLIGHT)) * 60);
 
             dbm.addWorkday( wddb );
         }

@@ -96,7 +96,7 @@ void DbManager::deletePnt( QString pid )
 }
 
 void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced,
-                            float lapse )
+                            QTime lapse )
 {
     QSqlQuery query( m_db );
     QString qustr =
@@ -110,7 +110,7 @@ void DbManager::addWorkday( QDate date, QString st, QString pntid, bool forced,
     query.bindValue( ":status", st.toLower() );
     query.bindValue( ":pntid", pntid.toLower() );
     query.bindValue( ":f", forced );
-    query.bindValue( ":l", lapse );
+    query.bindValue( ":l", lapse.toString(kTIMEFMT) );
     if ( !query.exec() ) {
         qDebug() << "exec addWorkday: " << query.lastError();
         qDebug() << "on the" << date.toString(kDATEFMT) << "concerning"
@@ -146,7 +146,7 @@ std::vector<WorkdayDb> DbManager::getWorkdays(
 {
     std::vector<WorkdayDb> rslt;
     QSqlQuery query( m_db );
-    QString qustr = "SELECT workdate, status, pntid, forced FROM "
+    QString qustr = "SELECT workdate, status, pntid, forced, lapse FROM "
                     "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
                     "pntid LIKE :pid AND "
                     "status LIKE :st AND "
@@ -166,10 +166,44 @@ std::vector<WorkdayDb> DbManager::getWorkdays(
             wd.pntid = query.value( 1 ).toString().toLower();
             wd.status = query.value( 2 ).toString().toUpper();
             wd.forced = query.value( 3 ).toBool();
+            wd.lapse = QTime::fromString(query.value( 4 ).toString(), kTIMEFMT);
             rslt.push_back( wd );
         }
     } else {
         qDebug() << "getWorkdayserr: " << query.lastError();
+    }
+    return rslt;
+}
+
+std::vector<WorkdayDb> DbManager::getWorkdays(
+        QString model, QDate day, QString status)
+{
+    std::vector<WorkdayDb> rslt;
+    QSqlQuery query( m_db );
+    QString qustr = "SELECT DISTINCT workdate, status, pntid, forced, lapse FROM "
+        "Workday INNER JOIN Pnt ON Workday.pntid = Pnt.id WHERE "
+        "Pnt.acft_modelname LIKE :mod AND "
+        "workdate LIKE :date AND "
+        "Workday.status LIKE :st";
+    if (!query.prepare(qustr)) {
+        qDebug() << "prepare getworkdays2:" << query.lastError();
+    }
+    query.bindValue(":st", status);
+    query.bindValue(":mod", model);
+    query.bindValue(":date", day);
+    if (query.exec()) {
+        while (query.next()) {
+            WorkdayDb wd;
+            wd.workdate = QDate::fromString(query.value(0).toString(),
+                    kDATEFMT);
+            wd.pntid = query.value(1).toString().toLower();
+            wd.status = query.value(2).toString().toUpper();
+            wd.forced = query.value(3).toBool();
+            wd.lapse = QTime::fromString(query.value(4).toString(), kTIMEFMT);
+            rslt.push_back(wd);
+        }
+    } else {
+        qDebug() << "getWorkdays2err: " << query.lastError();
     }
     return rslt;
 }
